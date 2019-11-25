@@ -1,0 +1,49 @@
+.jumbotron .btn {
+  /* margin-left: 0.5em; */
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.btn-toolbar {
+  display: inline;
+}
+
+.smart-search-input {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.jumbotron {
+  background-color: rgba(0, 0, 0, 0.3);
+  margin-top: 1.5em;
+}
+
+.ca-text {
+  font-size: 2.5rem;
+}
+
+@media (max-width: 576px) {
+  .ca-text {
+    font-size: 1.5rem;
+  }
+
+  .jumbotron h2 {
+    font-size: 1.3em;
+  }
+
+  .jumbotron h4 {
+    font-size: 0.6em;
+  }
+}
+
+.search-status {
+  margin-bottom: 0.5em;
+}
+
+.card-body a {
+  color: #007bff;
+}
+
+.card-body a + a {
+  margin-left: 1.25rem;
+}

@@ -1,0 +1,275 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #09d3ac;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header-text {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.navbar {
+  background-color: #563d7c;
+}
+
+.thread-pea th {
+  background-color: #563d7c;
+  color: #fbfbfb;
+}
+
+.data-table {
+  border-radius: 0.3rem;
+  padding: 1em;
+}
+
+.page-link {
+  color: #563d7c;
+}
+
+.page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
+
+.data-table .row .col .top-button {
+  margin-bottom: 0.5rem;
+}
+
+.perPageDropdown {
+  margin-bottom: 0.5rem;
+}
+
+.pagination {
+  margin-bottom: 0;
+  /* padding: 0;
+  padding-inline-start: 0; */
+}
+
+.filterRow {
+  margin-bottom: 1rem;
+}
+
+.td-tools-button {
+  min-width: 9.5em;
+}
+
+.td-tools-button .btn-toolbar>*+* {
+  margin-left: 0.3em;
+}
+
+.login {
+  margin: 0 auto;
+}
+
+.custom-control-input:checked~.custom-control-label::before {
+  color: #fff;
+  border-color: #563d7c;
+  background-color: #563d7c;
+}
+
+.custom-radio .custom-control-input:disabled:checked~.custom-control-label::before {
+  background-color: #563d7c8a;
+}
+
+.mark,
+mark {
+  padding: 0em;
+}
+
+.pea-color {
+  color: #563d7c;
+  border-color: #563d7c;
+}
+
+.form-button {
+  margin-top: 2em;
+}
+
+.perPageDropdown {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon-before-text>*+*,
+.perPageDropdown>*+*,
+.spinner-margin>*+*,
+.btn-toolbar>*+* {
+  margin-left: 0.5em;
+}
+
+/* @media only screen and (max-width: 340px) {
+  .btn-toolbar > * + * {
+    margin-left: 0 !important;
+    margin-top: 0.3em;
+  }
+} */
+
+.spinner-border {
+  vertical-align: middle;
+}
+
+.react-datepicker__header,
+.react-datepicker__day--selected,
+.react-datepicker__today-button {
+  background-color: #563d7c !important;
+}
+
+.react-datepicker__today-button {
+  color: white;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: white !important;
+}
+
+.react-datepicker__day--today {
+  background-color: lightgray;
+}
+
+.vertical-divider {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.not-found {
+  margin-top: 1em;
+}
+
+.btn-outline-secondary {
+  color: #563d7c;
+  border-color: #563d7c;
+}
+
+.btn-outline-secondary:hover {
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
+
+.btn-outline-secondary:focus,
+.btn-outline-secondary.focus {
+  box-shadow: 0 0 0 0.05rem #563d7c;
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled):active,
+.btn-outline-secondary:not(:disabled):not(.disabled).active,
+.show>.btn-outline-secondary.dropdown-toggle {
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
+
+.card-header {
+  padding: 0;
+  background-color: #563d7c;
+}
+
+.card-header>.btn-link {
+  color: #fff;
+}
+
+.react-datepicker-wrapper {
+  display: block;
+}
+
+.navbar-light .navbar-brand {
+  color: white;
+}
+
+.navbar-light .navbar-brand:focus,
+.navbar-light .navbar-brand:hover {
+  color: white;
+}
+
+.navbar-light .navbar-brand .active {
+  color: white;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: white;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: white;
+}
+
+.navbar-light .navbar-nav .active>.nav-link,
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .nav-link.show,
+.navbar-light .navbar-nav .show>.nav-link {
+  color: white;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.5rem 1rem;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+a:hover {
+  color: white;
+}
+
+.tab-link {
+  color: #563d7c;
+}
+
+.tab-link:hover {
+  color: #563d7c;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show>.nav-link {
+  color: #fff;
+  background-color: #563d7c;
+}
+
+@media (max-width: 910px) {
+  .nav-item {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 843px) {
+  .nav-item {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 776px) {
+  .nav-item {
+    font-size: 0.7rem;
+  }
+}
