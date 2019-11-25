@@ -7,12 +7,16 @@ import {
   Col,
   Row
 } from "react-bootstrap";
+import {connect} from "react-redux";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Signature from "./Signature";
+import config from "../../config"
+import { userActions } from "../../actions"
+import {authHeader} from "../../helpers"
 
-import axios from "axios";
+// import axios from "axios";
 // import "./CustomerForm.css";
 
 class CustomerForm extends Component {
@@ -40,6 +44,11 @@ class CustomerForm extends Component {
       signatureBase64: this.sigPad.getTrimmedCanvas().toDataURL("image/png")
     });
   };
+
+  componentDidMount(){
+    this.props.dispatch(userActions.getAll());
+    // console.log(this.props)
+  }
 
   handleChange = event => {
     // console.log(event.target.value);
@@ -90,42 +99,46 @@ class CustomerForm extends Component {
   //Whattttttttt I need to add REDUX!! ----------|
   insertData = event => {
     event.preventDefault();
-    this.trimSigPad();
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkZDc4NjY3MTU4N2Y3MzJjOGVlODljNyIsInVzZXJuYW1lIjoiYWRtaW4iLCJleHAiOjE1Nzk4NTA3MDYsImlhdCI6MTU3NDY2NjcwNn0.5xN1lw518xXC_TNuVOTSlHf4SUDkXxUIJePSeOxNdLs"
-      }
-    };
-    axios
-      .post(
-        "http://localhost:3000/api/customers",
-        {
-          customer: {
-            title: this.state.title,
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            peaId: this.state.peaId,
-            dateAppear: this.state.dateAppear,
-            authorize: this.state.authorize,
-            soldierNo: this.state.soldierNo,
-            war: this.state.war,
-            signatureBase64: this.state.signatureBase64,
-            address: {
-              houseNo: this.state.houseNo,
-              mooNo: this.state.mooNo,
-              districtNo: this.state.districtNo
-            }
+    // this.trimSigPad();
+    const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeader()},
+      body: JSON.stringify({
+        customer: {
+          title: this.state.title,
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          peaId: this.state.peaId,
+          dateAppear: this.state.dateAppear,
+          authorize: this.state.authorize,
+          soldierNo: this.state.soldierNo,
+          war: this.state.war,
+          signatureBase64: signatureData,
+          address: {
+            houseNo: this.state.houseNo,
+            mooNo: this.state.mooNo,
+            districtNo: this.state.districtNo
           }
-        },
-        config
-      )
+        }
+      })
+    };
+    
+    fetch(`${config.apiUrl}/api/customers`, requestOptions)
       .then(rep => {
-        console.log(rep);
+        if (!rep.ok) {
+          throw rep
+        }
+        return rep.json();
+      })
+      .then(rep=>{
+        console.log(rep)
       })
       .catch(err => {
-        console.error(err);
+        err.text().then(errorMsg => {
+          console.log(errorMsg);
+        })
+        
       });
   };
 
@@ -385,7 +398,7 @@ class CustomerForm extends Component {
 
           <Form.Group as={Row}>
             <Form.Label column sm={2}>
-              ลายเซน
+              ลายเซ็น
             </Form.Label>
             <Col sm={3}>
               <Signature
@@ -397,7 +410,7 @@ class CustomerForm extends Component {
 
           <Form.Group as={Row}>
             <Col sm={{ span: 10, offset: 2 }}>
-              <Button type="submit">เพิ่ม</Button>
+              <Button type="submit" className="btn-block">บันทึก</Button>
             </Col>
           </Form.Group>
         </Form>
@@ -406,4 +419,13 @@ class CustomerForm extends Component {
   }
 }
 
-export default CustomerForm;
+function mapStateToProps(state) {
+  const { users, authentication } = state;
+  const { user } = authentication;
+  return {
+    user,
+    users
+  };
+}
+
+export default connect(mapStateToProps)(CustomerForm);

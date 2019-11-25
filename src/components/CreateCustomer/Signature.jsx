@@ -18,7 +18,7 @@ class Signature extends Component {
           }}
         />
         <Button variant="danger" size="sm" onClick={this.props.clear}>
-          ล้างลายเซน
+          ล้างลายเซ็น
         </Button>
       </div>
     );
