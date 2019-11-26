@@ -5,23 +5,26 @@ import {
   FormControl,
   InputGroup,
   Col,
-  Row
+  Row,
+  Spinner
 } from "react-bootstrap";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Signature from "./Signature";
-import config from "../../config"
-import { userActions } from "../../actions"
-import {authHeader} from "../../helpers"
+import config from "../../config";
+import { userActions } from "../../actions";
+import { authHeader, handleFetchError, correctPostcode } from "../../helpers";
+import { FaCheck, FaExclamation, FaTimes } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 // import axios from "axios";
 // import "./CustomerForm.css";
 
 class CustomerForm extends Component {
   state = {
-    peaId: "12345",
+    peaId: "00251235551",
     title: "นาย",
     firstName: "สิทธิพร",
     lastName: "กาวี",
@@ -33,7 +36,11 @@ class CustomerForm extends Component {
     dateAppear: new Date(),
     soldierNo: "158/2154",
     war: "ภายในประเทศ",
-    signatureBase64: null
+    signatureBase64: null,
+    fetchPeaIdComplete: true,
+    existsPeaCustomer: false,
+    peaIdOk: false,
+    peaWarnText: ""
   };
   sigPad = {};
   clearSigPad = () => {
@@ -45,7 +52,7 @@ class CustomerForm extends Component {
     });
   };
 
-  componentDidMount(){
+  componentDidMount() {
     this.props.dispatch(userActions.getAll());
     // console.log(this.props)
   }
@@ -55,35 +62,36 @@ class CustomerForm extends Component {
     const elementName = event.target.name;
     const targetValue = event.target.value;
     if (elementName === "districtNo") {
-      if (
-        targetValue === "520102" ||
-        targetValue === "520104" ||
-        targetValue === "520106" ||
-        targetValue === "520108" ||
-        targetValue === "520113" ||
-        targetValue === "520114" ||
-        targetValue === "520115" ||
-        targetValue === "520116"
-      ) {
-        this.setState({
-          districtNo: targetValue,
-          postcode: 52100
-        });
-      } else if (targetValue === "520105") {
-        this.setState({
-          districtNo: targetValue,
-          postcode: 52220
-        });
-      } else {
-        this.setState({
-          districtNo: targetValue,
-          postcode: 52000
-        });
-      }
+      this.setState({
+        districtNo: targetValue,
+        postcode: correctPostcode(targetValue)
+      });
     }
     this.setState({
       [elementName]: targetValue
     });
+    if (elementName === "peaId") {
+      this.setState({
+        peaIdOk: true
+      });
+      if (this.validatePeaId(targetValue)) {
+        this.checkCustomerExists(targetValue);
+      } else {
+        this.setState({
+          peaIdOk: false,
+          existsPeaCustomer: false,
+          fetchPeaIdComplete: true,
+          peaWarnText: "หมายเลขผู้ใช้ไฟไม่ถูกต้อง"
+        });
+      }
+    }
+  };
+
+  validatePeaId = peaId => {
+    if (peaId.length === 11) {
+      return true;
+    }
+    return false;
   };
 
   handleDateChange = date => {
@@ -102,8 +110,8 @@ class CustomerForm extends Component {
     // this.trimSigPad();
     const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeader()},
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify({
         customer: {
           title: this.state.title,
@@ -123,22 +131,62 @@ class CustomerForm extends Component {
         }
       })
     };
-    
+
     fetch(`${config.apiUrl}/api/customers`, requestOptions)
+      .then(handleFetchError)
       .then(rep => {
-        if (!rep.ok) {
-          throw rep
-        }
-        return rep.json();
-      })
-      .then(rep=>{
-        console.log(rep)
+        console.log(rep);
       })
       .catch(err => {
-        err.text().then(errorMsg => {
-          console.log(errorMsg);
-        })
-        
+        console.log(err);
+      });
+  };
+
+  checkCustomerExists = peaId => {
+    // this.setState({
+    //   fetchPeaIdComplete: false
+    // });
+    this.setState({
+      fetchPeaIdComplete: false,
+      existsPeaCustomer: false,
+      peaWarnText: "กำลังตรวจสอบหมายเลขผู้ใช้ไฟ..."
+    });
+    const customer = this.getCustomerByPeaId(peaId);
+    customer
+      .then(res => {
+        this.setState({
+          fetchPeaIdComplete: true,
+          existsPeaCustomer: res ? true : false,
+          peaWarnText: res ? "หมายเลขผู้ใช้ไฟนี้มีอยู่ในระบบแล้ว" : ""
+        });
+      })
+      .catch(() => {
+        this.setState({
+          peaWarnText: "เซิฟเวอร์ขัดข้อง",
+          fetchPeaIdComplete: true,
+          existsPeaCustomer: true
+        });
+      });
+  };
+
+  getCustomerByPeaId = peaId => {
+    const requestOptions = {
+      method: "GET",
+      headers: authHeader()
+    };
+
+    return fetch(
+      `${config.apiUrl}/api/customers/peaid/${peaId}`,
+      requestOptions
+    )
+      .then(handleFetchError)
+      .then(rep => {
+        if (rep.status === 204) {
+          return null;
+        }
+        return rep.json().then(repMsg => {
+          return repMsg;
+        });
       });
   };
 
@@ -155,7 +203,11 @@ class CustomerForm extends Component {
       authorize,
       dateAppear,
       soldierNo,
-      war
+      war,
+      fetchPeaIdComplete,
+      existsPeaCustomer,
+      peaIdOk,
+      peaWarnText
     } = this.state;
     return (
       <div>
@@ -166,8 +218,8 @@ class CustomerForm extends Component {
             <Form.Label column sm={2}>
               หมายเลขผู้ใช้ไฟ
             </Form.Label>
-            <Col sm={3}>
-              <InputGroup className="mb-3">
+            <Col sm={5}>
+              <InputGroup className="mb-0">
                 <InputGroup.Prepend>
                   <InputGroup.Text id="basic-addon3">02</InputGroup.Text>
                 </InputGroup.Prepend>
@@ -178,7 +230,48 @@ class CustomerForm extends Component {
                   onChange={this.handleChange}
                   value={peaId}
                 />
+
+                <InputGroup.Append>
+                  <InputGroup.Text id="basic-addon3">
+                    {fetchPeaIdComplete ? (
+                      existsPeaCustomer ? ( //Exists
+                        <div style={{ color: "orange" }}>
+                          <FaExclamation />
+                        </div>
+                      ) : peaIdOk ? ( //OK
+                        <div style={{ color: "green" }}>
+                          <FaCheck />
+                        </div>
+                      ) : (
+                        //Invalid
+                        <div style={{ color: "red" }}>
+                          <FaTimes />
+                        </div>
+                      )
+                    ) : (
+                      <Spinner
+                        animation="border"
+                        variant="primary"
+                        size="sm"
+                        role="status"
+                      >
+                        <span className="sr-only">Loading...</span>
+                      </Spinner>
+                    )}
+                  </InputGroup.Text>
+                </InputGroup.Append>
               </InputGroup>
+              <Form.Text className="text-muted">
+                {peaWarnText}
+                {existsPeaCustomer ? (
+                  <span>
+                    {" "}
+                    หรือต้องการ{" "}
+                    <Link to={`/verify/${peaId}`}>ยืนยันการใช้สิทธิ์</Link>{" "}
+                    แทนหรือไม่
+                  </span>
+                ) : null}
+              </Form.Text>
             </Col>
           </Form.Group>
 
@@ -410,7 +503,9 @@ class CustomerForm extends Component {
 
           <Form.Group as={Row}>
             <Col sm={{ span: 10, offset: 2 }}>
-              <Button type="submit" className="btn-block">บันทึก</Button>
+              <Button type="submit" className="btn-block">
+                บันทึก
+              </Button>
             </Col>
           </Form.Group>
         </Form>

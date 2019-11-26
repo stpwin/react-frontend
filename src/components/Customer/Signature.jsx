@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button } from "react-bootstrap";
 
 import SignatureCanvas from "react-signature-canvas";
+import "./Signature.css";
 
 class Signature extends Component {
   render() {
@@ -10,7 +11,7 @@ class Signature extends Component {
         <SignatureCanvas
           ref={this.props.setRef}
           penColor="black"
-          backgroundColor="#E8E8E8"
+          backgroundColor="white"
           canvasProps={{
             width: 500,
             height: 200,
