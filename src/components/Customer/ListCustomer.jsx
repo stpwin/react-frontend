@@ -5,7 +5,8 @@ import config from "../../config";
 import { userActions } from "../../actions";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
 
-import { Table } from "react-bootstrap";
+import { Table, Pagination, InputGroup, FormControl } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 
 class ListCustomer extends Component {
   state = {
@@ -45,7 +46,20 @@ class ListCustomer extends Component {
     const { customers } = this.state;
     return (
       <div>
-        <Table striped bordered hover size="sm">
+        <InputGroup>
+          <InputGroup.Prepend>
+            <InputGroup.Text id='btnGroupAddon2'>
+              <FaSearch />
+            </InputGroup.Text>
+          </InputGroup.Prepend>
+          <FormControl
+            type='text'
+            placeholder='Input group example'
+            aria-label='Input group example'
+            aria-describedby='btnGroupAddon2'
+          />
+        </InputGroup>
+        <Table striped bordered hover size='sm'>
           <thead>
             <tr>
               <th>#</th>
@@ -64,9 +78,20 @@ class ListCustomer extends Component {
               return (
                 <tr key={index}>
                   <td>{index + 1}</td>
-                  <td>{customer.firstName + " " + customer.lastName}</td>
+                  <td>
+                    {customer.title +
+                      " " +
+                      customer.firstName +
+                      " " +
+                      customer.lastName}
+                  </td>
                   <td>{customer.peaId}</td>
                   <td>{addressToString(customer.address)}</td>
+                  <td>{customer.authorize}</td>
+                  <td>{}</td>
+                  <td>{customer.soldierNo}</td>
+                  <td>{customer.dateAppear[0]}</td>
+                  <td>{customer.war}</td>
                 </tr>
               );
             })}
@@ -82,6 +107,28 @@ class ListCustomer extends Component {
     );
   }
 }
+
+genPageination = props => {
+  return (
+    <Pagination>
+      <Pagination.First />
+      <Pagination.Prev />
+      <Pagination.Item>{1}</Pagination.Item>
+      <Pagination.Ellipsis />
+
+      <Pagination.Item>{10}</Pagination.Item>
+      <Pagination.Item>{11}</Pagination.Item>
+      <Pagination.Item active>{12}</Pagination.Item>
+      <Pagination.Item>{13}</Pagination.Item>
+      <Pagination.Item disabled>{14}</Pagination.Item>
+
+      <Pagination.Ellipsis />
+      <Pagination.Item>{20}</Pagination.Item>
+      <Pagination.Next />
+      <Pagination.Last />
+    </Pagination>
+  );
+};
 
 function mapStateToProps(state) {
   const { users, authentication } = state;
