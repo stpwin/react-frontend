@@ -14,10 +14,11 @@ function App() {
   return (
     <Router history={history}>
       {/* <CreateCustomer></CreateCustomer> */}
-      <PrivateRoute exact path="/verify/:peaid" component={Customers} />
-      <PrivateRoute exact path="/add-customer" component={Customers} />
-      <PrivateRoute exact path="/" component={Customers} />
-      <Route path="/login" component={LoginPage}></Route>
+      {/* <PrivateRoute exact path='/verify/:peaid' component={Customers} /> */}
+      {/* <PrivateRoute exact path='/add-customer' component={Customers} /> */}
+      <PrivateRoute exact path='/' component={Customers} />
+
+      <Route path='/login' component={LoginPage}></Route>
       <Switch></Switch>
     </Router>
   );

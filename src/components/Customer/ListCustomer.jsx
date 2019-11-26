@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import config from "../../config";
 import { userActions } from "../../actions";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
@@ -11,12 +12,13 @@ import { FaSearch } from "react-icons/fa";
 class ListCustomer extends Component {
   state = {
     pageNo: 1,
+    maxPage: 10,
     customers: []
   };
 
   componentDidMount() {
-    this.props.dispatch(userActions.getAll());
-    this.fetchCustomers();
+    // this.props.dispatch(userActions.getAll());
+    // this.fetchCustomers();
   }
 
   fetchCustomers = () => {
@@ -42,8 +44,20 @@ class ListCustomer extends Component {
       .catch(err => {});
   };
 
+  handleChangePage = event => {
+    const pageNo = parseInt(event.target.text);
+    console.log(pageNo);
+    if (pageNo) {
+      this.setState({
+        pageNo: pageNo
+      });
+    }
+  };
+
   render() {
-    const { customers } = this.state;
+    console.log(this.props);
+
+    const { customers, maxPage, pageNo } = this.state;
     return (
       <div>
         <InputGroup>
@@ -95,40 +109,51 @@ class ListCustomer extends Component {
                 </tr>
               );
             })}
-
-            {/* <tr>
-              <td>3</td>
-              <td colSpan="2">Larry the Bird</td>
-              <td>@twitter</td>
-            </tr> */}
           </tbody>
         </Table>
+        <Pagination onClick={this.handleChangePage}>
+          {pagination(pageNo, maxPage)}
+        </Pagination>
       </div>
     );
   }
 }
 
-genPageination = props => {
-  return (
-    <Pagination>
-      <Pagination.First />
-      <Pagination.Prev />
-      <Pagination.Item>{1}</Pagination.Item>
-      <Pagination.Ellipsis />
+function pagination(c, m) {
+  var current = c,
+    last = m,
+    delta = 2,
+    left = current - delta,
+    right = current + delta + 1,
+    range = [],
+    pagesItem = [],
+    l;
 
-      <Pagination.Item>{10}</Pagination.Item>
-      <Pagination.Item>{11}</Pagination.Item>
-      <Pagination.Item active>{12}</Pagination.Item>
-      <Pagination.Item>{13}</Pagination.Item>
-      <Pagination.Item disabled>{14}</Pagination.Item>
+  for (let i = 1; i <= last; i++) {
+    if (i == 1 || i == last || (i >= left && i < right)) {
+      range.push(i);
+    }
+  }
 
-      <Pagination.Ellipsis />
-      <Pagination.Item>{20}</Pagination.Item>
-      <Pagination.Next />
-      <Pagination.Last />
-    </Pagination>
-  );
-};
+  for (let i of range) {
+    if (l) {
+      if (i - l === 2) {
+        pagesItem.push(
+          <Pagination.Item active={current === l + 1}>{l + 1}</Pagination.Item>
+        );
+      } else if (i - l !== 1) {
+        pagesItem.push(<Pagination.Ellipsis disabled={true} />);
+      }
+    }
+
+    pagesItem.push(
+      <Pagination.Item active={current === i}>{i}</Pagination.Item>
+    );
+    l = i;
+  }
+
+  return pagesItem;
+}
 
 function mapStateToProps(state) {
   const { users, authentication } = state;
