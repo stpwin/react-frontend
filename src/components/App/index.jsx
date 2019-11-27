@@ -5,8 +5,8 @@ import { Router, Switch, Route } from "react-router-dom";
 import Customers from "../Pages/Customers";
 import { history } from "../../helpers";
 import { PrivateRoute } from "../PrivateRoute";
-import { LoginPage } from "../Login";
-// import { Home } from "../Home"
+import { LoginPage } from "../Pages/Login";
+import { Home } from "../Pages/Home"
 import config from "../../config";
 
 function App() {
@@ -15,8 +15,8 @@ function App() {
     <Router history={history}>
       {/* <CreateCustomer></CreateCustomer> */}
       {/* <PrivateRoute exact path='/verify/:peaid' component={Customers} /> */}
-      {/* <PrivateRoute exact path='/add-customer' component={Customers} /> */}
-      <PrivateRoute exact path='/' component={Customers} />
+      <PrivateRoute exact path='/customer' component={Customers} />
+      <PrivateRoute exact path='/' component={Home} />
 
       <Route path='/login' component={LoginPage}></Route>
       <Switch></Switch>

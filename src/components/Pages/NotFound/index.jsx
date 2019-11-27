@@ -10,4 +10,4 @@ class NotFound extends Component {
     }
 }
 
-export default index;
+export default NotFound;
