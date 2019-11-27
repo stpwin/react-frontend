@@ -8,17 +8,20 @@ import { authHeader, handleFetchError, addressToString } from "../../helpers";
 
 import { Table, Pagination, InputGroup, FormControl } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
+import { DataTable } from "react-data-components";
+import "react-data-components/css/table-twbs.css";
 
 class ListCustomer extends Component {
   state = {
     pageNo: 1,
     maxPage: 10,
-    customers: []
+    customers: [],
+    customerTranslate: []
   };
 
   componentDidMount() {
     // this.props.dispatch(userActions.getAll());
-    // this.fetchCustomers();
+    this.fetchCustomers();
   }
 
   fetchCustomers = () => {
@@ -35,10 +38,24 @@ class ListCustomer extends Component {
           return null;
         }
         rep.json().then(repMsg => {
-          this.setState({
-            customers: repMsg.customers
+          const translated = repMsg.customers.map((key, index) => {
+            return {
+              // index: this.i,
+              name: `${key.title} ${key.firstName} ${key.lastName}`,
+              peaId: key.peaId,
+              address: addressToString(key.address),
+              authorize: key.authorize,
+              privilegeDate: "",
+              soldierId: key.soldierId,
+              dateAppear: key.dateAppear,
+              war: key.war
+            };
           });
-          console.log(repMsg.customers);
+          this.setState({
+            customerTranslate: translated
+          });
+          console.log(translated);
+          // console.log(repMsg.customers);
         });
       })
       .catch(err => {});
@@ -54,26 +71,54 @@ class ListCustomer extends Component {
     }
   };
 
+  i = 1;
+  renderNumber = (val, row) => {
+    let i = 1;
+    return i++;
+  };
+
+  componentDidUpdate() {
+    console.log("Update");
+  }
+
+  columns = [
+    { title: "ลำดับ", render: this.renderNumber },
+    { title: "ชื่อ-สกุล", prop: "name" },
+    { title: "หมายเลขผู้ใช้ไฟ", prop: "peaId" },
+    { title: "ที่อยู่", prop: "address" },
+    { title: "กรณีเป็น", prop: "authorize" },
+    { title: "ได้รับสิทธิ์วันที่", prop: "privilegeDate" },
+    { title: "บัตรประจำตัวเลขที่", prop: "soldierId" },
+    { title: "วันที่มาแสดงตน", prop: "dateAppear" },
+    { title: "ลดสิทธิ์สงคราม", prop: "war" }
+  ];
+
   render() {
     console.log(this.props);
-
-    const { customers, maxPage, pageNo } = this.state;
+    const { customerTranslate } = this.state;
     return (
       <div>
-        <InputGroup>
+        {/* <InputGroup>
           <InputGroup.Prepend>
-            <InputGroup.Text id='btnGroupAddon2'>
+            <InputGroup.Text id="btnGroupAddon2">
               <FaSearch />
             </InputGroup.Text>
           </InputGroup.Prepend>
           <FormControl
-            type='text'
-            placeholder='Input group example'
-            aria-label='Input group example'
-            aria-describedby='btnGroupAddon2'
+            type="text"
+            placeholder="Input group example"
+            aria-label="Input group example"
+            aria-describedby="btnGroupAddon2"
           />
-        </InputGroup>
-        <Table striped bordered hover size='sm'>
+        </InputGroup> */}
+        <DataTable
+          keys="peaId"
+          columns={this.columns}
+          initialData={customerTranslate}
+          initialPageLength={5}
+          initialSortBy={{ prop: "index", order: "ascending" }}
+        />
+        {/* <Table striped bordered hover size="sm">
           <thead>
             <tr>
               <th>#</th>
@@ -110,10 +155,10 @@ class ListCustomer extends Component {
               );
             })}
           </tbody>
-        </Table>
-        <Pagination onClick={this.handleChangePage}>
+        </Table> */}
+        {/* <Pagination onClick={this.handleChangePage}>
           {pagination(pageNo, maxPage)}
-        </Pagination>
+        </Pagination> */}
       </div>
     );
   }
