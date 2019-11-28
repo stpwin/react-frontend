@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+// import { Link, useParams } from "react-router-dom";
 import config from "../../config";
-import { userActions } from "../../actions";
+// import { userActions } from "../../actions";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
 
-import { Table, Pagination, InputGroup, FormControl } from "react-bootstrap";
-import { FaSearch } from "react-icons/fa";
+// import { Pagination } from "react-bootstrap";
+// import { FaSearch } from "react-icons/fa";
 import { DataTable } from "react-data-components";
 import "react-data-components/css/table-twbs.css";
 
@@ -164,41 +164,41 @@ class ListCustomer extends Component {
   }
 }
 
-function pagination(c, m) {
-  var current = c,
-    last = m,
-    delta = 2,
-    left = current - delta,
-    right = current + delta + 1,
-    range = [],
-    pagesItem = [],
-    l;
+// function pagination(c, m) {
+//   var current = c,
+//     last = m,
+//     delta = 2,
+//     left = current - delta,
+//     right = current + delta + 1,
+//     range = [],
+//     pagesItem = [],
+//     l;
 
-  for (let i = 1; i <= last; i++) {
-    if (i == 1 || i == last || (i >= left && i < right)) {
-      range.push(i);
-    }
-  }
+//   for (let i = 1; i <= last; i++) {
+//     if (i == 1 || i == last || (i >= left && i < right)) {
+//       range.push(i);
+//     }
+//   }
 
-  for (let i of range) {
-    if (l) {
-      if (i - l === 2) {
-        pagesItem.push(
-          <Pagination.Item active={current === l + 1}>{l + 1}</Pagination.Item>
-        );
-      } else if (i - l !== 1) {
-        pagesItem.push(<Pagination.Ellipsis disabled={true} />);
-      }
-    }
+//   for (let i of range) {
+//     if (l) {
+//       if (i - l === 2) {
+//         pagesItem.push(
+//           <Pagination.Item active={current === l + 1}>{l + 1}</Pagination.Item>
+//         );
+//       } else if (i - l !== 1) {
+//         pagesItem.push(<Pagination.Ellipsis disabled={true} />);
+//       }
+//     }
 
-    pagesItem.push(
-      <Pagination.Item active={current === i}>{i}</Pagination.Item>
-    );
-    l = i;
-  }
+//     pagesItem.push(
+//       <Pagination.Item active={current === i}>{i}</Pagination.Item>
+//     );
+//     l = i;
+//   }
 
-  return pagesItem;
-}
+//   return pagesItem;
+// }
 
 function mapStateToProps(state) {
   const { users, authentication } = state;
