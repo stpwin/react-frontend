@@ -142,7 +142,7 @@ export class SmartSearch extends Component {
               <Row className="justify-content-md-center">
                 <Col xs lg="5">
                   <Form.Control
-                    className="text-center"
+                    className="smart-search-input text-center"
                     size="lg"
                     type="text"
                     placeholder="หมายเลขผู้ใช้ไฟ(CA)"
@@ -190,7 +190,7 @@ export class SmartSearch extends Component {
                     <Button
                       variant="info"
                       size="lg"
-                      href={`/create-customer/${peaId}`}
+                      href={`/add-customer/${peaId}`}
                       className="btn-block"
                     >
                       เพิ่มข้อมูล

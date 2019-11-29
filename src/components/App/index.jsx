@@ -10,7 +10,7 @@ import NotFound from "../Pages/NotFound";
 import { PrivateRoute } from "../PrivateRoute";
 
 import Customers, {
-  CreateCustomer,
+  AddCustomer,
   EditCustomer,
   VerifyCustomer
 } from "../Pages/Customers";
@@ -32,9 +32,9 @@ function App() {
         <PrivateRoute exact path="/customers" component={Customers} />
         <PrivateRoute exact path="/users" component={Users} />
         <PrivateRoute
-          path="/create-customer/:peaId?"
-          component={CreateCustomer}
-          // children={<CreateCustomer />}
+          path="/add-customer/:peaId?"
+          component={AddCustomer}
+          // children={<AddCustomer />}
         />
         <PrivateRoute
           path="/verify-customer/:peaId"

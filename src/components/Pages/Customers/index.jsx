@@ -16,5 +16,5 @@ class Customers extends Component {
 export default Customers;
 
 export * from "./EditCustomer";
-export * from "./CreateCustomer";
+export * from "./AddCustomer";
 export * from "./VerifyCustomer";
