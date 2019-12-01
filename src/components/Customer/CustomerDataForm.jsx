@@ -31,24 +31,6 @@ class CustomerDataForm extends Component {
     peaWarnText: ""
   };
 
-  //   componentDidUpdate(prevProps, prevState) {
-  //     if (prevState.peaId !== this.state.peaId) {
-  //       console.log("Hello");
-  //       this.setState({
-  //         peaId: (props.initial && props.initial.peaId) || "",
-  //         title: (props.initial && props.initial.title) || "",
-  //         firstName: (props.initial && props.initial.firstName) || "",
-  //         lastName: (props.initial && props.initial.lastName) || "",
-  //         houseNo: (props.initial && props.initial.houseNo) || "",
-  //         mooNo: (props.initial && props.initial.mooNo) || "",
-  //         districtNo: (props.initial && props.initial.districtNo) || "",
-  //         postcode: (props.initial && props.initial.postcode) || 52000,
-  //         soldierNo: (props.initial && props.initial.soldierNo) || "",
-  //         war: (props.initial && props.initial.war) || ""
-  //       });
-  //     }
-  //   }
-
   validatePeaId = peaId => {
     if (peaId.length === 11) {
       return true;
@@ -56,9 +38,6 @@ class CustomerDataForm extends Component {
     return false;
   };
   checkCustomerExists = peaId => {
-    // this.setState({
-    //   fetchPeaIdComplete: false
-    // });
     this.setState({
       fetchPeaIdComplete: false,
       existsPeaCustomer: false,
@@ -150,33 +129,31 @@ class CustomerDataForm extends Component {
       peaWarnText
     } = this.state;
     // console.log(this.props);
-    const { readOnly, showPlaceholder, validatePeaId } = this.props;
-    console.log(this.props);
+    const { readOnly, showPlaceholder, validatePeaId, peaIdReadOnly } = this.props;
+    // console.log(this.props);
     return (
-      <div>
-        {/* Customer Form */}
-
+      <React.Fragment>
         <Form.Group as={Row}>
           <Form.Label column sm={2}>
             หมายเลขผู้ใช้ไฟ
           </Form.Label>
           <Col sm={5}>
-            <InputGroup className="mb-0">
+            <InputGroup className='mb-0'>
               <InputGroup.Prepend>
-                <InputGroup.Text id="basic-addon3">02</InputGroup.Text>
+                <InputGroup.Text id='basic-addon3'>02</InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                aria-describedby="basic-addon3"
-                maxLength="11"
-                name="peaId"
+                aria-describedby='basic-addon3'
+                maxLength='11'
+                name='peaId'
                 placeholder={showPlaceholder ? "หมายเลขผู้ใช้ไฟ(CA)" : ""}
                 value={peaId}
-                readOnly={readOnly}
+                readOnly={readOnly || peaIdReadOnly}
                 onChange={this.handleChange}
               />
               {validatePeaId ? (
                 <InputGroup.Append>
-                  <InputGroup.Text id="basic-addon3">
+                  <InputGroup.Text id='basic-addon3'>
                     {fetchPeaIdComplete ? (
                       existsPeaCustomer ? ( //Exists
                         <div style={{ color: "orange" }}>
@@ -194,25 +171,25 @@ class CustomerDataForm extends Component {
                       )
                     ) : (
                       <Spinner
-                        animation="border"
-                        variant="primary"
-                        size="sm"
-                        role="status"
+                        animation='border'
+                        variant='primary'
+                        size='sm'
+                        role='status'
                       >
-                        <span className="sr-only">Loading...</span>
+                        <span className='sr-only'>Loading...</span>
                       </Spinner>
                     )}
                   </InputGroup.Text>
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
-            <Form.Text className="text-muted">
+            <Form.Text className='text-muted'>
               {peaWarnText}
               {existsPeaCustomer ? (
                 <span>
                   {" "}
                   ต้องการ{" "}
-                  <Link to={`/verify-customer/${peaId}`}>
+                  <Link to={`/customers/verify/${peaId}`}>
                     ยืนยันการใช้สิทธิ์
                   </Link>{" "}
                   แทนหรือไม่
@@ -228,9 +205,9 @@ class CustomerDataForm extends Component {
           </Form.Label>
           <Col sm={3}>
             <Form.Control
-              type="text"
+              type='text'
               placeholder={showPlaceholder ? "คำนำหน้า" : ""}
-              name="title"
+              name='title'
               readOnly={readOnly}
               value={title}
               onChange={this.handleChange}
@@ -246,9 +223,9 @@ class CustomerDataForm extends Component {
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Control
-                  type="text"
+                  type='text'
                   placeholder={showPlaceholder ? "ชื่อ" : ""}
-                  name="firstName"
+                  name='firstName'
                   readOnly={readOnly}
                   value={firstName}
                   onChange={this.handleChange}
@@ -257,10 +234,10 @@ class CustomerDataForm extends Component {
 
               <Form.Group as={Col}>
                 <Form.Control
-                  type="text"
+                  type='text'
                   placeholder={showPlaceholder ? "สกุล" : ""}
                   readOnly={readOnly}
-                  name="lastName"
+                  name='lastName'
                   value={lastName}
                   onChange={this.handleChange}
                 />
@@ -279,7 +256,7 @@ class CustomerDataForm extends Component {
                 <Form.Label>เลขที่/ซอย/ถนน</Form.Label>
                 <Form.Control
                   placeholder={showPlaceholder ? "เลขที่/ซอย/ถนน" : ""}
-                  name="houseNo"
+                  name='houseNo'
                   readOnly={readOnly}
                   value={houseNo}
                   onChange={this.handleChange}
@@ -290,8 +267,8 @@ class CustomerDataForm extends Component {
                 <Form.Label>หมู่ที่</Form.Label>
                 <Form.Control
                   placeholder={showPlaceholder ? "หมู่ที่" : ""}
-                  maxLength="2"
-                  name="mooNo"
+                  maxLength='2'
+                  name='mooNo'
                   readOnly={readOnly}
                   value={mooNo}
                   onChange={this.handleChange}
@@ -301,31 +278,31 @@ class CustomerDataForm extends Component {
               <Form.Group as={Col}>
                 <Form.Label>ตำบล</Form.Label>
                 <Form.Control
-                  as="select"
-                  name="districtNo"
+                  as='select'
+                  name='districtNo'
                   readOnly={readOnly}
                   value={districtNo}
                   onChange={this.handleChange}
                 >
-                  <option value="520101">1. เวียงเหนือ</option>
-                  <option value="520102">2. หัวเวียง</option>
-                  <option value="520103">3. สวนดอก</option>
-                  <option value="520104">4. สบตุ๋ย</option>
-                  <option value="520105">5. พระบาท</option>
-                  <option value="520106">6. ชมพู</option>
-                  <option value="520107">7. กล้วยแพะ</option>
-                  <option value="520108">8. ปงแสนทอง</option>
-                  <option value="520109">9. บ้านแลง</option>
-                  <option value="520110">10. บ้านเสด็จ</option>
-                  <option value="520111">11. พิชัย</option>
-                  <option value="520112">12. ทุ่งฝาย</option>
-                  <option value="520113">13. บ้านเอื้อม</option>
-                  <option value="520114">14. บ้านเป้า</option>
-                  <option value="520115">15. บ้านค่า</option>
-                  <option value="520116">16. บ่อแฮ้ว</option>
-                  <option value="520117">17. ต้นธงชัย</option>
-                  <option value="520118">18. นิคมพัฒนา</option>
-                  <option value="520119">19. บุญนาคพัฒนา</option>
+                  <option value='520101'>1. เวียงเหนือ</option>
+                  <option value='520102'>2. หัวเวียง</option>
+                  <option value='520103'>3. สวนดอก</option>
+                  <option value='520104'>4. สบตุ๋ย</option>
+                  <option value='520105'>5. พระบาท</option>
+                  <option value='520106'>6. ชมพู</option>
+                  <option value='520107'>7. กล้วยแพะ</option>
+                  <option value='520108'>8. ปงแสนทอง</option>
+                  <option value='520109'>9. บ้านแลง</option>
+                  <option value='520110'>10. บ้านเสด็จ</option>
+                  <option value='520111'>11. พิชัย</option>
+                  <option value='520112'>12. ทุ่งฝาย</option>
+                  <option value='520113'>13. บ้านเอื้อม</option>
+                  <option value='520114'>14. บ้านเป้า</option>
+                  <option value='520115'>15. บ้านค่า</option>
+                  <option value='520116'>16. บ่อแฮ้ว</option>
+                  <option value='520117'>17. ต้นธงชัย</option>
+                  <option value='520118'>18. นิคมพัฒนา</option>
+                  <option value='520119'>19. บุญนาคพัฒนา</option>
                 </Form.Control>
               </Form.Group>
             </Form.Row>
@@ -333,12 +310,12 @@ class CustomerDataForm extends Component {
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label>อำเภอ</Form.Label>
-                <Form.Control value="เมือง" readOnly={true} />
+                <Form.Control value='เมือง' readOnly={true} />
               </Form.Group>
 
               <Form.Group as={Col}>
                 <Form.Label>จังหวัด</Form.Label>
-                <Form.Control value="ลำปาง" readOnly={true} />
+                <Form.Control value='ลำปาง' readOnly={true} />
               </Form.Group>
 
               <Form.Group as={Col}>
@@ -355,12 +332,12 @@ class CustomerDataForm extends Component {
           </Form.Label>
           <Col sm={3}>
             <Form.Control
-              type="text"
+              type='text'
               placeholder={showPlaceholder ? "เลขที่บัตรประจำตัวทหาร" : ""}
-              name="soldierNo"
+              name='soldierNo'
               readOnly={readOnly}
               value={soldierNo}
-              maxLength="15"
+              maxLength='15'
               onChange={this.handleChange}
             />
           </Col>
@@ -372,22 +349,22 @@ class CustomerDataForm extends Component {
           </Form.Label>
           <Col sm={3}>
             <Form.Control
-              as="select"
-              name="war"
+              as='select'
+              name='war'
               readOnly={readOnly}
               value={war}
               onChange={this.handleChange}
             >
-              <option value="ภายในประเทศ">ภายในประเทศ</option>
-              <option value="เวียดนาม">เวียดนาม</option>
-              <option value="เกาหลี">เกาหลี</option>
-              <option value="เอเชียบูรพา">เอเชียบูรพา</option>
-              <option value="อินโดจีน">อินโดจีน</option>
-              <option value="ฝรั่งเศส">ฝรั่งเศส</option>
+              <option value='ภายในประเทศ'>ภายในประเทศ</option>
+              <option value='เวียดนาม'>เวียดนาม</option>
+              <option value='เกาหลี'>เกาหลี</option>
+              <option value='เอเชียบูรพา'>เอเชียบูรพา</option>
+              <option value='อินโดจีน'>อินโดจีน</option>
+              <option value='ฝรั่งเศส'>ฝรั่งเศส</option>
             </Form.Control>
           </Col>
         </Form.Group>
-      </div>
+      </React.Fragment>
     );
   }
 }

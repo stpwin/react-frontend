@@ -5,23 +5,33 @@ import SignatureCanvas from "react-signature-canvas";
 import "./Signature.css";
 
 class Signature extends Component {
+  sigpad = {};
+  setSigpadRef = ref => {
+    this.sigpad = ref;
+    this.props.setRef(ref);
+  };
+
+  clearSigpad = () => {
+    this.sigpad.clear();
+  };
+
   render() {
     return (
-      <div>
+      <React.Fragment>
         <SignatureCanvas
-          ref={this.props.setRef}
-          penColor="black"
-          backgroundColor="white"
+          ref={this.setSigpadRef}
+          penColor='black'
+          backgroundColor='white'
           canvasProps={{
             width: 500,
             height: 200,
             className: "sigCanvas"
           }}
         />
-        <Button variant="danger" size="sm" onClick={this.props.clear}>
+        <Button variant='danger' size='sm' onClick={this.clearSigpad}>
           ล้างลายเซ็น
         </Button>
-      </div>
+      </React.Fragment>
     );
   }
 }

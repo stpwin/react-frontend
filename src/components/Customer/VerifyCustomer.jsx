@@ -1,37 +1,48 @@
 import React, { Component } from "react";
-import { Form } from "react-bootstrap";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 import config from "../../config";
+import {
+  authHeader,
+  handleFetchError,
+  correctPostcode,
+  getCustomerByPeaId
+} from "../../helpers";
 
-import ModalStatus from "./ModalStatus";
+import { Form } from "react-bootstrap";
+
+import { ModalStatus } from "../Modals";
 import CustomerDataForm from "./CustomerDataForm";
 import CustomerVerifyForm from "./CustomerVerifyForm";
+import FormButton from "./FormButton";
 
-import { authHeader, handleFetchError } from "../../helpers";
-// import FakeTimers from "@jest/fake-timers/build/jestFakeTimers";
-
-// import { Link } from "react-router-dom";
-import { correctPostcode } from "../../helpers";
-// import axios from "axios";
-// import "./VerifyCustomerForm.css";
-
-class VerifyCustomerForm extends Component {
+class VerifyCustomer extends Component {
   state = {
-    initial: { peaId: this.props.peaId },
-
+    initial: {},
     statusModal: true,
-    statusModalState: "getting",
-    redirect: false
+    statusModalState: "loading",
+    redirectTo: "/"
   };
+
   componentWillMount() {
-    this.getCustomerByPeaId(this.props.peaId)
+    this.setState({
+      statusModal: true,
+      statusModalState: "getting"
+    });
+    getCustomerByPeaId(this.props.peaId)
       .then(customer => {
+        if (!customer) {
+          this.setState({
+            statusModal: true,
+            statusModalState: "nodata"
+          });
+          return;
+        }
         // console.log(customer);
-        if (!customer) return;
         this.setState({
           initial: {
+            peaId: this.props.peaId,
             title: customer.title,
             firstName: customer.firstName,
             lastName: customer.lastName,
@@ -42,10 +53,12 @@ class VerifyCustomerForm extends Component {
             soldierNo: customer.soldierNo,
             war: customer.war
           },
-          statusModal: false
+          statusModal: false,
+          statusModalState: "getok"
         });
       })
       .catch(() => {
+        console.log("get fail");
         this.setState({
           statusModal: true,
           statusModalState: "getfail"
@@ -53,9 +66,18 @@ class VerifyCustomerForm extends Component {
       });
   }
 
-  componentDidMount() {
-    // console.log(this.props)
-  }
+  sigPad = {};
+  setSigpadRef = ref => {
+    this.sigPad = ref;
+  };
+
+  handleSuccess = () => {
+    this.props.history.push(this.state.redirectTo);
+  };
+
+  handleCancel = () => {
+    this.props.history.push(this.state.redirectTo);
+  };
 
   verifyData = event => {
     event.preventDefault();
@@ -71,11 +93,11 @@ class VerifyCustomerForm extends Component {
       headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify({
         verify: {
-          dateAppear: this.state.dateAppear,
-          authorize: this.state.authorize,
-          authorizeName: this.state.authorizeName
-        },
-        signatureBase64: signatureData
+          dateAppear: event.target.dateAppear.value,
+          authorize: event.target.authorize.value,
+          authorizeName: event.target.authorizeName.value,
+          signatureBase64: signatureData
+        }
       })
     };
 
@@ -100,9 +122,7 @@ class VerifyCustomerForm extends Component {
           statusModalState: "saved"
         });
         setTimeout(() => {
-          this.setState({
-            redirect: true
-          });
+          this.handleSuccess();
         }, 1000);
       })
       .catch(err => {
@@ -118,43 +138,22 @@ class VerifyCustomerForm extends Component {
       });
   };
 
-  getCustomerByPeaId = peaId => {
-    const requestOptions = {
-      method: "GET",
-      headers: authHeader()
-    };
-
-    return fetch(
-      `${config.apiUrl}/api/customers/peaid/${peaId}`,
-      requestOptions
-    )
-      .then(handleFetchError)
-      .then(rep => {
-        if (rep.status === 200) {
-          return rep.json();
-        }
-        return null;
-      })
-      .then(data => {
-        // console.log(data);
-        return data;
-      });
-  };
-
   render() {
-    const { initial, statusModal, statusModalState, redirect } = this.state;
-    // console.log(initial);
-    // const { peaId } = this.props;
+    const { initial, statusModal, statusModalState } = this.state;
     return (
-      <div>
+      <React.Fragment>
         <Form onSubmit={this.verifyData}>
-          <CustomerDataForm initial={initial} readOnly={true} />
-          <hr />
-          <CustomerVerifyForm />
+          {statusModalState !== "getting" ? (
+            <React.Fragment>
+              <CustomerDataForm initial={initial} readOnly={true} />
+              <hr />
+              <CustomerVerifyForm setSigpadRef={this.setSigpadRef} />
+              <FormButton loading={statusModal} cancel={this.handleCancel} />
+            </React.Fragment>
+          ) : null}
         </Form>
         <ModalStatus show={statusModal} status={statusModalState} />
-        {redirect ? <Redirect to="/" /> : null}
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -167,4 +166,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(VerifyCustomerForm);
+export default withRouter(connect(mapStateToProps)(VerifyCustomer));

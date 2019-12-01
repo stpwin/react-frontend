@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Signature from "./Signature";
-import { Button, Form, Col, Row, Collapse, Spinner } from "react-bootstrap";
+import { Form, Col, Row, Collapse } from "react-bootstrap";
 
 class CustomerVerifyForm extends Component {
   state = {
@@ -13,9 +13,8 @@ class CustomerVerifyForm extends Component {
     authorizeNameOpen: false
   };
 
-  sigPad = {};
-
   handleChange = event => {
+    console.log(event);
     if (event.target.name === "authorize") {
       this.setState({
         authorizeNameOpen: event.target.value !== "ทหาร",
@@ -33,75 +32,80 @@ class CustomerVerifyForm extends Component {
     });
   };
 
-  setSigpadRef = ref => {
-    this.sigPad = ref;
-  };
-
   render() {
     const {
       dateAppear,
       authorize,
       authorizeNameOpen,
-      authorizeName,
-      statusModal
+      authorizeName
     } = this.state;
+    const { setSigpadRef } = this.props;
     return (
-      <div>
+      <React.Fragment>
         <Form.Group as={Row}>
-          <Form.Label as="legend" column sm={2}>
+          <Form.Label as='legend' column sm={2}>
             วันที่มาแสดงตน
           </Form.Label>
           <Col sm={3}>
             <DatePicker
-              todayButton="เลือกวันนี้"
-              className="form-control"
+              todayButton='เลือกวันนี้'
+              className='form-control'
               selected={dateAppear}
               onChange={this.handleDateChange}
+              name='dateAppear'
             ></DatePicker>
           </Col>
         </Form.Group>
 
         <fieldset>
           <Form.Group as={Row}>
-            <Form.Label as="legend" column sm={2}>
+            <Form.Label as='legend' column sm={2}>
               กรณีเป็น
             </Form.Label>
             <Col sm={10}>
               <Form.Check
                 inline
-                type="radio"
-                label="ทหารเจ้าของสิทธิ์"
-                name="authorize"
-                value="ทหาร"
+                custom
+                type='radio'
+                label='ทหารเจ้าของสิทธิ์'
+                name='authorize'
+                value='ทหาร'
                 checked={authorize === "ทหาร"}
                 onChange={this.handleChange}
+                id={`inline-1`}
               />
               <Form.Check
                 inline
-                type="radio"
-                label="ตัวแทน"
-                name="authorize"
-                value="ตัวแทน"
+                custom
+                type='radio'
+                label='ตัวแทน'
+                name='authorize'
+                value='ตัวแทน'
                 checked={authorize === "ตัวแทน"}
                 onChange={this.handleChange}
+                id={`inline-2`}
               />
               <Form.Check
                 inline
-                type="radio"
-                label="ภรรยา"
-                name="authorize"
-                value="ภรรยา"
+                custom
+                type='radio'
+                label='ภรรยา'
+                name='authorize'
+                value='ภรรยา'
                 checked={authorize === "ภรรยา"}
                 onChange={this.handleChange}
+                id={`inline-3`}
               />
               <Form.Check
                 inline
-                type="radio"
-                label="ทายาท"
-                name="authorize"
-                value="ทายาท"
+                custom
+                type='radio'
+                label='ทายาท'
+                name='authorize'
+                value='ทายาท'
                 checked={authorize === "ทายาท"}
                 onChange={this.handleChange}
+                id={`inline-4`}
               />
             </Col>
           </Form.Group>
@@ -114,12 +118,12 @@ class CustomerVerifyForm extends Component {
             </Form.Label>
             <Col sm={5}>
               <Form.Control
-                type="text"
+                type='text'
                 placeholder={`ชื่อ-สกุล ${
                   authorize !== "ทหาร" ? authorize : ""
                 }`}
                 onChange={this.handleChange}
-                name="authorizeName"
+                name='authorizeName'
                 value={authorizeName}
               />
             </Col>
@@ -131,34 +135,10 @@ class CustomerVerifyForm extends Component {
             ลายเซ็น
           </Form.Label>
           <Col sm={3}>
-            <Signature
-              setRef={this.setSigpadRef}
-              clear={this.clearSigPad}
-            ></Signature>
+            <Signature setRef={setSigpadRef}></Signature>
           </Col>
         </Form.Group>
-
-        <Form.Group as={Row}>
-          <Col sm={{ span: 10, offset: 2 }}>
-            <Button type="submit" disabled={statusModal} className="btn-block">
-              {statusModal ? (
-                <div>
-                  <Spinner
-                    as="span"
-                    animation="border"
-                    size="sm"
-                    role="status"
-                    aria-hidden="true"
-                  />
-                  {"  กำลังดำเนินการ..."}
-                </div>
-              ) : (
-                "บันทึก"
-              )}
-            </Button>
-          </Col>
-        </Form.Group>
-      </div>
+      </React.Fragment>
     );
   }
 }

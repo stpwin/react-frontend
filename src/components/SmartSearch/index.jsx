@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
+import { withRouter } from "react-router-dom";
 import {
   Container,
   Row,
@@ -13,11 +14,11 @@ import {
   ListGroupItem
 } from "react-bootstrap";
 
+import Moment from "react-moment";
+import "moment-timezone";
+
 import "./style.css";
-import { handleFetchError } from "../../helpers/fetch-helpers";
-import { authHeader } from "../../helpers/auth-header";
-import { addressToString } from "../../helpers/address-helpers";
-import config from "../../config";
+import { getCustomerByPeaId, addressToString } from "../../helpers";
 
 export class SmartSearch extends Component {
   state = {
@@ -53,7 +54,7 @@ export class SmartSearch extends Component {
       });
 
       try {
-        const result = await this.fetchData(peaId);
+        const result = await getCustomerByPeaId(peaId);
         if (!result) {
           console.log("i can't find anything");
           this.setState({
@@ -92,30 +93,16 @@ export class SmartSearch extends Component {
     // });
   };
 
-  queryCustomer = peaId => {
-    this.fetchData(peaId);
+  handleEdit = () => {
+    this.props.history.push(`/customers/edit/${this.state.peaId}`);
   };
 
-  fetchData = peaId => {
-    const reqConf = {
-      method: "GET",
-      headers: authHeader()
-    };
-    return fetch(`${config.apiUrl}/api/customers/peaid/${peaId}`, reqConf)
-      .then(handleFetchError)
-      .then(rep => {
-        if (rep.status === 200) {
-          return rep.json();
-        }
-        return null;
-        // console.log(rep);
-      })
-      .then(data => {
-        return data;
-      });
-    // .catch(() => {
-    //   console.log("Fetch error!");
-    // });
+  handleAdd = () => {
+    this.props.history.push(`/customers/add/${this.state.peaId}`);
+  };
+
+  handleVerify = () => {
+    this.props.history.push(`/customers/verify/${this.state.peaId}`);
   };
 
   render() {
@@ -131,140 +118,147 @@ export class SmartSearch extends Component {
     } = this.state;
 
     return (
-      <div>
-        <Container className="p-5 text-center">
-          <Jumbotron>
-            <h2 className="text-white">
-              PEA War Veterans Privilege Managment System
-            </h2>
+      <Container className='p-5 text-center'>
+        <Jumbotron>
+          <h2 className='text-white'>
+            PEA War Veterans Privilege Managment System
+          </h2>
 
-            <Form>
-              <Row className="justify-content-md-center">
-                <Col xs lg="5">
-                  <Form.Control
-                    className="smart-search-input text-center"
-                    size="lg"
-                    type="text"
-                    placeholder="หมายเลขผู้ใช้ไฟ(CA)"
-                    maxLength={11}
-                    onChange={this.handleTextChange}
-                    value={peaId}
-                  />
-                  <Collapse in={statusOpen}>
-                    <div id="example-collapse-text">
-                      {fetching ? (
-                        <div>
-                          <Spinner
-                            animation="border"
-                            role="status"
-                            as="span"
-                            aria-hidden="true"
-                          >
-                            <span className="sr-only text-white">
-                              กำลังเรียกข้อมูล...
-                            </span>
-                          </Spinner>
-                          <span className="text-white">
+          <Form>
+            <Row className='justify-content-md-center'>
+              <Col xs lg='5'>
+                <Form.Control
+                  className='smart-search-input text-center'
+                  size='lg'
+                  type='text'
+                  placeholder='หมายเลขผู้ใช้ไฟ(CA)'
+                  maxLength={11}
+                  onChange={this.handleTextChange}
+                  value={peaId}
+                />
+                <Collapse in={statusOpen}>
+                  <div id='example-collapse-text'>
+                    {fetching ? (
+                      <React.Fragment>
+                        <Spinner
+                          animation='border'
+                          role='status'
+                          as='span'
+                          aria-hidden='true'
+                        >
+                          <span className='sr-only text-white'>
                             กำลังเรียกข้อมูล...
                           </span>
-                        </div>
-                      ) : fetchError ? (
-                        <FetchError statusText={statusText} />
-                      ) : (
-                        <div>
-                          <span className="text-white">{statusText}</span>
+                        </Spinner>
+                        <span className='text-white'>กำลังเรียกข้อมูล...</span>
+                      </React.Fragment>
+                    ) : fetchError ? (
+                      <FetchError statusText={statusText} />
+                    ) : (
+                      <React.Fragment>
+                        <span className='text-white'>{statusText}</span>
 
-                          {customer ? (
-                            <CustomerView customer={customer} />
-                          ) : null}
-                        </div>
-                      )}
-                    </div>
-                  </Collapse>
+                        {customer ? <CustomerView customer={customer} /> : null}
+                      </React.Fragment>
+                    )}
+                  </div>
+                </Collapse>
+              </Col>
+            </Row>
+
+            <Collapse in={createButtonOpen}>
+              <Row className='justify-content-md-center'>
+                <Col>
+                  <Button
+                    variant='outline-light'
+                    size='lg'
+                    // href={`/customers/add/${peaId}`}
+                    onClick={this.handleAdd}
+                    className='btn-block'
+                  >
+                    เพิ่มข้อมูล
+                  </Button>
                 </Col>
               </Row>
-
-              <Collapse in={createButtonOpen}>
-                <Row className="justify-content-md-center">
-                  <Col>
-                    <Button
-                      variant="info"
-                      size="lg"
-                      href={`/add-customer/${peaId}`}
-                      className="btn-block"
-                    >
-                      เพิ่มข้อมูล
-                    </Button>
-                  </Col>
-                </Row>
-              </Collapse>
-              <Collapse in={editVerifyButtonOpen}>
-                <Row className="justify-content-md-center">
-                  <Col xs lg="3">
-                    <Button
-                      variant="info"
-                      size="lg"
-                      href={`/edit-customer/${peaId}`}
-                      className="btn-block"
-                    >
-                      แก้ไขข้อมูล
-                    </Button>
-                  </Col>
-                  <Col xs lg="3">
-                    <Button
-                      variant="info"
-                      size="lg"
-                      href={`/verify-customer/${peaId}`}
-                      className="btn-block"
-                    >
-                      ยืนยันสิทธิ์
-                    </Button>
-                  </Col>
-                </Row>
-              </Collapse>
-            </Form>
-          </Jumbotron>
-        </Container>
-      </div>
+            </Collapse>
+            <Collapse in={editVerifyButtonOpen}>
+              <Row className='justify-content-md-center'>
+                <Col xs lg='3'>
+                  <Button
+                    variant='outline-light'
+                    size='lg'
+                    // href={`/customers/edit/${peaId}`}
+                    className='btn-block'
+                    onClick={this.handleEdit}
+                  >
+                    แก้ไขข้อมูล
+                  </Button>
+                </Col>
+                <Col xs lg='3'>
+                  <Button
+                    variant='outline-light'
+                    size='lg'
+                    // href={`/customers/verify/${peaId}`}
+                    onClick={this.handleVerify}
+                    className='btn-block'
+                  >
+                    ยืนยันสิทธิ์
+                  </Button>
+                </Col>
+              </Row>
+            </Collapse>
+          </Form>
+        </Jumbotron>
+      </Container>
     );
   }
 }
 
 const CustomerView = ({ customer }) => {
   return (
-    <div>
-      <Card>
-        <Card.Body>
-          <Card.Title>
-            {customer.title}
-            {" " + customer.firstName}
-            {" " + customer.lastName}
-          </Card.Title>
-          <Card.Subtitle className="mb-2 text-muted">
-            สงคราม {customer.war} G1
-          </Card.Subtitle>
-          <Card.Text>{addressToString(customer.address)}</Card.Text>
-        </Card.Body>
-        <ListGroup className="list-group-flush">
-          <ListGroupItem>หมายเลขทหาร {customer.soldierNo}</ListGroupItem>
-          {/* <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
+    <Card>
+      <Card.Body>
+        <Card.Title>
+          {customer.title}
+          {" " + customer.firstName}
+          {" " + customer.lastName}
+        </Card.Title>
+        <Card.Subtitle className='mb-2 text-muted'>
+          สงคราม {customer.war} G1
+        </Card.Subtitle>
+        <Card.Text>{addressToString(customer.address)}</Card.Text>
+      </Card.Body>
+      <ListGroup className='list-group-flush'>
+        <ListGroupItem>หมายเลขทหาร {customer.soldierNo}</ListGroupItem>
+        {/* <ListGroupItem>Dapibus ac facilisis in</ListGroupItem>
           <ListGroupItem>Vestibulum at eros</ListGroupItem> */}
-        </ListGroup>
-        <Card.Body>
-          <Card.Link href="#">พิมพ์</Card.Link>
-        </Card.Body>
-        <Card.Footer>
-          <small className="text-muted">
-            ยืนยันสิทธิ์ครั้งล่าสุดเมื่อ {"{ConfirmDate}"}
-          </small>
-        </Card.Footer>
-      </Card>
-    </div>
+      </ListGroup>
+      <Card.Body>
+        <Card.Link href='#'>พิมพ์</Card.Link>
+      </Card.Body>
+      <Card.Footer>
+        <small className='text-muted'>
+          {customer.verifies && customer.verifies.length > 0 ? (
+            <Fragment>
+              ยืนยันสิทธิ์ครั้งล่าสุดเมื่อ{" "}
+              <Moment
+                format='YYYY/MM/DD'
+                date={
+                  customer.verifies[customer.verifies.length - 1].dateAppear
+                }
+              />
+            </Fragment>
+          ) : (
+            "ไม่เคยยืนยันสิทธิ์"
+          )}
+        </small>
+      </Card.Footer>
+    </Card>
   );
 };
 
 const FetchError = ({ statusText }) => {
-  return <span className="text-danger">{`${statusText}`}</span>;
+  return <span className='text-danger'>{`${statusText}`}</span>;
 };
 
-export default SmartSearch;
+export default withRouter(SmartSearch);

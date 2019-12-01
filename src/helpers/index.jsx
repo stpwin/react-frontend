@@ -4,3 +4,4 @@ export * from "./store";
 export * from "./auth-header";
 export * from "./fetch-helpers";
 export * from "./address-helpers";
+export * from "./customer-helpers";

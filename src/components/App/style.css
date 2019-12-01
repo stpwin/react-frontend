@@ -1,3 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Kanit|Mitr|Pridi|Sarabun');
+
+body {
+  /* font-family: 'Mitr', sans-serif; */
+  /* font-family: 'Sarabun', sans-serif; */
+  font-family: 'Kanit', sans-serif;
+  /* font-family: 'Pridi', serif; */
+}
+
 .App {
   text-align: center;
 }
@@ -31,4 +40,45 @@ hr {
 .header-text {
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
+
+.navbar {
+  background-color: #563d7c;
+}
+
+.thread-pea th {
+  background-color: #563d7c;
+  color: #fbfbfb
+}
+
+.data-table {
+  border-radius: .3rem;
+  padding: 1em;
+  background-color: #fbfbfb;
+}
+
+.page-link {
+  color: #563d7c;
+}
+
+
+.page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
+
+.col .dropdown {
+  margin-bottom: .5rem;
+}
+
+.pagination {
+  margin-bottom: 0;
+  /* padding: 0;
+  padding-inline-start: 0; */
+}
+
+.filterRow {
+  margin-bottom: 1rem;
 }

@@ -1,26 +1,40 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 
 import { connect } from "react-redux";
 // import { Link, useParams } from "react-router-dom";
 import config from "../../config";
 // import { userActions } from "../../actions";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
+import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
 
-// import { Pagination } from "react-bootstrap";
-// import { FaSearch } from "react-icons/fa";
-import { DataTable } from "react-data-components";
-import "react-data-components/css/table-twbs.css";
+// import {
+//   Table,
+//   InputGroup,
+//   FormControl,
+//   Row,
+//   Col,
+//   Form,
+//   Pagination,
+//   Button,
+//   Dropdown
+// } from "react-bootstrap";
+// import { FaSearch, FaTimes } from "react-icons/fa";
+// import { DataTable } from "react-data-components";
+
+import { DataTable } from "../DataTable";
+// import paginationFactory, { PaginationProvider, PaginationListStandalone } from "react-bootstrap-table2-paginator";
+// import BootstrapTable from "react-bootstrap-table-next";
 
 class ListCustomer extends Component {
   state = {
     pageNo: 1,
     maxPage: 10,
     customers: [],
-    customerTranslate: []
+    customerTranslate: [],
+    filterText: ""
   };
 
   componentDidMount() {
-    // this.props.dispatch(userActions.getAll());
     this.fetchCustomers();
   }
 
@@ -40,21 +54,21 @@ class ListCustomer extends Component {
         rep.json().then(repMsg => {
           const translated = repMsg.customers.map((key, index) => {
             return {
-              // index: this.i,
+              index: index + 1,
               name: `${key.title} ${key.firstName} ${key.lastName}`,
               peaId: key.peaId,
               address: addressToString(key.address),
               authorize: key.authorize,
-              privilegeDate: "",
-              soldierId: key.soldierId,
-              dateAppear: key.dateAppear,
+              // privilegeDate: "",
+              soldierNo: key.soldierNo,
+              // dateAppear: key.dateAppear,
               war: key.war
             };
           });
           this.setState({
             customerTranslate: translated
           });
-          console.log(translated);
+          // console.log(translated);
           // console.log(repMsg.customers);
         });
       })
@@ -71,141 +85,57 @@ class ListCustomer extends Component {
     }
   };
 
-  i = 1;
-  renderNumber = (val, row) => {
-    let i = 1;
-    return i++;
+  handleFilterTextChange = event => {
+    this.setState({
+      filterText: event.target.value
+    });
   };
 
-  componentDidUpdate() {
-    console.log("Update");
-  }
+  clearFilterText = () => {
+    this.setState({
+      filterText: ""
+    });
+  };
 
   columns = [
-    { title: "ลำดับ", render: this.renderNumber },
-    { title: "ชื่อ-สกุล", prop: "name" },
-    { title: "หมายเลขผู้ใช้ไฟ", prop: "peaId" },
-    { title: "ที่อยู่", prop: "address" },
-    { title: "กรณีเป็น", prop: "authorize" },
-    { title: "ได้รับสิทธิ์วันที่", prop: "privilegeDate" },
-    { title: "บัตรประจำตัวเลขที่", prop: "soldierId" },
-    { title: "วันที่มาแสดงตน", prop: "dateAppear" },
-    { title: "ลดสิทธิ์สงคราม", prop: "war" }
+    { text: "ลำดับ", dataField: "index", valign: "true" },
+    { text: "ชื่อ-สกุล", dataField: "name" },
+    { text: "หมายเลขผู้ใช้ไฟ", dataField: "peaId", valign: "true" },
+    { text: "ที่อยู่", dataField: "address" },
+    { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
+    { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
+    { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
+
+    { text: "กรณีเป็น", dataField: "authorize" },
+    { text: "วันที่มาแสดงตน", dataField: "laseDateAppear", valign: "true" }
   ];
 
   render() {
-    console.log(this.props);
+    // console.log(this.props);
     const { customerTranslate } = this.state;
     return (
-      <div>
-        {/* <InputGroup>
-          <InputGroup.Prepend>
-            <InputGroup.Text id="btnGroupAddon2">
-              <FaSearch />
-            </InputGroup.Text>
-          </InputGroup.Prepend>
-          <FormControl
-            type="text"
-            placeholder="Input group example"
-            aria-label="Input group example"
-            aria-describedby="btnGroupAddon2"
-          />
-        </InputGroup> */}
-        <DataTable
-          keys="peaId"
+      <Fragment>
+        {/* <SuperTable /> */}
+        {/* <BootstrapTable
+          keyField='id'
+          data={customerTranslate}
           columns={this.columns}
-          initialData={customerTranslate}
-          initialPageLength={5}
-          initialSortBy={{ prop: "index", order: "ascending" }}
+          pagination={paginationFactory()}
+        /> */}
+        <DataTable
+          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA'
+          columns={this.columns}
         />
-        {/* <Table striped bordered hover size="sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>ชื่อ-สกุล</th>
-              <th>หมายเลขผู้ใช้ไฟ</th>
-              <th>ที่อยู่</th>
-              <th>กรณีเป็น</th>
-              <th>ได้รับสิทธิ์วันที่</th>
-              <th>บัตรประจำตัวเลขที่</th>
-              <th>วันที่มาแสดงตน</th>
-              <th>ลดสิทธิ์สงคราม</th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map((customer, index) => {
-              return (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>
-                    {customer.title +
-                      " " +
-                      customer.firstName +
-                      " " +
-                      customer.lastName}
-                  </td>
-                  <td>{customer.peaId}</td>
-                  <td>{addressToString(customer.address)}</td>
-                  <td>{customer.authorize}</td>
-                  <td>{}</td>
-                  <td>{customer.soldierNo}</td>
-                  <td>{customer.dateAppear[0]}</td>
-                  <td>{customer.war}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table> */}
-        {/* <Pagination onClick={this.handleChangePage}>
-          {pagination(pageNo, maxPage)}
-        </Pagination> */}
-      </div>
+      </Fragment>
     );
   }
 }
 
-// function pagination(c, m) {
-//   var current = c,
-//     last = m,
-//     delta = 2,
-//     left = current - delta,
-//     right = current + delta + 1,
-//     range = [],
-//     pagesItem = [],
-//     l;
-
-//   for (let i = 1; i <= last; i++) {
-//     if (i == 1 || i == last || (i >= left && i < right)) {
-//       range.push(i);
-//     }
-//   }
-
-//   for (let i of range) {
-//     if (l) {
-//       if (i - l === 2) {
-//         pagesItem.push(
-//           <Pagination.Item active={current === l + 1}>{l + 1}</Pagination.Item>
-//         );
-//       } else if (i - l !== 1) {
-//         pagesItem.push(<Pagination.Ellipsis disabled={true} />);
-//       }
-//     }
-
-//     pagesItem.push(
-//       <Pagination.Item active={current === i}>{i}</Pagination.Item>
-//     );
-//     l = i;
-//   }
-
-//   return pagesItem;
-// }
-
 function mapStateToProps(state) {
-  const { users, authentication } = state;
+  const { authentication } = state;
   const { user } = authentication;
   return {
-    user,
-    users
+    user
   };
 }
 
