@@ -1,8 +1,5 @@
 import React, { Component } from "react";
 
-import config from "../../config";
-import { authHeader, handleFetchError, addressToString } from "../../helpers";
-
 import {
   Table,
   InputGroup,
@@ -12,47 +9,23 @@ import {
   Form,
   Pagination,
   Button,
-  Dropdown
+  Dropdown,
+  ButtonToolbar,
+  OverlayTrigger,
+  Tooltip
 } from "react-bootstrap";
-import { FaSearch, FaTimes } from "react-icons/fa";
+import { FaSearch, FaTimes, FaSlidersH, FaCheck, FaEdit } from "react-icons/fa";
 
 export class DataTable extends Component {
   state = {
-    pageNo: 1,
-    maxPage: 50,
-    customers: [],
-    customerTranslate: [],
     filterText: ""
-  };
-
-  handlePageChangePrev = event => {
-    this.setState({
-      pageNo: this.state.pageNo - 1
-    });
-  };
-
-  handlePageChangeNext = event => {
-    this.setState({
-      pageNo: this.state.pageNo + 1
-    });
-  };
-
-  handlePageChange = event => {
-    if (!event.target.text) return;
-
-    const pageNo = parseInt(event.target.text);
-
-    if (pageNo) {
-      this.setState({
-        pageNo: pageNo
-      });
-    }
   };
 
   handleFilterTextChange = event => {
     this.setState({
       filterText: event.target.value
     });
+    this.props.filterTextChange(event.target.value);
   };
 
   clearFilterText = () => {
@@ -63,23 +36,40 @@ export class DataTable extends Component {
 
   render() {
     // console.log(this.props);
-    const { customerTranslate, filterText, pageNo, maxPage } = this.state;
-    const { filterPlaceholder, columns, rows } = this.props;
+    const { filterText } = this.state;
+    const {
+      filterPlaceholder,
+      columns,
+      data,
+      pageNo,
+      maxPage,
+      onNextPage,
+      onPrevPage,
+      onPageChange,
+      onPerPageChange,
+      perPage,
+      filters,
+      filterChecked,
+      onFilterCheckedChange
+    } = this.props;
     return (
       <div className='data-table'>
         <Row>
           <Col />
           <Col />
           <Col className='text-right align-self-center'>
-            <Dropdown id='dropdown-item-button justify-content-end'>
+            <Dropdown
+              id='dropdown-item-button justify-content-end'
+              onSelect={onPerPageChange}
+            >
               <Dropdown.Toggle variant='outline-secondary' id='dropdown-basic'>
-                20
+                {perPage}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item href='#/action-1'>20</Dropdown.Item>
-                <Dropdown.Item href='#/action-2'>100</Dropdown.Item>
-                <Dropdown.Item href='#/action-3'>500</Dropdown.Item>
+                <Dropdown.Item eventKey={50}>50</Dropdown.Item>
+                <Dropdown.Item eventKey={100}>100</Dropdown.Item>
+                <Dropdown.Item eventKey={500}>500</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Col>
@@ -113,11 +103,31 @@ export class DataTable extends Component {
             </InputGroup>
           </Col>
           <Col className='align-self-center'>
-            <Form.Check custom inline label='G1' id='inline-1' />
-            <Form.Check custom inline label='G2' id='inline-2' />
+            {filters &&
+              filters.map((filter, index) => {
+                return (
+                  <Form.Check
+                    custom
+                    inline
+                    name={`filter-${index}`}
+                    label={filter.text}
+                    checked={filterChecked[index]}
+                    onChange={onFilterCheckedChange}
+                    id={`filter-${index}`}
+                  />
+                );
+              })}
+            {/* <Form.Check custom inline label='G1' id='inline-1' />
+            <Form.Check custom inline label='G2' id='inline-2' /> */}
           </Col>
           <Col className='text-right align-self-center'>
-            {/* <Paginator curPage={1} maxPage={10} /> */}
+            <Paginator
+              curPage={pageNo}
+              maxPage={maxPage}
+              pageChange={onPageChange}
+              pageChangePrev={onPrevPage}
+              pageChangeNext={onNextPage}
+            />
           </Col>
         </Row>
 
@@ -128,11 +138,14 @@ export class DataTable extends Component {
                 columns.map(col => {
                   return <th className='align-middle'>{col.text}</th>;
                 })}
+              <th className='align-middle'>
+                <FaSlidersH />
+              </th>
             </tr>
           </thead>
           <tbody>
-            {rows ? (
-              rows.map(data => {
+            {data ? (
+              data.map(data => {
                 return (
                   <tr>
                     {columns &&
@@ -147,6 +160,45 @@ export class DataTable extends Component {
                           </td>
                         );
                       })}
+                    <td className='align-middle text-center td-tools-button'>
+                      <ButtonToolbar aria-label='Toolbar with button groups'>
+                        <OverlayTrigger
+                          key='verify'
+                          placement='top'
+                          overlay={
+                            <Tooltip id={`tooltip-verify`}>
+                              ยืนยันสิทธิ์
+                            </Tooltip>
+                          }
+                        >
+                          <Button variant='outline-success' size='sm'>
+                            <FaCheck />
+                          </Button>
+                        </OverlayTrigger>
+
+                        <OverlayTrigger
+                          key='verify'
+                          placement='top'
+                          overlay={
+                            <Tooltip id={`tooltip-verify`}>แก้ไขข้อมูล</Tooltip>
+                          }
+                        >
+                          <Button size='sm' variant='outline-info'>
+                            <FaEdit />
+                          </Button>
+                        </OverlayTrigger>
+
+                        <OverlayTrigger
+                          key='verify'
+                          placement='top'
+                          overlay={<Tooltip id={`tooltip-verify`}>ลบ</Tooltip>}
+                        >
+                          <Button variant='outline-danger' size='sm'>
+                            <FaTimes />
+                          </Button>
+                        </OverlayTrigger>
+                      </ButtonToolbar>
+                    </td>
                   </tr>
                 );
               })
@@ -169,9 +221,9 @@ export class DataTable extends Component {
             <Paginator
               curPage={pageNo}
               maxPage={maxPage}
-              pageChange={this.handlePageChange}
-              pageChangePrev={this.handlePageChangePrev}
-              pageChangeNext={this.handlePageChangeNext}
+              pageChange={onPageChange}
+              pageChangePrev={onPrevPage}
+              pageChangeNext={onNextPage}
             />
           </Col>
         </Row>
@@ -197,30 +249,51 @@ const Paginator = ({
 
     if (x === curPage) {
       middle.push(x - 2);
-    } else if (curPage - x === 1) {
-      middle.push(x - 2);
-      middle.push(x - 1);
-    } else if (curPage - x === 2) {
-      middle.push(x - 2);
-      middle.push(x - 1);
-      middle.push(x);
+      // console.log("a", x - 2);
     }
+    // else if (curPage - x === 1) {
+    //   middle.push(x - 2);
+    //   middle.push(x - 1);
+    // } else if (curPage - x === 2) {
+    //   middle.push(x - 2);
+    //   middle.push(x - 1);
+    //   middle.push(x);
+    // }
 
     for (let i = 3; i <= x; i++) {
-      if (curPage === i || curPage - 1 === i || curPage + 1 === i) {
+      if (i <= 5 && curPage < 5) {
+        // console.log("b", i);
         middle.push(i);
       }
+
+      if (curPage === maxPage && i === maxPage - 4) {
+        // console.log("c", i);
+        middle.push(i);
+      }
+
+      if (curPage > x && (curPage - 3 === i || curPage - 2 === i)) {
+        // console.log("d", i);
+        middle.push(i);
+      }
+      if (
+        curPage > 4 &&
+        (curPage === i || curPage - 1 === i || curPage + 1 === i)
+      ) {
+        middle.push(i);
+        // console.log("e", i);
+      }
     }
-    if (curPage === 1) {
-      middle.push(3);
-      middle.push(4);
-      middle.push(5);
-    } else if (curPage === 2) {
-      middle.push(4);
-      middle.push(5);
-    } else if (curPage === 3) {
-      middle.push(5);
-    }
+    // console.log("-------------------------");
+    // if (curPage === 1) {
+    //   middle.push(3);
+    //   middle.push(4);
+    //   middle.push(5);
+    // } else if (curPage === 2) {
+    //   middle.push(4);
+    //   middle.push(5);
+    // } else if (curPage === 3) {
+    //   middle.push(5);
+    // }
   }
 
   return (
@@ -229,7 +302,9 @@ const Paginator = ({
       <Pagination.Item active={curPage === 1}>{1}</Pagination.Item>
 
       {curPage <= 4 || maxPage <= 7 ? (
-        <Pagination.Item active={curPage === 2}>{2}</Pagination.Item>
+        maxPage > 1 ? (
+          <Pagination.Item active={curPage === 2}>{2}</Pagination.Item>
+        ) : null
       ) : (
         <Pagination.Ellipsis disabled />
       )}
@@ -252,9 +327,12 @@ const Paginator = ({
         )
       ) : null}
 
-      <Pagination.Item
-        active={curPage === maxPage}
-      >{`${maxPage}`}</Pagination.Item>
+      {maxPage > 2 ? (
+        <Pagination.Item
+          active={curPage === maxPage}
+        >{`${maxPage}`}</Pagination.Item>
+      ) : null}
+
       <Pagination.Next
         disabled={curPage === maxPage}
         onClick={pageChangeNext}
@@ -262,13 +340,5 @@ const Paginator = ({
     </Pagination>
   );
 };
-
-function mapStateToProps(state) {
-  const { authentication } = state;
-  const { user } = authentication;
-  return {
-    user
-  };
-}
 
 export default DataTable;

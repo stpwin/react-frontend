@@ -82,3 +82,15 @@ hr {
 .filterRow {
   margin-bottom: 1rem;
 }
+
+.td-tools-button {
+  min-width: 8em;
+}
+
+.td-tools-button .btn-toolbar>*+* {
+  margin-left: .3em;
+}
+
+.login {
+  margin: 0 auto;
+}

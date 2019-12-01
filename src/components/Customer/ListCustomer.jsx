@@ -29,9 +29,12 @@ class ListCustomer extends Component {
   state = {
     pageNo: 1,
     maxPage: 10,
+    perPage: "50",
     customers: [],
     customerTranslate: [],
-    filterText: ""
+    filterText: "",
+    filterChecked: [true, true],
+    filters: [{ text: "G1" }, { text: "G2" }]
   };
 
   componentDidMount() {
@@ -75,6 +78,13 @@ class ListCustomer extends Component {
       .catch(err => {});
   };
 
+  onPerPageChange = value => {
+    console.log(value);
+    this.setState({
+      perPage: value
+    });
+  };
+
   handleChangePage = event => {
     const pageNo = parseInt(event.target.text);
     console.log(pageNo);
@@ -85,15 +95,43 @@ class ListCustomer extends Component {
     }
   };
 
-  handleFilterTextChange = event => {
+  onPrevPage = event => {
     this.setState({
-      filterText: event.target.value
+      pageNo: this.state.pageNo - 1
     });
   };
 
-  clearFilterText = () => {
+  onNextPage = event => {
     this.setState({
-      filterText: ""
+      pageNo: this.state.pageNo + 1
+    });
+  };
+
+  onPageChange = event => {
+    if (!event.target.text) return;
+
+    const pageNo = parseInt(event.target.text);
+
+    if (pageNo) {
+      this.setState({
+        pageNo: pageNo
+      });
+    }
+  };
+
+  onFilterCheckedChange = event => {
+    const index = event.target.name.replace("filter-", "");
+    let newChecked = this.state.filterChecked;
+    newChecked[index] = event.target.checked;
+    this.setState({
+      filterChecked: newChecked
+    });
+  };
+
+  onFilterTextChange = text => {
+    // console.log(text);
+    this.setState({
+      filterText: text
     });
   };
 
@@ -112,7 +150,14 @@ class ListCustomer extends Component {
 
   render() {
     // console.log(this.props);
-    const { customerTranslate } = this.state;
+    const {
+      customerTranslate,
+      maxPage,
+      pageNo,
+      perPage,
+      filterChecked,
+      filters
+    } = this.state;
     return (
       <Fragment>
         {/* <SuperTable /> */}
@@ -125,6 +170,18 @@ class ListCustomer extends Component {
         <DataTable
           filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA'
           columns={this.columns}
+          data={customerTranslate}
+          maxPage={maxPage}
+          pageNo={pageNo}
+          onNextPage={this.onNextPage}
+          onPrevPage={this.onPrevPage}
+          onPageChange={this.onPageChange}
+          onPerPageChange={this.onPerPageChange}
+          perPage={perPage}
+          filters={filters}
+          filterChecked={filterChecked}
+          onFilterCheckedChange={this.onFilterCheckedChange}
+          filterTextChange={this.onFilterTextChange}
         />
       </Fragment>
     );
