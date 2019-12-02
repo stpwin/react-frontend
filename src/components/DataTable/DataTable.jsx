@@ -7,14 +7,18 @@ import {
   Row,
   Col,
   Form,
-  Pagination,
   Button,
   Dropdown,
   ButtonToolbar,
   OverlayTrigger,
   Tooltip
 } from "react-bootstrap";
+
+import "./table.css";
+
 import { FaSearch, FaTimes, FaSlidersH, FaCheck, FaEdit } from "react-icons/fa";
+
+import Paginator from "./Paginator";
 
 export class DataTable extends Component {
   state = {
@@ -47,45 +51,59 @@ export class DataTable extends Component {
       onPrevPage,
       onPageChange,
       onPerPageChange,
+      onVerify,
+      onEdit,
+      onDelete,
       perPage,
+      perPages,
       filters,
       filterChecked,
       onFilterCheckedChange
     } = this.props;
     return (
-      <div className='data-table'>
+      <div className="data-table">
         <Row>
           <Col />
           <Col />
-          <Col className='text-right align-self-center'>
-            <Dropdown
-              id='dropdown-item-button justify-content-end'
-              onSelect={onPerPageChange}
-            >
-              <Dropdown.Toggle variant='outline-secondary' id='dropdown-basic'>
-                {perPage}
-              </Dropdown.Toggle>
+          <Col className="text-right align-self-center">
+            {perPage ? (
+              <Dropdown
+                id="dropdown-item-button justify-content-end"
+                onSelect={onPerPageChange}
+              >
+                <Dropdown.Toggle
+                  variant="outline-secondary"
+                  id="dropdown-basic"
+                >
+                  {perPage}
+                </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item eventKey={50}>50</Dropdown.Item>
-                <Dropdown.Item eventKey={100}>100</Dropdown.Item>
-                <Dropdown.Item eventKey={500}>500</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+                <Dropdown.Menu>
+                  {perPages &&
+                    perPages.map((key, index) => {
+                      return (
+                        <Dropdown.Item key={`perPage-${index}`} eventKey={key}>
+                          {key}
+                        </Dropdown.Item>
+                      );
+                    })}
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : null}
           </Col>
         </Row>
 
-        <Row className='filterRow'>
-          <Col className='align-self-center'>
+        <Row className="filterRow">
+          <Col className="align-self-center">
             <InputGroup>
               <InputGroup.Prepend>
-                <InputGroup.Text id='inputGroup-sizing-sm'>
+                <InputGroup.Text id="inputGroup-sizing-sm">
                   <FaSearch />
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                aria-label='Small'
-                aria-describedby='inputGroup-sizing-sm'
+                aria-label="Small"
+                aria-describedby="inputGroup-sizing-sm"
                 placeholder={filterPlaceholder}
                 onChange={this.handleFilterTextChange}
                 value={filterText}
@@ -93,7 +111,7 @@ export class DataTable extends Component {
               {filterText.length > 0 ? (
                 <InputGroup.Append>
                   <Button
-                    variant='outline-secondary'
+                    variant="outline-secondary"
                     onClick={this.clearFilterText}
                   >
                     <FaTimes />
@@ -102,13 +120,14 @@ export class DataTable extends Component {
               ) : null}
             </InputGroup>
           </Col>
-          <Col className='align-self-center'>
+          <Col className="align-self-center">
             {filters &&
               filters.map((filter, index) => {
                 return (
                   <Form.Check
                     custom
                     inline
+                    key={`filter-${index}`}
                     name={`filter-${index}`}
                     label={filter.text}
                     checked={filterChecked[index]}
@@ -120,7 +139,7 @@ export class DataTable extends Component {
             {/* <Form.Check custom inline label='G1' id='inline-1' />
             <Form.Check custom inline label='G2' id='inline-2' /> */}
           </Col>
-          <Col className='text-right align-self-center'>
+          <Col className="text-right align-self-center">
             <Paginator
               curPage={pageNo}
               maxPage={maxPage}
@@ -131,69 +150,93 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Table striped responsive bordered hover size='sm'>
-          <thead className='text-center thread-pea'>
+        <Table striped responsive bordered hover size="sm">
+          <thead className="text-center thread-pea">
             <tr>
               {columns &&
-                columns.map(col => {
-                  return <th className='align-middle'>{col.text}</th>;
+                columns.map((col, index) => {
+                  return (
+                    <th key={`th-${index}`} className="align-middle">
+                      {col.text}
+                    </th>
+                  );
                 })}
-              <th className='align-middle'>
+              <th key={`th-toolsbar`} className="align-middle">
                 <FaSlidersH />
               </th>
             </tr>
           </thead>
           <tbody>
             {data ? (
-              data.map(data => {
+              data.map((item, index) => {
+                // console.log("peaId", item.peaId);
                 return (
-                  <tr>
+                  <tr key={`tr-${index}`}>
                     {columns &&
-                      columns.map(col => {
+                      columns.map((col, index) => {
                         return (
                           <td
+                            key={`td-${index}`}
                             className={`align-middle ${
                               col.valign === "true" ? "text-center" : null
                             }`}
                           >
-                            {data[col.dataField]}
+                            {item[col.dataField]}
                           </td>
                         );
                       })}
-                    <td className='align-middle text-center td-tools-button'>
-                      <ButtonToolbar aria-label='Toolbar with button groups'>
+                    <td
+                      key={`td-toolsbar`}
+                      className="align-middle text-center td-tools-button"
+                    >
+                      <ButtonToolbar aria-label="Toolbar with button groups">
                         <OverlayTrigger
-                          key='verify'
-                          placement='top'
+                          key={"verify"}
+                          placement={"top"}
                           overlay={
                             <Tooltip id={`tooltip-verify`}>
                               ยืนยันสิทธิ์
                             </Tooltip>
                           }
                         >
-                          <Button variant='outline-success' size='sm'>
+                          <Button
+                            key={`verify-button-${index}`}
+                            variant={"outline-success"}
+                            size={"sm"}
+                            onClick={() => onVerify(item.peaId)}
+                          >
                             <FaCheck />
                           </Button>
                         </OverlayTrigger>
 
                         <OverlayTrigger
-                          key='verify'
-                          placement='top'
+                          key={"edit"}
+                          placement={"top"}
                           overlay={
-                            <Tooltip id={`tooltip-verify`}>แก้ไขข้อมูล</Tooltip>
+                            <Tooltip id={`tooltip-edit`}>แก้ไขข้อมูล</Tooltip>
                           }
                         >
-                          <Button size='sm' variant='outline-info'>
+                          <Button
+                            key={`edit-button-${index}`}
+                            size={"sm"}
+                            variant={"outline-info"}
+                            onClick={() => onEdit(item.peaId)}
+                          >
                             <FaEdit />
                           </Button>
                         </OverlayTrigger>
 
                         <OverlayTrigger
-                          key='verify'
-                          placement='top'
-                          overlay={<Tooltip id={`tooltip-verify`}>ลบ</Tooltip>}
+                          key="delete"
+                          placement="top"
+                          overlay={<Tooltip id={`tooltip-delete`}>ลบ</Tooltip>}
                         >
-                          <Button variant='outline-danger' size='sm'>
+                          <Button
+                            key={`delete-button-${index}`}
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => onDelete(item.peaId)}
+                          >
                             <FaTimes />
                           </Button>
                         </OverlayTrigger>
@@ -205,7 +248,7 @@ export class DataTable extends Component {
             ) : (
               <tr>
                 <td
-                  className='text-center align-middle'
+                  className="text-center align-middle"
                   colSpan={columns.length}
                 >
                   ไม่มีข้อมูล
@@ -231,114 +274,5 @@ export class DataTable extends Component {
     );
   }
 }
-
-const Paginator = ({
-  curPage,
-  maxPage,
-  pageChange,
-  pageChangePrev,
-  pageChangeNext
-}) => {
-  const middle = [];
-  if (maxPage <= 7) {
-    for (let i = 3; i < maxPage; i++) {
-      middle.push(i);
-    }
-  } else {
-    const x = maxPage - 2;
-
-    if (x === curPage) {
-      middle.push(x - 2);
-      // console.log("a", x - 2);
-    }
-    // else if (curPage - x === 1) {
-    //   middle.push(x - 2);
-    //   middle.push(x - 1);
-    // } else if (curPage - x === 2) {
-    //   middle.push(x - 2);
-    //   middle.push(x - 1);
-    //   middle.push(x);
-    // }
-
-    for (let i = 3; i <= x; i++) {
-      if (i <= 5 && curPage < 5) {
-        // console.log("b", i);
-        middle.push(i);
-      }
-
-      if (curPage === maxPage && i === maxPage - 4) {
-        // console.log("c", i);
-        middle.push(i);
-      }
-
-      if (curPage > x && (curPage - 3 === i || curPage - 2 === i)) {
-        // console.log("d", i);
-        middle.push(i);
-      }
-      if (
-        curPage > 4 &&
-        (curPage === i || curPage - 1 === i || curPage + 1 === i)
-      ) {
-        middle.push(i);
-        // console.log("e", i);
-      }
-    }
-    // console.log("-------------------------");
-    // if (curPage === 1) {
-    //   middle.push(3);
-    //   middle.push(4);
-    //   middle.push(5);
-    // } else if (curPage === 2) {
-    //   middle.push(4);
-    //   middle.push(5);
-    // } else if (curPage === 3) {
-    //   middle.push(5);
-    // }
-  }
-
-  return (
-    <Pagination className='justify-content-end' onClick={pageChange}>
-      <Pagination.Prev disabled={curPage === 1} onClick={pageChangePrev} />
-      <Pagination.Item active={curPage === 1}>{1}</Pagination.Item>
-
-      {curPage <= 4 || maxPage <= 7 ? (
-        maxPage > 1 ? (
-          <Pagination.Item active={curPage === 2}>{2}</Pagination.Item>
-        ) : null
-      ) : (
-        <Pagination.Ellipsis disabled />
-      )}
-
-      {middle.map(pageNo => {
-        return (
-          <Pagination.Item active={curPage === pageNo}>
-            {pageNo}
-          </Pagination.Item>
-        );
-      })}
-
-      {maxPage > 7 ? (
-        curPage >= maxPage - 3 ? (
-          <Pagination.Item active={curPage === maxPage - 1}>
-            {maxPage - 1}
-          </Pagination.Item>
-        ) : (
-          <Pagination.Ellipsis disabled />
-        )
-      ) : null}
-
-      {maxPage > 2 ? (
-        <Pagination.Item
-          active={curPage === maxPage}
-        >{`${maxPage}`}</Pagination.Item>
-      ) : null}
-
-      <Pagination.Next
-        disabled={curPage === maxPage}
-        onClick={pageChangeNext}
-      />
-    </Pagination>
-  );
-};
 
 export default DataTable;

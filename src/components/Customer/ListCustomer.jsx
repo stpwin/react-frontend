@@ -1,11 +1,12 @@
 import React, { Component, Fragment } from "react";
 
 import { connect } from "react-redux";
-// import { Link, useParams } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import config from "../../config";
 // import { userActions } from "../../actions";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
 import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
+import ScrollPositionManager from "../../helpers/scroll-mamager";
 
 // import {
 //   Table,
@@ -28,8 +29,9 @@ import { DataTable } from "../DataTable";
 class ListCustomer extends Component {
   state = {
     pageNo: 1,
-    maxPage: 10,
-    perPage: "50",
+    maxPage: 0,
+    perPage: "10",
+    perPages: [10, 20, 50, 100],
     customers: [],
     customerTranslate: [],
     filterText: "",
@@ -37,24 +39,29 @@ class ListCustomer extends Component {
     filters: [{ text: "G1" }, { text: "G2" }]
   };
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.fetchCustomers();
   }
 
   fetchCustomers = () => {
-    const { pageNo } = this.state;
+    const { pageNo, perPage } = this.state;
     const reqConf = {
       method: "GET",
       headers: authHeader()
     };
 
-    fetch(`${config.apiUrl}/api/customers/${pageNo}`, reqConf)
+    fetch(`${config.apiUrl}/api/customers/all/${pageNo}/${perPage}`, reqConf)
       .then(handleFetchError)
       .then(rep => {
         if (rep.status === 204) {
           return null;
         }
         rep.json().then(repMsg => {
+          // console.log(repMsg.pages);
+          this.setState({
+            maxPage: repMsg.pages,
+            pageNo: pageNo > repMsg.pages ? repMsg.pages : pageNo
+          });
           const translated = repMsg.customers.map((key, index) => {
             return {
               index: index + 1,
@@ -75,36 +82,90 @@ class ListCustomer extends Component {
           // console.log(repMsg.customers);
         });
       })
-      .catch(err => {});
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  fillCustomer = filter => {
+    const { pageNo, perPage, filterText } = this.state;
+    const reqConf = {
+      method: "GET",
+      headers: authHeader()
+    };
+
+    fetch(
+      `${config.apiUrl}/api/customers/filter/${filterText}/${pageNo}/${perPage}`,
+      reqConf
+    )
+      .then(handleFetchError)
+      .then(rep => {
+        if (rep.status === 204) {
+          return null;
+        }
+        rep.json().then(repMsg => {
+          // console.log(repMsg.pages);
+          this.setState({
+            maxPage: repMsg.pages,
+            pageNo: pageNo > repMsg.pages ? repMsg.pages : pageNo
+          });
+          const translated = repMsg.customers.map((key, index) => {
+            return {
+              index: index + 1,
+              name: `${key.title} ${key.firstName} ${key.lastName}`,
+              peaId: key.peaId,
+              address: addressToString(key.address),
+              authorize: key.authorize,
+              // privilegeDate: "",
+              soldierNo: key.soldierNo,
+              // dateAppear: key.dateAppear,
+              war: key.war
+            };
+          });
+          this.setState({
+            customerTranslate: translated
+          });
+          // console.log(translated);
+          // console.log(repMsg.customers);
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   onPerPageChange = value => {
-    console.log(value);
-    this.setState({
-      perPage: value
-    });
-  };
-
-  handleChangePage = event => {
-    const pageNo = parseInt(event.target.text);
-    console.log(pageNo);
-    if (pageNo) {
-      this.setState({
-        pageNo: pageNo
-      });
-    }
+    // console.log(value);
+    this.setState(
+      {
+        perPage: value
+      },
+      () => {
+        this.fetchCustomers();
+      }
+    );
   };
 
   onPrevPage = event => {
-    this.setState({
-      pageNo: this.state.pageNo - 1
-    });
+    this.setState(
+      {
+        pageNo: this.state.pageNo - 1
+      },
+      () => {
+        this.fetchCustomers();
+      }
+    );
   };
 
   onNextPage = event => {
-    this.setState({
-      pageNo: this.state.pageNo + 1
-    });
+    this.setState(
+      {
+        pageNo: this.state.pageNo + 1
+      },
+      () => {
+        this.fetchCustomers();
+      }
+    );
   };
 
   onPageChange = event => {
@@ -113,9 +174,14 @@ class ListCustomer extends Component {
     const pageNo = parseInt(event.target.text);
 
     if (pageNo) {
-      this.setState({
-        pageNo: pageNo
-      });
+      this.setState(
+        {
+          pageNo: pageNo
+        },
+        () => {
+          this.fetchCustomers();
+        }
+      );
     }
   };
 
@@ -133,6 +199,19 @@ class ListCustomer extends Component {
     this.setState({
       filterText: text
     });
+  };
+
+  onVerifyClick = peaId => {
+    this.props.history.push(`/customers/verify/${peaId}`);
+  };
+
+  onEditClick = peaId => {
+    this.props.history.push(`/customers/edit/${peaId}`);
+  };
+
+  onDeleteClick = peaId => {
+    console.log(peaId);
+    // this.props.history.push(`/customers/verify/${peaId}`);
   };
 
   columns = [
@@ -155,20 +234,15 @@ class ListCustomer extends Component {
       maxPage,
       pageNo,
       perPage,
+      perPages,
       filterChecked,
       filters
     } = this.state;
     return (
       <Fragment>
-        {/* <SuperTable /> */}
-        {/* <BootstrapTable
-          keyField='id'
-          data={customerTranslate}
-          columns={this.columns}
-          pagination={paginationFactory()}
-        /> */}
+        <ScrollPositionManager />
         <DataTable
-          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA'
+          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA"
           columns={this.columns}
           data={customerTranslate}
           maxPage={maxPage}
@@ -177,11 +251,16 @@ class ListCustomer extends Component {
           onPrevPage={this.onPrevPage}
           onPageChange={this.onPageChange}
           onPerPageChange={this.onPerPageChange}
+          onVerify={this.onVerifyClick}
+          onEdit={this.onEditClick}
+          onDelete={this.onDeleteClick}
           perPage={perPage}
+          perPages={perPages}
           filters={filters}
           filterChecked={filterChecked}
           onFilterCheckedChange={this.onFilterCheckedChange}
           filterTextChange={this.onFilterTextChange}
+          // redirectTo={"/customers"}
         />
       </Fragment>
     );
@@ -196,4 +275,4 @@ function mapStateToProps(state) {
   };
 }
 
-export default connect(mapStateToProps)(ListCustomer);
+export default withRouter(connect(mapStateToProps)(ListCustomer));

@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Kanit|Mitr|Pridi|Sarabun');
+@import url("https://fonts.googleapis.com/css?family=Kanit|Mitr|Pridi|Sarabun");
 
 body {
   /* font-family: 'Mitr', sans-serif; */
   /* font-family: 'Sarabun', sans-serif; */
-  font-family: 'Kanit', sans-serif;
+  font-family: "Kanit", sans-serif;
   /* font-family: 'Pridi', serif; */
 }
 
@@ -48,11 +48,11 @@ hr {
 
 .thread-pea th {
   background-color: #563d7c;
-  color: #fbfbfb
+  color: #fbfbfb;
 }
 
 .data-table {
-  border-radius: .3rem;
+  border-radius: 0.3rem;
   padding: 1em;
   background-color: #fbfbfb;
 }
@@ -60,7 +60,6 @@ hr {
 .page-link {
   color: #563d7c;
 }
-
 
 .page-item.active .page-link {
   z-index: 1;
@@ -70,7 +69,7 @@ hr {
 }
 
 .col .dropdown {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 
 .pagination {
@@ -87,10 +86,16 @@ hr {
   min-width: 8em;
 }
 
-.td-tools-button .btn-toolbar>*+* {
-  margin-left: .3em;
+.td-tools-button .btn-toolbar > * + * {
+  margin-left: 0.3em;
 }
 
 .login {
   margin: 0 auto;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: #fff;
+  border-color: #563d7c;
+  background-color: #563d7c;
 }

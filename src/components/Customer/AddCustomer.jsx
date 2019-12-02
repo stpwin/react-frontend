@@ -21,7 +21,7 @@ class AddCustomer extends Component {
     peaWarnText: "",
     statusModal: false,
     statusModalState: "loading",
-    redirectTo: "/",
+    // redirectTo: "/",
     confirmModal: false
   };
 
@@ -32,7 +32,8 @@ class AddCustomer extends Component {
   };
 
   handleSuccess = () => {
-    this.props.history.push(this.state.redirectTo);
+    // this.props.history.push(this.state.redirectTo);
+    this.props.history.goBack();
   };
 
   handleCancel = () => {
@@ -139,7 +140,7 @@ class AddCustomer extends Component {
         <ModalStatus show={statusModal} status={statusModalState} />
         <ModalConfirm
           show={confirmModal}
-          status='datachanged'
+          status="datachanged"
           confirm={this.handleSuccess}
           close={this.handleConfirmModalClose}
         />

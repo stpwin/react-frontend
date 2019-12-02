@@ -21,11 +21,11 @@ class VerifyCustomer extends Component {
   state = {
     initial: {},
     statusModal: true,
-    statusModalState: "loading",
-    redirectTo: "/"
+    statusModalState: "loading"
+    // redirectTo: "/"
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.setState({
       statusModal: true,
       statusModalState: "getting"
@@ -72,11 +72,13 @@ class VerifyCustomer extends Component {
   };
 
   handleSuccess = () => {
-    this.props.history.push(this.state.redirectTo);
+    // this.props.history.push(this.props.redirectTo);
+    this.props.history.goBack();
   };
 
   handleCancel = () => {
-    this.props.history.push(this.state.redirectTo);
+    // this.props.history.push(this.props.redirectTo);
+    this.props.history.goBack();
   };
 
   verifyData = event => {

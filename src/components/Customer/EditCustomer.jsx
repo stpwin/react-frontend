@@ -20,11 +20,11 @@ export class EditCustomer extends Component {
   state = {
     initial: {},
     statusModal: true,
-    statusModalState: "loading",
-    redirectTo: "/"
+    statusModalState: "loading"
+    // redirectTo: "/"
   };
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { peaId } = this.props;
     this.setState({
       statusModal: true,
@@ -67,7 +67,14 @@ export class EditCustomer extends Component {
   }
 
   handleSuccess = () => {
-    this.props.history.push(this.state.redirectTo);
+    // this.props.history.push(this.state.redirectTo);
+
+    this.props.history.goBack();
+  };
+
+  handleCancel = () => {
+    // this.props.history.push(this.props.redirectTo);
+    this.props.history.goBack();
   };
 
   updateData = event => {
@@ -149,7 +156,7 @@ export class EditCustomer extends Component {
               initial={initial}
               showPlaceholder={true}
             />
-            <FormButton />
+            <FormButton loading={statusModal} cancel={this.handleCancel} />
           </Form>
         ) : null}
 

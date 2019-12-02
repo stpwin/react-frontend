@@ -1,0 +1,24 @@
+/* table {
+  width: 100%;
+}
+
+tr:after {
+  content: " ";
+  display: block;
+  visibility: hidden;
+  clear: both;
+}
+
+thead th {
+  height: 30px;
+}
+
+tbody {
+  height: 120px;
+  overflow-y: auto;
+}
+
+thead th:first-child,
+tbody td:first-child {
+  width: 0px;
+} */
