@@ -36,12 +36,27 @@ class ListCustomer extends Component {
     customerTranslate: [],
     filterText: "",
     filterChecked: [true, true],
-    filters: [{ text: "G1" }, { text: "G2" }]
+    filters: [
+      { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
+      { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
+    ]
   };
 
   UNSAFE_componentWillMount() {
     this.fetchCustomers();
   }
+
+  getWarFilter = () => {
+    const { filters, filterChecked } = this.state;
+    return filterChecked.every(v => v === true)
+      ? "*"
+      : filterChecked
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
+  };
 
   fetchCustomers = () => {
     const { pageNo, perPage } = this.state;
@@ -59,8 +74,9 @@ class ListCustomer extends Component {
         rep.json().then(repMsg => {
           // console.log(repMsg.pages);
           this.setState({
-            maxPage: repMsg.pages,
-            pageNo: pageNo > repMsg.pages ? repMsg.pages : pageNo
+            maxPage: repMsg.metadata.pages,
+            pageNo:
+              pageNo > repMsg.metadata.pages ? repMsg.metadata.pages : pageNo
           });
           const translated = repMsg.customers.map((key, index) => {
             return {
@@ -87,28 +103,36 @@ class ListCustomer extends Component {
       });
   };
 
-  fillCustomer = filter => {
+  fillCustomer = () => {
     const { pageNo, perPage, filterText } = this.state;
     const reqConf = {
       method: "GET",
       headers: authHeader()
     };
-
+    const war = this.getWarFilter();
+    console.log(war);
     fetch(
-      `${config.apiUrl}/api/customers/filter/${filterText}/${pageNo}/${perPage}`,
+      `${config.apiUrl}/api/customers/filter/${filterText}/${war}/${pageNo}/${perPage}`,
       reqConf
     )
       .then(handleFetchError)
       .then(rep => {
         if (rep.status === 204) {
-          return null;
+          this.setState({
+            customerTranslate: []
+          });
+          return;
         }
         rep.json().then(repMsg => {
-          // console.log(repMsg.pages);
+          console.log(repMsg);
+          if (!repMsg.customers || !repMsg.metadata) return;
+
           this.setState({
-            maxPage: repMsg.pages,
-            pageNo: pageNo > repMsg.pages ? repMsg.pages : pageNo
+            maxPage: repMsg.metadata.pages,
+            pageNo:
+              pageNo > repMsg.metadata.pages ? repMsg.metadata.pages : pageNo
           });
+
           const translated = repMsg.customers.map((key, index) => {
             return {
               index: index + 1,
@@ -132,6 +156,14 @@ class ListCustomer extends Component {
       .catch(err => {
         console.log(err);
       });
+  };
+
+  fetchNew = () => {
+    if (this.state.filterText) {
+      this.fillCustomer(this.state.filterText);
+    } else {
+      this.fetchCustomers();
+    }
   };
 
   onPerPageChange = value => {
@@ -141,29 +173,32 @@ class ListCustomer extends Component {
         perPage: value
       },
       () => {
-        this.fetchCustomers();
+        this.fetchNew();
       }
     );
   };
 
-  onPrevPage = event => {
+  onPrevPage = () => {
     this.setState(
       {
-        pageNo: this.state.pageNo - 1
+        pageNo: this.state.pageNo > 1 ? this.state.pageNo - 1 : 1
       },
       () => {
-        this.fetchCustomers();
+        this.fetchNew();
       }
     );
   };
 
-  onNextPage = event => {
+  onNextPage = () => {
     this.setState(
       {
-        pageNo: this.state.pageNo + 1
+        pageNo:
+          this.state.pageNo < this.state.maxPage
+            ? this.state.pageNo + 1
+            : this.state.pageNo
       },
       () => {
-        this.fetchCustomers();
+        this.fetchNew();
       }
     );
   };
@@ -179,7 +214,7 @@ class ListCustomer extends Component {
           pageNo: pageNo
         },
         () => {
-          this.fetchCustomers();
+          this.fetchNew();
         }
       );
     }
@@ -189,16 +224,27 @@ class ListCustomer extends Component {
     const index = event.target.name.replace("filter-", "");
     let newChecked = this.state.filterChecked;
     newChecked[index] = event.target.checked;
-    this.setState({
-      filterChecked: newChecked
-    });
+    this.setState(
+      {
+        filterChecked: newChecked
+      },
+      () => {
+        this.fetchNew();
+      }
+    );
   };
 
   onFilterTextChange = text => {
-    // console.log(text);
-    this.setState({
-      filterText: text
-    });
+    this.setState(
+      {
+        filterText: text,
+        pageNo: 1,
+        maxPage: 1
+      },
+      () => {
+        this.fetchNew();
+      }
+    );
   };
 
   onVerifyClick = peaId => {
@@ -216,8 +262,13 @@ class ListCustomer extends Component {
 
   columns = [
     { text: "ลำดับ", dataField: "index", valign: "true" },
-    { text: "ชื่อ-สกุล", dataField: "name" },
-    { text: "หมายเลขผู้ใช้ไฟ", dataField: "peaId", valign: "true" },
+    { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
+    {
+      text: "หมายเลขผู้ใช้ไฟ",
+      dataField: "peaId",
+      valign: "true",
+      canSearch: true
+    },
     { text: "ที่อยู่", dataField: "address" },
     { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
     { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },

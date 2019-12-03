@@ -18,6 +18,8 @@ import "./table.css";
 
 import { FaSearch, FaTimes, FaSlidersH, FaCheck, FaEdit } from "react-icons/fa";
 
+import Highlight from "react-highlighter";
+
 import Paginator from "./Paginator";
 
 export class DataTable extends Component {
@@ -59,6 +61,7 @@ export class DataTable extends Component {
       filters,
       filterChecked,
       onFilterCheckedChange
+      // searchText
     } = this.props;
     return (
       <div className="data-table">
@@ -167,7 +170,7 @@ export class DataTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {data ? (
+            {data && data.length > 0 ? (
               data.map((item, index) => {
                 // console.log("peaId", item.peaId);
                 return (
@@ -181,7 +184,19 @@ export class DataTable extends Component {
                               col.valign === "true" ? "text-center" : null
                             }`}
                           >
-                            {item[col.dataField]}
+                            {col.canSearch ? (
+                              <Highlight
+                                matchStyle={{
+                                  color: "white",
+                                  backgroundColor: "#563d7c"
+                                }}
+                                search={filterText}
+                              >
+                                {item[col.dataField]}
+                              </Highlight>
+                            ) : (
+                              item[col.dataField]
+                            )}
                           </td>
                         );
                       })}

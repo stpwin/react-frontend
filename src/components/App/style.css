@@ -99,3 +99,8 @@ hr {
   border-color: #563d7c;
   background-color: #563d7c;
 }
+
+.mark,
+mark {
+  padding: 0em;
+}
