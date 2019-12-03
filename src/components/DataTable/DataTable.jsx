@@ -64,19 +64,19 @@ export class DataTable extends Component {
       // searchText
     } = this.props;
     return (
-      <div className="data-table">
+      <div className='data-table'>
         <Row>
           <Col />
           <Col />
-          <Col className="text-right align-self-center">
+          <Col className='text-right align-self-center'>
             {perPage ? (
               <Dropdown
-                id="dropdown-item-button justify-content-end"
+                id='dropdown-item-button justify-content-end'
                 onSelect={onPerPageChange}
               >
                 <Dropdown.Toggle
-                  variant="outline-secondary"
-                  id="dropdown-basic"
+                  variant='outline-secondary'
+                  id='dropdown-basic'
                 >
                   {perPage}
                 </Dropdown.Toggle>
@@ -96,17 +96,17 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Row className="filterRow">
-          <Col className="align-self-center">
+        <Row className='filterRow'>
+          <Col className='align-self-center'>
             <InputGroup>
               <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroup-sizing-sm">
+                <InputGroup.Text id='inputGroup-sizing-sm'>
                   <FaSearch />
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                aria-label="Small"
-                aria-describedby="inputGroup-sizing-sm"
+                aria-label='Small'
+                aria-describedby='inputGroup-sizing-sm'
                 placeholder={filterPlaceholder}
                 onChange={this.handleFilterTextChange}
                 value={filterText}
@@ -114,7 +114,7 @@ export class DataTable extends Component {
               {filterText.length > 0 ? (
                 <InputGroup.Append>
                   <Button
-                    variant="outline-secondary"
+                    variant='outline-secondary'
                     onClick={this.clearFilterText}
                   >
                     <FaTimes />
@@ -123,7 +123,7 @@ export class DataTable extends Component {
               ) : null}
             </InputGroup>
           </Col>
-          <Col className="align-self-center">
+          <Col className='align-self-center'>
             {filters &&
               filters.map((filter, index) => {
                 return (
@@ -142,7 +142,7 @@ export class DataTable extends Component {
             {/* <Form.Check custom inline label='G1' id='inline-1' />
             <Form.Check custom inline label='G2' id='inline-2' /> */}
           </Col>
-          <Col className="text-right align-self-center">
+          <Col className='text-right align-self-center'>
             <Paginator
               curPage={pageNo}
               maxPage={maxPage}
@@ -153,18 +153,18 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Table striped responsive bordered hover size="sm">
-          <thead className="text-center thread-pea">
+        <Table responsive bordered hover size='sm'>
+          <thead className='text-center thread-pea'>
             <tr>
               {columns &&
                 columns.map((col, index) => {
                   return (
-                    <th key={`th-${index}`} className="align-middle">
+                    <th key={`th-${index}`} className='align-middle'>
                       {col.text}
                     </th>
                   );
                 })}
-              <th key={`th-toolsbar`} className="align-middle">
+              <th key={`th-toolsbar`} className='align-middle'>
                 <FaSlidersH />
               </th>
             </tr>
@@ -202,9 +202,9 @@ export class DataTable extends Component {
                       })}
                     <td
                       key={`td-toolsbar`}
-                      className="align-middle text-center td-tools-button"
+                      className='align-middle text-center td-tools-button'
                     >
-                      <ButtonToolbar aria-label="Toolbar with button groups">
+                      <ButtonToolbar aria-label='Toolbar with button groups'>
                         <OverlayTrigger
                           key={"verify"}
                           placement={"top"}
@@ -242,14 +242,14 @@ export class DataTable extends Component {
                         </OverlayTrigger>
 
                         <OverlayTrigger
-                          key="delete"
-                          placement="top"
+                          key='delete'
+                          placement='top'
                           overlay={<Tooltip id={`tooltip-delete`}>ลบ</Tooltip>}
                         >
                           <Button
                             key={`delete-button-${index}`}
-                            variant="outline-danger"
-                            size="sm"
+                            variant='outline-danger'
+                            size='sm'
                             onClick={() => onDelete(item.peaId)}
                           >
                             <FaTimes />
@@ -263,7 +263,7 @@ export class DataTable extends Component {
             ) : (
               <tr>
                 <td
-                  className="text-center align-middle"
+                  className='text-center align-middle'
                   colSpan={columns.length}
                 >
                   ไม่มีข้อมูล

@@ -65,7 +65,12 @@ class ListCustomer extends Component {
       headers: authHeader()
     };
 
-    fetch(`${config.apiUrl}/api/customers/all/${pageNo}/${perPage}`, reqConf)
+    fetch(
+      `${
+        config.apiUrl
+      }/api/customers/all?war=${this.getWarFilter()}&page=${pageNo}&limit=${perPage}`,
+      reqConf
+    )
       .then(handleFetchError)
       .then(rep => {
         if (rep.status === 204) {
@@ -112,7 +117,7 @@ class ListCustomer extends Component {
     const war = this.getWarFilter();
     console.log(war);
     fetch(
-      `${config.apiUrl}/api/customers/filter/${filterText}/${war}/${pageNo}/${perPage}`,
+      `${config.apiUrl}/api/customers/filter/${filterText}?war=${war}&page=${pageNo}&limit=${perPage}`,
       reqConf
     )
       .then(handleFetchError)
@@ -293,7 +298,7 @@ class ListCustomer extends Component {
       <Fragment>
         <ScrollPositionManager />
         <DataTable
-          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA"
+          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA'
           columns={this.columns}
           data={customerTranslate}
           maxPage={maxPage}
