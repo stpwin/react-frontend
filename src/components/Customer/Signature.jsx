@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button } from "react-bootstrap";
+import { Button, ButtonToolbar, Row, Col } from "react-bootstrap";
 
 import SignatureCanvas from "react-signature-canvas";
 import "./Signature.css";
@@ -20,17 +20,43 @@ class Signature extends Component {
       <React.Fragment>
         <SignatureCanvas
           ref={this.setSigpadRef}
-          penColor='black'
-          backgroundColor='white'
+          penColor="black"
+          backgroundColor="white"
           canvasProps={{
-            width: 500,
+            width: 600,
             height: 200,
             className: "sigCanvas"
           }}
         />
-        <Button variant='danger' size='sm' onClick={this.clearSigpad}>
-          ล้างลายเซ็น
-        </Button>
+        <Row>
+          <Col>
+            <ButtonToolbar>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={this.clearSigpad}
+              >
+                ล้างลายเซ็น
+              </Button>
+              <Button
+                variant="outline"
+                className="pea-color"
+                size="sm"
+                onClick={this.getQRLink}
+              >
+                รับลิ้งก์ QR Code
+              </Button>
+              <Button
+                variant="outline"
+                className="pea-color"
+                size="sm"
+                onClick={this.camera}
+              >
+                กล้อง
+              </Button>
+            </ButtonToolbar>
+          </Col>
+        </Row>
       </React.Fragment>
     );
   }

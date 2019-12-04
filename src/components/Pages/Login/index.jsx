@@ -18,17 +18,14 @@ class LoginPage extends React.Component {
       password: "sittiporn",
       submitted: false
     };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(e) {
+  handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
-  }
+  };
 
-  handleSubmit(e) {
+  handleSubmit = e => {
     e.preventDefault();
 
     this.setState({ submitted: true });
@@ -37,42 +34,43 @@ class LoginPage extends React.Component {
     if (username && password) {
       dispatch(userActions.login(username, password));
     }
-  }
+  };
 
   render() {
     const { loggingIn } = this.props;
     const { username, password, submitted } = this.state;
     return (
       <Container>
-        <Col md={{ span: 6, offset: 3 }} className='text-center p-5'>
-          <h2>Login</h2>
+        <Col md={{ span: 6, offset: 3 }} className="text-center p-5">
+          <h2>เข้าสู่ระบบ</h2>
           <Form onSubmit={this.handleSubmit}>
             <FormGroup className={submitted && !username ? " has-error" : ""}>
-              <Form.Label htmlFor='username'>ชื่อผู้ใช้งาน</Form.Label>
+              <Form.Label htmlFor="username">ชื่อผู้ใช้งาน</Form.Label>
               <Form.Control
-                name='username'
+                name="username"
                 value={username}
-                placeholder='ชื่อผู้ใช้งาน'
+                placeholder="ชื่อผู้ใช้งาน"
                 onChange={this.handleChange}
               />
             </FormGroup>
             <FormGroup className={submitted && !username ? " has-error" : ""}>
-              <Form.Label htmlFor='username'>รหัสผ่าน</Form.Label>
+              <Form.Label htmlFor="username">รหัสผ่าน</Form.Label>
               <Form.Control
-                name='password'
-                type='password'
+                name="password"
+                type="password"
                 value={password}
-                placeholder='รหัสผ่าน'
+                placeholder="รหัสผ่าน"
                 onChange={this.handleChange}
               />
             </FormGroup>
             <FormGroup>
-              <Button type='submit'>เข้าสู่ระบบ</Button>
+              <Button type="submit" variant="outline" className="pea-color">
+                เข้าสู่ระบบ
+              </Button>
             </FormGroup>
           </Form>
         </Col>
-        <div className='col-md-6 col-md-offset-3 p-5 text-center'>
-          {/* <h2>Login</h2> */}
+        {/* <div className='col-md-6 col-md-offset-3 p-5 text-center'>
           <form name='form' onSubmit={this.handleSubmit}>
             <div
               className={
@@ -118,7 +116,7 @@ class LoginPage extends React.Component {
               )}
             </div>
           </form>
-        </div>
+        </div> */}
       </Container>
     );
   }

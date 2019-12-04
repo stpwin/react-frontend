@@ -104,3 +104,25 @@ hr {
 mark {
   padding: 0em;
 }
+
+.pea-color {
+  color: #563d7c;
+  border-color: #563d7c;
+}
+
+.form-button {
+  margin-top: 2em;
+}
+
+.btn-toolbar > * + * {
+  margin-left: 0.5em;
+}
+
+.perPageDropdown {
+  display: inline-flex;
+  align-items: center;
+}
+
+.perPageDropdown > * + * {
+  margin-left: 0.5em;
+}

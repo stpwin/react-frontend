@@ -1,46 +1,51 @@
 import React, { Component, Fragment } from "react";
-
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import config from "../../config";
-// import { userActions } from "../../actions";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
-import "react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css";
-import ScrollPositionManager from "../../helpers/scroll-mamager";
 
-// import {
-//   Table,
-//   InputGroup,
-//   FormControl,
-//   Row,
-//   Col,
-//   Form,
-//   Pagination,
-//   Button,
-//   Dropdown
-// } from "react-bootstrap";
-// import { FaSearch, FaTimes } from "react-icons/fa";
-// import { DataTable } from "react-data-components";
-
+// import ScrollPositionManager from "../../helpers/scroll-mamager";
+import { ModalConfirm, ModalStatus } from "../Modals";
 import { DataTable } from "../DataTable";
-// import paginationFactory, { PaginationProvider, PaginationListStandalone } from "react-bootstrap-table2-paginator";
-// import BootstrapTable from "react-bootstrap-table-next";
 
 class ListCustomer extends Component {
   state = {
     pageNo: 1,
     maxPage: 0,
-    perPage: "10",
+    perPage: 10,
     perPages: [10, 20, 50, 100],
     customers: [],
-    customerTranslate: [],
+    // customers: [],
     filterText: "",
     filterChecked: [true, true],
     filters: [
       { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
       { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
-    ]
+    ],
+    confirmDelete: false,
+    confirmDeleteText: "",
+    confirmDeletePeaId: "",
+    statusModal: true,
+    statusModalState: "getting",
+    statusModalFailText: ""
   };
+
+  columns = [
+    { text: "ลำดับ", dataField: "index", valign: "true" },
+    { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
+    {
+      text: "หมายเลขผู้ใช้ไฟ",
+      dataField: "peaId",
+      valign: "true",
+      canSearch: true
+    },
+    { text: "ที่อยู่", dataField: "address" },
+    { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
+    { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
+    { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
+    { text: "กรณีเป็น", dataField: "authorize" },
+    { text: "วันที่มาแสดงตน", dataField: "laseDateAppear", valign: "true" }
+  ];
 
   UNSAFE_componentWillMount() {
     this.fetchCustomers();
@@ -74,37 +79,48 @@ class ListCustomer extends Component {
       .then(handleFetchError)
       .then(rep => {
         if (rep.status === 204) {
-          return null;
+          this.setState({
+            customers: [],
+            pageNo: 1,
+            maxPage: 1,
+            statusModal: false
+          });
+          return;
         }
-        rep.json().then(repMsg => {
-          // console.log(repMsg.pages);
+        // if (rep.status === 200) {
+        return rep.json().then(result => {
+          const pages = parseInt(result.metadata.pages);
+          const page = parseInt(result.metadata.page);
+          const startNumber = page > 1 ? (page - 1) * perPage : 0;
           this.setState({
-            maxPage: repMsg.metadata.pages,
-            pageNo:
-              pageNo > repMsg.metadata.pages ? repMsg.metadata.pages : pageNo
+            statusModal: false,
+            maxPage: pages,
+            pageNo: page,
+            customers: result.customers.map((key, index) => {
+              return {
+                index: startNumber + index + 1,
+                name: `${key.title} ${key.firstName} ${key.lastName}`,
+                peaId: key.peaId,
+                address: addressToString(key.address),
+                authorize: key.authorize,
+                soldierNo: key.soldierNo,
+                war: key.war
+              };
+            })
           });
-          const translated = repMsg.customers.map((key, index) => {
-            return {
-              index: index + 1,
-              name: `${key.title} ${key.firstName} ${key.lastName}`,
-              peaId: key.peaId,
-              address: addressToString(key.address),
-              authorize: key.authorize,
-              // privilegeDate: "",
-              soldierNo: key.soldierNo,
-              // dateAppear: key.dateAppear,
-              war: key.war
-            };
-          });
-          this.setState({
-            customerTranslate: translated
-          });
-          // console.log(translated);
-          // console.log(repMsg.customers);
         });
+        // }
+        // this.setState({
+        //   statusModal: false
+        // });
       })
-      .catch(err => {
-        console.log(err);
+      .catch(() => {
+        this.setState({
+          statusModal: true,
+          statusModalState: "getfail",
+          statusModalFailText: "ไม่สามารถติดต่อเซิฟเวอร์ได้"
+        });
+        // console.log(err);
       });
   };
 
@@ -114,52 +130,95 @@ class ListCustomer extends Component {
       method: "GET",
       headers: authHeader()
     };
-    const war = this.getWarFilter();
-    console.log(war);
+
     fetch(
-      `${config.apiUrl}/api/customers/filter/${filterText}?war=${war}&page=${pageNo}&limit=${perPage}`,
+      `${
+        config.apiUrl
+      }/api/customers/filter/${filterText}?war=${this.getWarFilter()}&page=${pageNo}&limit=${perPage}`,
       reqConf
     )
       .then(handleFetchError)
       .then(rep => {
         if (rep.status === 204) {
           this.setState({
-            customerTranslate: []
+            customers: [],
+            pageNo: 1,
+            maxPage: 1,
+            statusModal: false
           });
           return;
         }
-        rep.json().then(repMsg => {
-          console.log(repMsg);
-          if (!repMsg.customers || !repMsg.metadata) return;
+        return rep.json().then(result => {
+          const page = (result.metadata && parseInt(result.metadata.page)) || 1;
+          const pages =
+            (result.metadata && parseInt(result.metadata.pages)) || 1;
+
+          const startNumber = page > 1 ? (page - 1) * perPage : 0;
 
           this.setState({
-            maxPage: repMsg.metadata.pages,
-            pageNo:
-              pageNo > repMsg.metadata.pages ? repMsg.metadata.pages : pageNo
+            statusModal: false,
+            maxPage: pages,
+            pageNo: page,
+            customers:
+              (result.customers &&
+                result.customers.map((key, index) => {
+                  return {
+                    index: startNumber + index + 1,
+                    name: `${key.title} ${key.firstName} ${key.lastName}`,
+                    peaId: key.peaId,
+                    address: addressToString(key.address),
+                    authorize: key.authorize,
+                    soldierNo: key.soldierNo,
+                    war: key.war
+                  };
+                })) ||
+              []
           });
-
-          const translated = repMsg.customers.map((key, index) => {
-            return {
-              index: index + 1,
-              name: `${key.title} ${key.firstName} ${key.lastName}`,
-              peaId: key.peaId,
-              address: addressToString(key.address),
-              authorize: key.authorize,
-              // privilegeDate: "",
-              soldierNo: key.soldierNo,
-              // dateAppear: key.dateAppear,
-              war: key.war
-            };
-          });
-          this.setState({
-            customerTranslate: translated
-          });
-          // console.log(translated);
-          // console.log(repMsg.customers);
         });
       })
-      .catch(err => {
-        console.log(err);
+      .catch(() => {
+        this.setState({
+          statusModal: true,
+          statusModalState: "getfail",
+          statusModalFailText: "ไม่สามารถติดต่อเซิฟเวอร์ได้"
+        });
+      });
+  };
+
+  deleteCustomer = peaId => {
+    const reqConf = {
+      method: "DELETE",
+      headers: authHeader()
+    };
+    return fetch(`${config.apiUrl}/api/customers/${peaId}`, reqConf)
+      .then(handleFetchError)
+      .then(response => {
+        if (response.status === 200) {
+          response.json().then(result => {
+            this.setState({
+              statusModalState: "deleted"
+            });
+          });
+        }
+
+        setTimeout(() => {
+          this.setState({
+            statusModal: false
+          });
+          this.fetchNew();
+        }, config.statusShowTime);
+      })
+      .catch(() => {
+        this.setState({
+          statusModalState: "deleteFail",
+          statusModalFailText: "ไม่สามารถติดต่อเซิฟเวอร์ได้"
+        });
+        setTimeout(() => {
+          this.setState({
+            statusModal: false
+          });
+          this.fetchNew();
+        }, config.statusShowTime);
       });
   };
 
@@ -175,7 +234,7 @@ class ListCustomer extends Component {
     // console.log(value);
     this.setState(
       {
-        perPage: value
+        perPage: parseInt(value)
       },
       () => {
         this.fetchNew();
@@ -231,7 +290,8 @@ class ListCustomer extends Component {
     newChecked[index] = event.target.checked;
     this.setState(
       {
-        filterChecked: newChecked
+        filterChecked: newChecked,
+        pageNo: 1
       },
       () => {
         this.fetchNew();
@@ -261,46 +321,56 @@ class ListCustomer extends Component {
   };
 
   onDeleteClick = peaId => {
-    console.log(peaId);
+    if (!peaId) return;
+
+    this.setState({
+      confirmDelete: true,
+      confirmDeleteText: peaId,
+      confirmDeletePeaId: peaId
+    });
     // this.props.history.push(`/customers/verify/${peaId}`);
   };
 
-  columns = [
-    { text: "ลำดับ", dataField: "index", valign: "true" },
-    { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
-    {
-      text: "หมายเลขผู้ใช้ไฟ",
-      dataField: "peaId",
-      valign: "true",
-      canSearch: true
-    },
-    { text: "ที่อยู่", dataField: "address" },
-    { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
-    { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
-    { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
+  handleDeleteModalClose = () => {
+    this.setState({
+      confirmDelete: false
+    });
+  };
 
-    { text: "กรณีเป็น", dataField: "authorize" },
-    { text: "วันที่มาแสดงตน", dataField: "laseDateAppear", valign: "true" }
-  ];
+  handleConfirmClick = () => {
+    this.setState({
+      confirmDelete: false,
+      statusModal: true,
+      statusModalState: "deleting"
+    });
+    this.deleteCustomer(this.state.confirmDeletePeaId);
+
+    // console.log(this.state.confirmDeletePeaId);
+  };
 
   render() {
     // console.log(this.props);
     const {
-      customerTranslate,
+      customers,
       maxPage,
       pageNo,
       perPage,
       perPages,
       filterChecked,
-      filters
+      filters,
+      confirmDelete,
+      confirmDeleteText,
+      statusModal,
+      statusModalState,
+      statusModalFailText
     } = this.state;
     return (
       <Fragment>
-        <ScrollPositionManager />
+        {/* <ScrollPositionManager /> */}
         <DataTable
-          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA'
+          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA"
           columns={this.columns}
-          data={customerTranslate}
+          data={customers}
           maxPage={maxPage}
           pageNo={pageNo}
           onNextPage={this.onNextPage}
@@ -317,6 +387,18 @@ class ListCustomer extends Component {
           onFilterCheckedChange={this.onFilterCheckedChange}
           filterTextChange={this.onFilterTextChange}
           // redirectTo={"/customers"}
+        />
+        <ModalConfirm
+          show={confirmDelete}
+          onHide={this.handleDeleteModalClose}
+          confirm={this.handleConfirmClick}
+          status="delete"
+          confirmtext={confirmDeleteText}
+        />
+        <ModalStatus
+          show={statusModal}
+          status={statusModalState}
+          failtext={statusModalFailText}
         />
       </Fragment>
     );

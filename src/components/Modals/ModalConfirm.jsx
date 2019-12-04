@@ -2,24 +2,37 @@ import React, { Component } from "react";
 
 import { Spinner, Modal, Button } from "react-bootstrap";
 
-import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaCheck,
+  FaExclamationTriangle,
+  FaQuestionCircle
+} from "react-icons/fa";
 
 export class ModalConfirm extends Component {
   render() {
-    const { status, confirm, close } = this.props;
+    const { show, status, confirm, confirmtext, onHide } = this.props;
     return (
       <Modal
-        {...this.props}
-        size='sm'
-        aria-labelledby='contained-modal-title-vcenter'
+        // {...this.props}
+        // size="sm"
+        show={show}
+        onHide={onHide}
+        aria-labelledby="contained-modal-title-vcenter"
         centered
-        backdrop='static'
+        // backdrop="static"
       >
-        <Modal.Body className='text-center'>
+        <Modal.Header>
+          <div className="pea-color">
+            <FaQuestionCircle size={32} />
+          </div>
+          {/* <Modal.Title>Modal title</Modal.Title> */}
+        </Modal.Header>
+
+        <Modal.Body className="text-center">
           {status === "datachanged" ? (
             <DataChanged />
-          ) : status === "getok" ? (
-            <FetchOk />
+          ) : status === "delete" ? (
+            <ConfirmDelete confirmtext={confirmtext} />
           ) : status === "getfail" ? (
             <FetchFail />
           ) : status === "saving" ? (
@@ -36,12 +49,13 @@ export class ModalConfirm extends Component {
             <Loading />
           ) : null}
         </Modal.Body>
+
         <Modal.Footer>
-          <Button variant='secondary' onClick={close}>
-            ปิด
-          </Button>
-          <Button variant='warning' onClick={confirm}>
+          <Button variant="warning" onClick={confirm}>
             ยืนยัน
+          </Button>
+          <Button variant="secondary" onClick={onHide}>
+            ปิด
           </Button>
         </Modal.Footer>
       </Modal>
@@ -52,23 +66,17 @@ export class ModalConfirm extends Component {
 const DataChanged = () => {
   return (
     <React.Fragment>
-      {/* <Spinner
-        as='span'
-        animation='border'
-        size='lg'
-        role='status'
-        aria-hidden='true'
-      /> */}
       <h4>ข้อมูลมีการแก้ไข ต้องการยกเลิกหรือไม่?</h4>
     </React.Fragment>
   );
 };
 
-const FetchOk = () => {
+const ConfirmDelete = ({ confirmtext }) => {
   return (
     <React.Fragment>
-      <FaCheck />
-      <h4>เรียกข้อมูลสำเร็จ</h4>
+      <h4>
+        คุณต้องการลบ <span className="text-danger">{confirmtext}</span> หรือไม่
+      </h4>
     </React.Fragment>
   );
 };
@@ -76,7 +84,7 @@ const FetchOk = () => {
 const Require = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -88,7 +96,7 @@ const Require = () => {
 const FetchFail = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -101,11 +109,11 @@ const Saving = () => {
   return (
     <React.Fragment>
       <Spinner
-        as='span'
-        animation='border'
-        size='lg'
-        role='status'
-        aria-hidden='true'
+        as="span"
+        animation="border"
+        size="lg"
+        role="status"
+        aria-hidden="true"
       />
       <h4>กำลังบันทึกข้อมูล...</h4>
     </React.Fragment>
@@ -115,7 +123,7 @@ const Saving = () => {
 const Saved = () => {
   return (
     <React.Fragment>
-      <div className='text-success'>
+      <div className="text-success">
         <FaCheck size={32} />
       </div>
 
@@ -127,7 +135,7 @@ const Saved = () => {
 const SaveFail = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -140,11 +148,11 @@ const Loading = () => {
   return (
     <React.Fragment>
       <Spinner
-        as='span'
-        animation='border'
-        size='lg'
-        role='status'
-        aria-hidden='true'
+        as="span"
+        animation="border"
+        size="lg"
+        role="status"
+        aria-hidden="true"
       />
 
       <h4>กำลังโหลด...</h4>
@@ -155,7 +163,7 @@ const Loading = () => {
 const NoData = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 
 import {
   Table,
@@ -31,13 +31,16 @@ export class DataTable extends Component {
     this.setState({
       filterText: event.target.value
     });
-    this.props.filterTextChange(event.target.value);
+    const { filterTextChange } = this.props;
+    if (filterTextChange) filterTextChange(event.target.value);
   };
 
   clearFilterText = () => {
     this.setState({
       filterText: ""
     });
+    const { filterTextChange } = this.props;
+    if (filterTextChange) filterTextChange("");
   };
 
   render() {
@@ -64,49 +67,58 @@ export class DataTable extends Component {
       // searchText
     } = this.props;
     return (
-      <div className='data-table'>
+      <div className="data-table">
         <Row>
           <Col />
           <Col />
-          <Col className='text-right align-self-center'>
+          <Col className="text-right align-self-center">
             {perPage ? (
-              <Dropdown
-                id='dropdown-item-button justify-content-end'
-                onSelect={onPerPageChange}
-              >
-                <Dropdown.Toggle
-                  variant='outline-secondary'
-                  id='dropdown-basic'
-                >
-                  {perPage}
-                </Dropdown.Toggle>
+              <Fragment>
+                <div className="perPageDropdown">
+                  <span>แสดง</span>
+                  <Dropdown
+                    id="dropdown-item-button justify-content-end"
+                    onSelect={onPerPageChange}
+                  >
+                    <Dropdown.Toggle
+                      variant="outline-secondary"
+                      id="dropdown-basic"
+                    >
+                      {perPage}
+                    </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  {perPages &&
-                    perPages.map((key, index) => {
-                      return (
-                        <Dropdown.Item key={`perPage-${index}`} eventKey={key}>
-                          {key}
-                        </Dropdown.Item>
-                      );
-                    })}
-                </Dropdown.Menu>
-              </Dropdown>
+                    <Dropdown.Menu>
+                      {perPages &&
+                        perPages.map((key, index) => {
+                          return (
+                            <Dropdown.Item
+                              key={`perPage-${index}`}
+                              eventKey={key}
+                            >
+                              {key}
+                            </Dropdown.Item>
+                          );
+                        })}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                  <span>รายการ</span>
+                </div>
+              </Fragment>
             ) : null}
           </Col>
         </Row>
 
-        <Row className='filterRow'>
-          <Col className='align-self-center'>
+        <Row className="filterRow">
+          <Col className="align-self-center">
             <InputGroup>
               <InputGroup.Prepend>
-                <InputGroup.Text id='inputGroup-sizing-sm'>
+                <InputGroup.Text id="inputGroup-sizing-sm">
                   <FaSearch />
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                aria-label='Small'
-                aria-describedby='inputGroup-sizing-sm'
+                aria-label="Small"
+                aria-describedby="inputGroup-sizing-sm"
                 placeholder={filterPlaceholder}
                 onChange={this.handleFilterTextChange}
                 value={filterText}
@@ -114,7 +126,7 @@ export class DataTable extends Component {
               {filterText.length > 0 ? (
                 <InputGroup.Append>
                   <Button
-                    variant='outline-secondary'
+                    variant="outline-secondary"
                     onClick={this.clearFilterText}
                   >
                     <FaTimes />
@@ -123,7 +135,7 @@ export class DataTable extends Component {
               ) : null}
             </InputGroup>
           </Col>
-          <Col className='align-self-center'>
+          <Col className="align-self-center">
             {filters &&
               filters.map((filter, index) => {
                 return (
@@ -142,7 +154,7 @@ export class DataTable extends Component {
             {/* <Form.Check custom inline label='G1' id='inline-1' />
             <Form.Check custom inline label='G2' id='inline-2' /> */}
           </Col>
-          <Col className='text-right align-self-center'>
+          <Col className="text-right align-self-center">
             <Paginator
               curPage={pageNo}
               maxPage={maxPage}
@@ -153,33 +165,33 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Table responsive bordered hover size='sm'>
-          <thead className='text-center thread-pea'>
+        <Table responsive bordered hover size="sm">
+          <thead className="text-center thread-pea">
             <tr>
               {columns &&
                 columns.map((col, index) => {
                   return (
-                    <th key={`th-${index}`} className='align-middle'>
+                    <th key={`th-${index}`} className="align-middle">
                       {col.text}
                     </th>
                   );
                 })}
-              <th key={`th-toolsbar`} className='align-middle'>
+              <th key={`th-toolsbar`} className="align-middle">
                 <FaSlidersH />
               </th>
             </tr>
           </thead>
           <tbody>
             {data && data.length > 0 ? (
-              data.map((item, index) => {
+              data.map((item, dataIndex) => {
                 // console.log("peaId", item.peaId);
                 return (
-                  <tr key={`tr-${index}`}>
-                    {columns &&
-                      columns.map((col, index) => {
+                  <tr key={`tr-${dataIndex}`}>
+                    {columns && //////////////List Data
+                      columns.map((col, colIndex) => {
                         return (
                           <td
-                            key={`td-${index}`}
+                            key={`td-${colIndex}${dataIndex}`}
                             className={`align-middle ${
                               col.valign === "true" ? "text-center" : null
                             }`}
@@ -198,13 +210,13 @@ export class DataTable extends Component {
                               item[col.dataField]
                             )}
                           </td>
-                        );
+                        ); //////////////////List data
                       })}
                     <td
                       key={`td-toolsbar`}
-                      className='align-middle text-center td-tools-button'
+                      className="align-middle text-center td-tools-button"
                     >
-                      <ButtonToolbar aria-label='Toolbar with button groups'>
+                      <ButtonToolbar aria-label="Toolbar with button groups">
                         <OverlayTrigger
                           key={"verify"}
                           placement={"top"}
@@ -215,9 +227,10 @@ export class DataTable extends Component {
                           }
                         >
                           <Button
-                            key={`verify-button-${index}`}
-                            variant={"outline-success"}
+                            key={`verify-button-${dataIndex}`}
+                            variant={"outline"}
                             size={"sm"}
+                            className={"pea-color"}
                             onClick={() => onVerify(item.peaId)}
                           >
                             <FaCheck />
@@ -232,9 +245,10 @@ export class DataTable extends Component {
                           }
                         >
                           <Button
-                            key={`edit-button-${index}`}
+                            key={`edit-button-${dataIndex}`}
                             size={"sm"}
-                            variant={"outline-info"}
+                            variant={"outline"}
+                            className={"pea-color"}
                             onClick={() => onEdit(item.peaId)}
                           >
                             <FaEdit />
@@ -242,14 +256,15 @@ export class DataTable extends Component {
                         </OverlayTrigger>
 
                         <OverlayTrigger
-                          key='delete'
-                          placement='top'
+                          key="delete"
+                          placement="top"
                           overlay={<Tooltip id={`tooltip-delete`}>ลบ</Tooltip>}
                         >
                           <Button
-                            key={`delete-button-${index}`}
-                            variant='outline-danger'
-                            size='sm'
+                            key={`delete-button-${dataIndex}`}
+                            variant="outline"
+                            size="sm"
+                            className={"pea-color"}
                             onClick={() => onDelete(item.peaId)}
                           >
                             <FaTimes />
@@ -263,8 +278,8 @@ export class DataTable extends Component {
             ) : (
               <tr>
                 <td
-                  className='text-center align-middle'
-                  colSpan={columns.length}
+                  className="text-center align-middle"
+                  colSpan={columns && columns.length + 1}
                 >
                   ไม่มีข้อมูล
                 </td>

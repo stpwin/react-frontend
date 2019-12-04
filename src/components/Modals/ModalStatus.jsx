@@ -6,22 +6,22 @@ import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 export class ModalStatus extends Component {
   render() {
-    const { status } = this.props;
+    const { status, failtext } = this.props;
     return (
       <Modal
         {...this.props}
-        size='sm'
-        aria-labelledby='contained-modal-title-vcenter'
+        size="sm"
+        aria-labelledby="contained-modal-title-vcenter"
         centered
-        backdrop='static'
+        backdrop="static"
       >
-        <Modal.Body className='text-center'>
+        <Modal.Body className="text-center">
           {status === "getting" ? (
             <FetchingData />
           ) : status === "getok" ? (
             <FetchOk />
           ) : status === "getfail" ? (
-            <FetchFail />
+            <FetchFail failtext={failtext} />
           ) : status === "saving" ? (
             <Saving />
           ) : status === "saved" ? (
@@ -34,6 +34,12 @@ export class ModalStatus extends Component {
             <NoData />
           ) : status === "loading" ? (
             <Loading />
+          ) : status === "deleting" ? (
+            <Deleting />
+          ) : status === "deleted" ? (
+            <Deleted />
+          ) : status === "deleteFail" ? (
+            <DeleteFail failtext={failtext} />
           ) : null}
         </Modal.Body>
       </Modal>
@@ -41,15 +47,53 @@ export class ModalStatus extends Component {
   }
 }
 
+const Deleted = () => {
+  return (
+    <React.Fragment>
+      <div className="text-success">
+        <FaCheck size={32} />
+      </div>
+
+      <h4>ลบข้อมูลสำเร็จ</h4>
+    </React.Fragment>
+  );
+};
+const Deleting = () => {
+  return (
+    <React.Fragment>
+      <Spinner
+        as="span"
+        animation="border"
+        size="lg"
+        role="status"
+        aria-hidden="true"
+      />
+      <h4>กำลังลบข้อมูล...</h4>
+    </React.Fragment>
+  );
+};
+const DeleteFail = ({ failtext }) => {
+  return (
+    <React.Fragment>
+      <div className="text-danger">
+        <FaExclamationTriangle size={32} />
+      </div>
+
+      <h4>ลบข้อมูลไม่สำเร็จ</h4>
+      <p className="text-danger">{failtext}</p>
+    </React.Fragment>
+  );
+};
+
 const FetchingData = () => {
   return (
     <React.Fragment>
       <Spinner
-        as='span'
-        animation='border'
-        size='lg'
-        role='status'
-        aria-hidden='true'
+        as="span"
+        animation="border"
+        size="lg"
+        role="status"
+        aria-hidden="true"
       />
       <h4>กำลังเรียกข้อมูล...</h4>
     </React.Fragment>
@@ -68,7 +112,7 @@ const FetchOk = () => {
 const Require = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -77,14 +121,15 @@ const Require = () => {
   );
 };
 
-const FetchFail = () => {
+const FetchFail = ({ failtext }) => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 
       <h4>เรียกข้อมูลไม่สำเร็จ</h4>
+      <p className="text-danger">{failtext}</p>
     </React.Fragment>
   );
 };
@@ -93,11 +138,11 @@ const Saving = () => {
   return (
     <React.Fragment>
       <Spinner
-        as='span'
-        animation='border'
-        size='lg'
-        role='status'
-        aria-hidden='true'
+        as="span"
+        animation="border"
+        size="lg"
+        role="status"
+        aria-hidden="true"
       />
       <h4>กำลังบันทึกข้อมูล...</h4>
     </React.Fragment>
@@ -107,7 +152,7 @@ const Saving = () => {
 const Saved = () => {
   return (
     <React.Fragment>
-      <div className='text-success'>
+      <div className="text-success">
         <FaCheck size={32} />
       </div>
 
@@ -119,7 +164,7 @@ const Saved = () => {
 const SaveFail = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -132,11 +177,11 @@ const Loading = () => {
   return (
     <React.Fragment>
       <Spinner
-        as='span'
-        animation='border'
-        size='lg'
-        role='status'
-        aria-hidden='true'
+        as="span"
+        animation="border"
+        size="lg"
+        role="status"
+        aria-hidden="true"
       />
 
       <h4>กำลังโหลด...</h4>
@@ -147,7 +192,7 @@ const Loading = () => {
 const NoData = () => {
   return (
     <React.Fragment>
-      <div className='text-danger'>
+      <div className="text-danger">
         <FaExclamationTriangle size={32} />
       </div>
 

@@ -5,17 +5,22 @@ export default class FormButton extends Component {
   render() {
     const { loading, cancel } = this.props;
     return (
-      <Form.Group as={Row}>
+      <Form.Group as={Row} className="form-button">
         <Col>
-          <Button type='submit' disabled={loading} className='btn-block'>
+          <Button
+            type="submit"
+            variant="outline"
+            disabled={loading}
+            className="pea-color btn-block"
+          >
             {loading ? (
               <React.Fragment>
                 <Spinner
-                  as='span'
-                  animation='border'
-                  size='sm'
-                  role='status'
-                  aria-hidden='true'
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
                 />
                 {"  กำลังดำเนินการ..."}
               </React.Fragment>
@@ -26,9 +31,9 @@ export default class FormButton extends Component {
         </Col>
         <Col>
           <Button
-            variant='warning'
+            variant="outline"
             disabled={loading}
-            className='btn-block'
+            className="pea-color btn-block"
             onClick={cancel}
           >
             ยกเลิก

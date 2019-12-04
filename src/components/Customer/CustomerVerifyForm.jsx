@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Signature from "./Signature";
-import { Form, Col, Row, Collapse } from "react-bootstrap";
+import { Form, Col, Row } from "react-bootstrap";
 
 class CustomerVerifyForm extends Component {
   state = {
@@ -35,41 +35,41 @@ class CustomerVerifyForm extends Component {
   render() {
     const {
       dateAppear,
-      authorize,
-      authorizeNameOpen,
-      authorizeName
+      authorize
+      // authorizeNameOpen,
+      // authorizeName
     } = this.state;
     const { setSigpadRef } = this.props;
     return (
       <React.Fragment>
         <Form.Group as={Row}>
-          <Form.Label as='legend' column sm={2}>
+          <Form.Label as="legend" column sm={2}>
             วันที่มาแสดงตน
           </Form.Label>
           <Col sm={3}>
             <DatePicker
-              todayButton='เลือกวันนี้'
-              className='form-control'
+              todayButton="เลือกวันนี้"
+              className="form-control"
               selected={dateAppear}
               onChange={this.handleDateChange}
-              name='dateAppear'
+              name="dateAppear"
             ></DatePicker>
           </Col>
         </Form.Group>
 
         <fieldset>
           <Form.Group as={Row}>
-            <Form.Label as='legend' column sm={2}>
+            <Form.Label as="legend" column sm={2}>
               กรณีเป็น
             </Form.Label>
             <Col sm={10}>
               <Form.Check
                 inline
                 custom
-                type='radio'
-                label='ทหารเจ้าของสิทธิ์'
-                name='authorize'
-                value='ทหาร'
+                type="radio"
+                label="ทหาร"
+                name="authorize"
+                value="ทหาร"
                 checked={authorize === "ทหาร"}
                 onChange={this.handleChange}
                 id={`inline-1`}
@@ -77,10 +77,10 @@ class CustomerVerifyForm extends Component {
               <Form.Check
                 inline
                 custom
-                type='radio'
-                label='ตัวแทน'
-                name='authorize'
-                value='ตัวแทน'
+                type="radio"
+                label="ตัวแทน"
+                name="authorize"
+                value="ตัวแทน"
                 checked={authorize === "ตัวแทน"}
                 onChange={this.handleChange}
                 id={`inline-2`}
@@ -88,10 +88,10 @@ class CustomerVerifyForm extends Component {
               <Form.Check
                 inline
                 custom
-                type='radio'
-                label='ภรรยา'
-                name='authorize'
-                value='ภรรยา'
+                type="radio"
+                label="ภรรยา"
+                name="authorize"
+                value="ภรรยา"
                 checked={authorize === "ภรรยา"}
                 onChange={this.handleChange}
                 id={`inline-3`}
@@ -99,10 +99,10 @@ class CustomerVerifyForm extends Component {
               <Form.Check
                 inline
                 custom
-                type='radio'
-                label='ทายาท'
-                name='authorize'
-                value='ทายาท'
+                type="radio"
+                label="ทายาท"
+                name="authorize"
+                value="ทายาท"
                 checked={authorize === "ทายาท"}
                 onChange={this.handleChange}
                 id={`inline-4`}
@@ -111,30 +111,30 @@ class CustomerVerifyForm extends Component {
           </Form.Group>
         </fieldset>
 
-        <Collapse in={authorizeNameOpen}>
+        {/* <Collapse in={authorizeNameOpen}>
           <Form.Group as={Row}>
             <Form.Label column sm={2}>
               {`ชื่อ-สกุล ${authorize !== "ทหาร" ? authorize : ""}`}
             </Form.Label>
             <Col sm={5}>
               <Form.Control
-                type='text'
+                type="text"
                 placeholder={`ชื่อ-สกุล ${
                   authorize !== "ทหาร" ? authorize : ""
                 }`}
                 onChange={this.handleChange}
-                name='authorizeName'
+                name="authorizeName"
                 value={authorizeName}
               />
             </Col>
           </Form.Group>
-        </Collapse>
+        </Collapse> */}
 
         <Form.Group as={Row}>
           <Form.Label column sm={2}>
             ลายเซ็น
           </Form.Label>
-          <Col sm={3}>
+          <Col>
             <Signature setRef={setSigpadRef}></Signature>
           </Col>
         </Form.Group>

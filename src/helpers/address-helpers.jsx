@@ -62,14 +62,14 @@ export function getDistrictName(districtNo) {
   }
 }
 
-export function getAddressStringByDistrictNo(districtNo) {
-  return `ตำบล${getDistrictName(
-    districtNo
-  )} อำเภอเมือง จังหวัดลำปาง ${correctPostcode(districtNo)}`;
+export function getAddressStringByDistrictNo(districtNo, short = true) {
+  return `${short ? "ต." : "ตำบล"}${getDistrictName(districtNo)} ${
+    short ? "อ." : "อำเภอ"
+  }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${correctPostcode(districtNo)}`;
 }
 
-export function addressToString(addr) {
-  return `เลขที่ ${addr.houseNo} หมู่ที่ ${
+export function addressToString(addr, short = true) {
+  return `เลขที่ ${addr.houseNo} ${short ? "ม." : "หมู่ "}${
     addr.mooNo
-  } ${getAddressStringByDistrictNo(addr.districtNo)}`;
+  } ${getAddressStringByDistrictNo(addr.districtNo, short)}`;
 }
