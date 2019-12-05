@@ -69,6 +69,7 @@ export function getAddressStringByDistrictNo(districtNo, short = true) {
 }
 
 export function addressToString(addr, short = true) {
+  if (!addr) return;
   return `เลขที่ ${addr.houseNo} ${short ? "ม." : "หมู่ "}${
     addr.mooNo
   } ${getAddressStringByDistrictNo(addr.districtNo, short)}`;

@@ -21,7 +21,6 @@ class AddCustomer extends Component {
     peaWarnText: "",
     statusModal: false,
     statusModalState: "loading",
-    // redirectTo: "/",
     confirmModal: false
   };
 
@@ -32,7 +31,6 @@ class AddCustomer extends Component {
   };
 
   handleSuccess = () => {
-    // this.props.history.push(this.state.redirectTo);
     this.props.history.goBack();
   };
 
@@ -64,6 +62,7 @@ class AddCustomer extends Component {
           firstName: event.target.firstName.value,
           lastName: event.target.lastName.value,
           peaId: event.target.peaId.value,
+          authorize: event.target.authorize.value,
           soldierNo: event.target.soldierNo.value,
           war: event.target.war.value,
           address: {
@@ -73,15 +72,12 @@ class AddCustomer extends Component {
           }
         },
         verify: {
-          signatureBase64: signatureData,
-          authorize: event.target.authorize.value,
-          authorizeName: event.target.authorizeName.value,
-          dateAppear: event.target.dateAppear.value
+          dateAppear: event.target.dateAppear.value,
+          signatureBase64: signatureData
         }
       })
     };
 
-    // return;
     fetch(`${config.apiUrl}/api/customers`, requestOptions)
       .then(rep => {
         if (rep.status === 422) {
@@ -92,7 +88,7 @@ class AddCustomer extends Component {
             this.setState({
               statusModal: false
             });
-          }, 1000);
+          }, config.statusShowTime);
           return;
         }
         return rep;
@@ -101,17 +97,15 @@ class AddCustomer extends Component {
       .then(rep => {
         if (!rep) return;
         rep.json().then(data => {
-          console.log(data);
           this.setState({
             statusModalState: "saved"
           });
           setTimeout(() => {
             this.handleSuccess();
-          }, 1000);
+          }, config.statusShowTime);
         });
       })
       .catch(err => {
-        console.log(err);
         this.setState({
           statusModalState: "savefail"
         });
@@ -119,7 +113,7 @@ class AddCustomer extends Component {
           this.setState({
             statusModal: false
           });
-        }, 1000);
+        }, config.statusShowTime);
       });
   };
 
@@ -140,7 +134,7 @@ class AddCustomer extends Component {
         <ModalStatus show={statusModal} status={statusModalState} />
         <ModalConfirm
           show={confirmModal}
-          status="datachanged"
+          status='datachanged'
           confirm={this.handleSuccess}
           close={this.handleConfirmModalClose}
         />

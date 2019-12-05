@@ -86,7 +86,7 @@ hr {
   min-width: 8em;
 }
 
-.td-tools-button .btn-toolbar > * + * {
+.td-tools-button .btn-toolbar>*+* {
   margin-left: 0.3em;
 }
 
@@ -94,7 +94,7 @@ hr {
   margin: 0 auto;
 }
 
-.custom-control-input:checked ~ .custom-control-label::before {
+.custom-control-input:checked~.custom-control-label::before {
   color: #fff;
   border-color: #563d7c;
   background-color: #563d7c;
@@ -114,15 +114,42 @@ mark {
   margin-top: 2em;
 }
 
-.btn-toolbar > * + * {
-  margin-left: 0.5em;
-}
-
 .perPageDropdown {
   display: inline-flex;
   align-items: center;
 }
 
-.perPageDropdown > * + * {
+.icon-before-text>*+*,
+.perPageDropdown>*+*,
+.spinner-margin>*+*,
+.btn-toolbar>*+* {
   margin-left: 0.5em;
+}
+
+.spinner-border {
+  vertical-align: middle;
+}
+
+.react-datepicker__header,
+.react-datepicker__day--selected,
+.react-datepicker__today-button {
+
+  background-color: #563d7c !important;
+}
+
+.react-datepicker__today-button {
+  color: white;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+  color: white !important;
+}
+
+.react-datepicker__day--today {
+  background-color: lightgray;
+}
+
+.vertical-divider {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
 }

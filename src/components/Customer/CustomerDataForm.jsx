@@ -23,6 +23,7 @@ class CustomerDataForm extends Component {
     mooNo: (this.props.initial && this.props.initial.mooNo) || "",
     districtNo: (this.props.initial && this.props.initial.districtNo) || "",
     postcode: (this.props.initial && this.props.initial.postcode) || 52000,
+    authorize: (this.props.initial && this.props.initial.authorize) || "",
     soldierNo: (this.props.initial && this.props.initial.soldierNo) || "",
     war: (this.props.initial && this.props.initial.war) || "",
     peaIdOk: true,
@@ -41,7 +42,7 @@ class CustomerDataForm extends Component {
     this.setState({
       fetchPeaIdComplete: false,
       existsPeaCustomer: false,
-      peaWarnText: "กำลังตรวจสอบหมายเลขผู้ใช้ไฟ..."
+      peaWarnText: "กำลังตรวจสอบหมายเลขผู้ใช้ไฟฟ้า..."
     });
     const customer = this.getCustomerByPeaId(peaId);
     customer
@@ -49,12 +50,12 @@ class CustomerDataForm extends Component {
         this.setState({
           fetchPeaIdComplete: true,
           existsPeaCustomer: res ? true : false,
-          peaWarnText: res ? "หมายเลขผู้ใช้ไฟนี้มีอยู่ในระบบแล้ว" : ""
+          peaWarnText: res ? "หมายเลขผู้ใช้ไฟฟ้านี้มีอยู่ในระบบแล้ว" : ""
         });
       })
       .catch(() => {
         this.setState({
-          peaWarnText: "เซิฟเวอร์ขัดข้อง",
+          peaWarnText: "เซิร์ฟเวอร์ขัดข้อง",
           fetchPeaIdComplete: true,
           existsPeaCustomer: true
         });
@@ -90,11 +91,7 @@ class CustomerDataForm extends Component {
         districtNo: targetValue,
         postcode: correctPostcode(targetValue)
       });
-    }
-    this.setState({
-      [elementName]: targetValue
-    });
-    if (this.props.validatePeaId && elementName === "peaId") {
+    } else if (this.props.validatePeaId && elementName === "peaId") {
       this.setState({
         peaIdOk: true
       });
@@ -105,9 +102,13 @@ class CustomerDataForm extends Component {
           peaIdOk: false,
           existsPeaCustomer: false,
           fetchPeaIdComplete: true,
-          peaWarnText: "หมายเลขผู้ใช้ไฟไม่ถูกต้อง"
+          peaWarnText: "หมายเลขผู้ใช้ไฟฟ้าไม่ถูกต้อง"
         });
       }
+    } else {
+      this.setState({
+        [elementName]: targetValue
+      });
     }
   };
 
@@ -121,6 +122,7 @@ class CustomerDataForm extends Component {
       mooNo,
       districtNo,
       postcode,
+      authorize,
       soldierNo,
       war,
       peaIdOk,
@@ -129,13 +131,18 @@ class CustomerDataForm extends Component {
       peaWarnText
     } = this.state;
     // console.log(this.props);
-    const { readOnly, showPlaceholder, validatePeaId, peaIdReadOnly } = this.props;
+    const {
+      readOnly,
+      showPlaceholder,
+      validatePeaId,
+      peaIdReadOnly
+    } = this.props;
     // console.log(this.props);
     return (
       <React.Fragment>
         <Form.Group as={Row}>
           <Form.Label column sm={2}>
-            หมายเลขผู้ใช้ไฟ
+            หมายเลขผู้ใช้ไฟฟ้า
           </Form.Label>
           <Col sm={5}>
             <InputGroup className='mb-0'>
@@ -146,9 +153,9 @@ class CustomerDataForm extends Component {
                 aria-describedby='basic-addon3'
                 maxLength='11'
                 name='peaId'
-                placeholder={showPlaceholder ? "หมายเลขผู้ใช้ไฟ(CA)" : ""}
+                placeholder={showPlaceholder ? "หมายเลขผู้ใช้ไฟฟ้า(CA)" : ""}
                 value={peaId}
-                readOnly={readOnly || peaIdReadOnly}
+                disabled={readOnly || peaIdReadOnly}
                 onChange={this.handleChange}
               />
               {validatePeaId ? (
@@ -208,7 +215,7 @@ class CustomerDataForm extends Component {
               type='text'
               placeholder={showPlaceholder ? "คำนำหน้า" : ""}
               name='title'
-              readOnly={readOnly}
+              disabled={readOnly}
               value={title}
               onChange={this.handleChange}
             />
@@ -226,7 +233,7 @@ class CustomerDataForm extends Component {
                   type='text'
                   placeholder={showPlaceholder ? "ชื่อ" : ""}
                   name='firstName'
-                  readOnly={readOnly}
+                  disabled={readOnly}
                   value={firstName}
                   onChange={this.handleChange}
                 />
@@ -236,7 +243,7 @@ class CustomerDataForm extends Component {
                 <Form.Control
                   type='text'
                   placeholder={showPlaceholder ? "สกุล" : ""}
-                  readOnly={readOnly}
+                  disabled={readOnly}
                   name='lastName'
                   value={lastName}
                   onChange={this.handleChange}
@@ -257,7 +264,7 @@ class CustomerDataForm extends Component {
                 <Form.Control
                   placeholder={showPlaceholder ? "เลขที่/ซอย/ถนน" : ""}
                   name='houseNo'
-                  readOnly={readOnly}
+                  disabled={readOnly}
                   value={houseNo}
                   onChange={this.handleChange}
                 />
@@ -269,7 +276,7 @@ class CustomerDataForm extends Component {
                   placeholder={showPlaceholder ? "หมู่ที่" : ""}
                   maxLength='2'
                   name='mooNo'
-                  readOnly={readOnly}
+                  disabled={readOnly}
                   value={mooNo}
                   onChange={this.handleChange}
                 />
@@ -280,7 +287,7 @@ class CustomerDataForm extends Component {
                 <Form.Control
                   as='select'
                   name='districtNo'
-                  readOnly={readOnly}
+                  disabled={readOnly}
                   value={districtNo}
                   onChange={this.handleChange}
                 >
@@ -310,21 +317,79 @@ class CustomerDataForm extends Component {
             <Form.Row>
               <Form.Group as={Col}>
                 <Form.Label>อำเภอ</Form.Label>
-                <Form.Control value='เมือง' readOnly={true} />
+                <Form.Control value='เมือง' disabled={true} />
               </Form.Group>
 
               <Form.Group as={Col}>
                 <Form.Label>จังหวัด</Form.Label>
-                <Form.Control value='ลำปาง' readOnly={true} />
+                <Form.Control value='ลำปาง' disabled={true} />
               </Form.Group>
 
               <Form.Group as={Col}>
                 <Form.Label>รหัสไปรษณีย์</Form.Label>
-                <Form.Control readOnly={true} value={postcode} />
+                <Form.Control disabled={true} value={postcode} />
               </Form.Group>
             </Form.Row>
           </Col>
         </Form.Group>
+
+        <fieldset>
+          <Form.Group as={Row}>
+            <Form.Label as='legend' column sm={2}>
+              กรณีเป็น
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Check
+                inline
+                custom
+                type='radio'
+                label='ทหาร'
+                name='authorize'
+                value='ทหาร'
+                checked={authorize === "ทหาร"}
+                onChange={this.handleChange}
+                disabled={readOnly}
+                id={`inline-1`}
+              />
+              <Form.Check
+                inline
+                custom
+                type='radio'
+                label='ตัวแทน'
+                name='authorize'
+                value='ตัวแทน'
+                checked={authorize === "ตัวแทน"}
+                onChange={this.handleChange}
+                disabled={readOnly}
+                id={`inline-2`}
+              />
+              <Form.Check
+                inline
+                custom
+                type='radio'
+                label='ภรรยา'
+                name='authorize'
+                value='ภรรยา'
+                checked={authorize === "ภรรยา"}
+                onChange={this.handleChange}
+                disabled={readOnly}
+                id={`inline-3`}
+              />
+              <Form.Check
+                inline
+                custom
+                type='radio'
+                label='ทายาท'
+                name='authorize'
+                value='ทายาท'
+                checked={authorize === "ทายาท"}
+                onChange={this.handleChange}
+                disabled={readOnly}
+                id={`inline-4`}
+              />
+            </Col>
+          </Form.Group>
+        </fieldset>
 
         <Form.Group as={Row}>
           <Form.Label column sm={2}>
@@ -335,7 +400,7 @@ class CustomerDataForm extends Component {
               type='text'
               placeholder={showPlaceholder ? "เลขที่บัตรประจำตัวทหาร" : ""}
               name='soldierNo'
-              readOnly={readOnly}
+              disabled={readOnly}
               value={soldierNo}
               maxLength='15'
               onChange={this.handleChange}
@@ -351,7 +416,7 @@ class CustomerDataForm extends Component {
             <Form.Control
               as='select'
               name='war'
-              readOnly={readOnly}
+              disabled={readOnly}
               value={war}
               onChange={this.handleChange}
             >

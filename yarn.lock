@@ -2474,11 +2474,6 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@2.2.5:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
-  integrity sha1-+zgB1FNGdknvNgPH1hoCvRKb3m0=
-
 classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
@@ -3383,13 +3378,6 @@ dom-converter@^0.2:
   integrity sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==
   dependencies:
     utila "~0.4"
-
-dom-helpers@^3.3.1:
-  version "3.4.0"
-  resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-3.4.0.tgz#e9b369700f959f62ecde5a6babde4bccd9169af8"
-  integrity sha512-LnuPJ+dwqKDIyotW1VzmOZ5TONUN7CwkCR5hrgawTUbkBGYdeoNLZo6nNfGkCrjtE1nXXaj7iMMpDa8/d9WoIA==
-  dependencies:
-    "@babel/runtime" "^7.1.2"
 
 dom-helpers@^5.0.1, dom-helpers@^5.1.0, dom-helpers@^5.1.2:
   version "5.1.3"
@@ -8213,20 +8201,6 @@ react-app-polyfill@^1.0.4:
     regenerator-runtime "0.13.3"
     whatwg-fetch "3.0.0"
 
-react-bootstrap-table-next@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/react-bootstrap-table-next/-/react-bootstrap-table-next-3.3.1.tgz#c8fcd6853d95de5f66f1a8c672cdf914aa671064"
-  integrity sha512-ZKT8cfrOVoSbZa+hbaIt5A1L5sUocA8JkmLFfdPFEfhs+YoGu+I0xRJ4JJma3VcOfgTslqkbA2xhnGApo848/w==
-  dependencies:
-    classnames "2.2.5"
-    react-transition-group "2.5.3"
-    underscore "1.9.1"
-
-react-bootstrap-table2-filter@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/react-bootstrap-table2-filter/-/react-bootstrap-table2-filter-1.3.0.tgz#cd8d7fd3dfe1cde23297e4db961e26dcb3cf85bd"
-  integrity sha512-Jl4YP9fAl5sHLntW/Q5WX044doQVdUrAkeEniffD5OZQdYxuOj1wlUWO0jKQ7DqCsHvqVo/+jOZCMI8SzhOD/Q==
-
 react-bootstrap@^1.0.0-beta.16:
   version "1.0.0-beta.16"
   resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-1.0.0-beta.16.tgz#42da0314aee6754494e478687b8e6953de1aaf62"
@@ -8489,16 +8463,6 @@ react-signature-canvas@^1.0.3:
   dependencies:
     signature_pad "^2.3.2"
     trim-canvas "^0.1.0"
-
-react-transition-group@2.5.3:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.5.3.tgz#26de363cab19e5c88ae5dbae105c706cf953bb92"
-  integrity sha512-2DGFck6h99kLNr8pOFk+z4Soq3iISydwOFeeEVPjTN6+Y01CmvbWmnN02VuTWyFdnRtIDPe+wy2q6Ui8snBPZg==
-  dependencies:
-    dom-helpers "^3.3.1"
-    loose-envify "^1.4.0"
-    prop-types "^15.6.2"
-    react-lifecycles-compat "^3.0.4"
 
 react-transition-group@^4.0.0:
   version "4.3.0"
@@ -9952,11 +9916,6 @@ uncontrollable@^7.0.0:
     "@types/react" "^16.9.11"
     invariant "^2.2.4"
     react-lifecycles-compat "^3.0.4"
-
-underscore@1.9.1:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
-  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

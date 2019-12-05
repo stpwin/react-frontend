@@ -96,8 +96,6 @@ class VerifyCustomer extends Component {
       body: JSON.stringify({
         verify: {
           dateAppear: event.target.dateAppear.value,
-          authorize: event.target.authorize.value,
-          authorizeName: event.target.authorizeName.value,
           signatureBase64: signatureData
         }
       })
@@ -112,20 +110,20 @@ class VerifyCustomer extends Component {
     fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
       .then(handleFetchError)
       .then(rep => {
-        console.log(rep.status);
+        // console.log(rep.status);
         if (rep.status === 200) {
           return rep.json();
         }
         return null;
       })
       .then(data => {
-        console.log(data);
+        // console.log(data);
         this.setState({
           statusModalState: "saved"
         });
         setTimeout(() => {
           this.handleSuccess();
-        }, 1000);
+        }, config.statusShowTime);
       })
       .catch(err => {
         console.log(err);
@@ -136,7 +134,7 @@ class VerifyCustomer extends Component {
           this.setState({
             statusModal: false
           });
-        }, 1000);
+        }, config.statusShowTime);
       });
   };
 

@@ -1,10 +1,17 @@
-import React from "react";
+import React, { Fragment } from "react";
 // import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
 
 import { userActions } from "../../../actions";
 
-import { Container, Button, Col, Form, FormGroup } from "react-bootstrap";
+import {
+  Container,
+  Button,
+  Col,
+  Form,
+  FormGroup,
+  Spinner
+} from "react-bootstrap";
 
 class LoginPage extends React.Component {
   constructor(props) {
@@ -41,31 +48,49 @@ class LoginPage extends React.Component {
     const { username, password, submitted } = this.state;
     return (
       <Container>
-        <Col md={{ span: 6, offset: 3 }} className="text-center p-5">
+        <Col md={{ span: 6, offset: 3 }} className='text-center p-5'>
           <h2>เข้าสู่ระบบ</h2>
           <Form onSubmit={this.handleSubmit}>
             <FormGroup className={submitted && !username ? " has-error" : ""}>
-              <Form.Label htmlFor="username">ชื่อผู้ใช้งาน</Form.Label>
+              <Form.Label htmlFor='username'>ชื่อผู้ใช้งาน</Form.Label>
               <Form.Control
-                name="username"
+                name='username'
                 value={username}
-                placeholder="ชื่อผู้ใช้งาน"
+                placeholder='ชื่อผู้ใช้งาน'
                 onChange={this.handleChange}
               />
             </FormGroup>
             <FormGroup className={submitted && !username ? " has-error" : ""}>
-              <Form.Label htmlFor="username">รหัสผ่าน</Form.Label>
+              <Form.Label htmlFor='username'>รหัสผ่าน</Form.Label>
               <Form.Control
-                name="password"
-                type="password"
+                name='password'
+                type='password'
                 value={password}
-                placeholder="รหัสผ่าน"
+                placeholder='รหัสผ่าน'
                 onChange={this.handleChange}
               />
             </FormGroup>
             <FormGroup>
-              <Button type="submit" variant="outline" className="pea-color">
-                เข้าสู่ระบบ
+              <Button
+                type='submit'
+                variant='outline'
+                className='pea-color spinner-margin'
+                disabled={loggingIn}
+              >
+                {loggingIn ? (
+                  <Fragment>
+                    <Spinner
+                      as='span'
+                      animation='border'
+                      size='sm'
+                      role='status'
+                      aria-hidden={true}
+                    />
+                    <span>กำลังเข้าสู่ระบบ...</span>
+                  </Fragment>
+                ) : (
+                  "เข้าสู่ระบบ"
+                )}
               </Button>
             </FormGroup>
           </Form>

@@ -4,7 +4,8 @@ import { withRouter } from "react-router-dom";
 import config from "../../config";
 import { authHeader, handleFetchError, addressToString } from "../../helpers";
 
-// import ScrollPositionManager from "../../helpers/scroll-mamager";
+import moment from "moment";
+import "moment/locale/th";
 import { ModalConfirm, ModalStatus } from "../Modals";
 import { DataTable } from "../DataTable";
 
@@ -15,13 +16,9 @@ class ListCustomer extends Component {
     perPage: 10,
     perPages: [10, 20, 50, 100],
     customers: [],
-    // customers: [],
     filterText: "",
     filterChecked: [true, true],
-    filters: [
-      { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
-      { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
-    ],
+
     confirmDelete: false,
     confirmDeleteText: "",
     confirmDeletePeaId: "",
@@ -30,11 +27,16 @@ class ListCustomer extends Component {
     statusModalFailText: ""
   };
 
+  filters = [
+    { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
+    { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
+  ];
+
   columns = [
     { text: "ลำดับ", dataField: "index", valign: "true" },
     { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
     {
-      text: "หมายเลขผู้ใช้ไฟ",
+      text: "หมายเลขผู้ใช้ไฟฟ้า",
       dataField: "peaId",
       valign: "true",
       canSearch: true
@@ -43,21 +45,22 @@ class ListCustomer extends Component {
     { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
     { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
     { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
-    { text: "กรณีเป็น", dataField: "authorize" },
-    { text: "วันที่มาแสดงตน", dataField: "laseDateAppear", valign: "true" }
+    { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
+    { text: "วันที่มาแสดงตน", dataField: "dateAppear", valign: "true" }
   ];
 
   UNSAFE_componentWillMount() {
+    moment.locale("th");
     this.fetchCustomers();
   }
 
   getWarFilter = () => {
-    const { filters, filterChecked } = this.state;
+    const { filterChecked } = this.state;
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
           .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
+            return data === true ? this.filters[index].wars.join() : null;
           })
           .filter(Boolean)
           .join() || "-";
@@ -97,6 +100,14 @@ class ListCustomer extends Component {
             maxPage: pages,
             pageNo: page,
             customers: result.customers.map((key, index) => {
+              const lastDateAppear =
+                key.verifies &&
+                key.verifies.length > 0 &&
+                moment(key.verifies[key.verifies.length - 1].dateAppear).format(
+                  "ll"
+                );
+              const privilegeDate =
+                key.privilegeDate && moment(key.privilegeDate).format("ll");
               return {
                 index: startNumber + index + 1,
                 name: `${key.title} ${key.firstName} ${key.lastName}`,
@@ -104,6 +115,8 @@ class ListCustomer extends Component {
                 address: addressToString(key.address),
                 authorize: key.authorize,
                 soldierNo: key.soldierNo,
+                privilegeDate: privilegeDate,
+                dateAppear: lastDateAppear,
                 war: key.war
               };
             })
@@ -114,11 +127,12 @@ class ListCustomer extends Component {
         //   statusModal: false
         // });
       })
-      .catch(() => {
+      .catch(err => {
+        console.log(err);
         this.setState({
           statusModal: true,
           statusModalState: "getfail",
-          statusModalFailText: "ไม่สามารถติดต่อเซิฟเวอร์ได้"
+          statusModalFailText: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
         });
         // console.log(err);
       });
@@ -162,6 +176,14 @@ class ListCustomer extends Component {
             customers:
               (result.customers &&
                 result.customers.map((key, index) => {
+                  const lastDateAppear =
+                    key.verifies &&
+                    key.verifies.length > 0 &&
+                    moment(
+                      key.verifies[key.verifies.length - 1].dateAppear
+                    ).format("ll");
+                  const privilegeDate =
+                    key.privilegeDate && moment(key.privilegeDate).format("ll");
                   return {
                     index: startNumber + index + 1,
                     name: `${key.title} ${key.firstName} ${key.lastName}`,
@@ -169,6 +191,8 @@ class ListCustomer extends Component {
                     address: addressToString(key.address),
                     authorize: key.authorize,
                     soldierNo: key.soldierNo,
+                    privilegeDate: privilegeDate,
+                    dateAppear: lastDateAppear,
                     war: key.war
                   };
                 })) ||
@@ -180,7 +204,7 @@ class ListCustomer extends Component {
         this.setState({
           statusModal: true,
           statusModalState: "getfail",
-          statusModalFailText: "ไม่สามารถติดต่อเซิฟเวอร์ได้"
+          statusModalFailText: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
         });
       });
   };
@@ -211,7 +235,7 @@ class ListCustomer extends Component {
       .catch(() => {
         this.setState({
           statusModalState: "deleteFail",
-          statusModalFailText: "ไม่สามารถติดต่อเซิฟเวอร์ได้"
+          statusModalFailText: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
         });
         setTimeout(() => {
           this.setState({
@@ -234,7 +258,10 @@ class ListCustomer extends Component {
     // console.log(value);
     this.setState(
       {
-        perPage: parseInt(value)
+        pageNo: 1,
+        perPage: parseInt(value),
+        statusModal: true,
+        statusModalState: "getting"
       },
       () => {
         this.fetchNew();
@@ -245,7 +272,9 @@ class ListCustomer extends Component {
   onPrevPage = () => {
     this.setState(
       {
-        pageNo: this.state.pageNo > 1 ? this.state.pageNo - 1 : 1
+        pageNo: this.state.pageNo > 1 ? this.state.pageNo - 1 : 1,
+        statusModal: true,
+        statusModalState: "getting"
       },
       () => {
         this.fetchNew();
@@ -259,7 +288,9 @@ class ListCustomer extends Component {
         pageNo:
           this.state.pageNo < this.state.maxPage
             ? this.state.pageNo + 1
-            : this.state.pageNo
+            : this.state.pageNo,
+        statusModal: true,
+        statusModalState: "getting"
       },
       () => {
         this.fetchNew();
@@ -275,7 +306,9 @@ class ListCustomer extends Component {
     if (pageNo) {
       this.setState(
         {
-          pageNo: pageNo
+          pageNo: pageNo,
+          statusModal: true,
+          statusModalState: "getting"
         },
         () => {
           this.fetchNew();
@@ -291,7 +324,9 @@ class ListCustomer extends Component {
     this.setState(
       {
         filterChecked: newChecked,
-        pageNo: 1
+        pageNo: 1,
+        statusModal: true,
+        statusModalState: "getting"
       },
       () => {
         this.fetchNew();
@@ -357,7 +392,6 @@ class ListCustomer extends Component {
       perPage,
       perPages,
       filterChecked,
-      filters,
       confirmDelete,
       confirmDeleteText,
       statusModal,
@@ -368,7 +402,7 @@ class ListCustomer extends Component {
       <Fragment>
         {/* <ScrollPositionManager /> */}
         <DataTable
-          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟ CA"
+          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)'
           columns={this.columns}
           data={customers}
           maxPage={maxPage}
@@ -382,7 +416,7 @@ class ListCustomer extends Component {
           onDelete={this.onDeleteClick}
           perPage={perPage}
           perPages={perPages}
-          filters={filters}
+          filters={this.filters}
           filterChecked={filterChecked}
           onFilterCheckedChange={this.onFilterCheckedChange}
           filterTextChange={this.onFilterTextChange}
@@ -392,7 +426,7 @@ class ListCustomer extends Component {
           show={confirmDelete}
           onHide={this.handleDeleteModalClose}
           confirm={this.handleConfirmClick}
-          status="delete"
+          status='delete'
           confirmtext={confirmDeleteText}
         />
         <ModalStatus

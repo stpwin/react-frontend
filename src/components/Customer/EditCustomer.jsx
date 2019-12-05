@@ -50,6 +50,7 @@ export class EditCustomer extends Component {
             mooNo: customer.address.mooNo,
             districtNo: customer.address.districtNo,
             postcode: correctPostcode(customer.address.districtNo),
+            authorize: customer.authorize,
             soldierNo: customer.soldierNo,
             war: customer.war
           },
@@ -67,13 +68,10 @@ export class EditCustomer extends Component {
   }
 
   handleSuccess = () => {
-    // this.props.history.push(this.state.redirectTo);
-
     this.props.history.goBack();
   };
 
   handleCancel = () => {
-    // this.props.history.push(this.props.redirectTo);
     this.props.history.goBack();
   };
 
@@ -92,6 +90,7 @@ export class EditCustomer extends Component {
           title: event.target.title.value,
           firstName: event.target.firstName.value,
           lastName: event.target.lastName.value,
+          authorize: event.target.authorize.value,
           soldierNo: event.target.soldierNo.value,
           war: event.target.war.value,
           address: {
@@ -114,7 +113,7 @@ export class EditCustomer extends Component {
             this.setState({
               statusModal: false
             });
-          }, 1000);
+          }, config.statusShowTime);
           return;
         }
         return rep;
@@ -123,13 +122,13 @@ export class EditCustomer extends Component {
       .then(rep => {
         if (!rep) return;
         rep.json().then(data => {
-          console.log(data);
+          // console.log(data);
           this.setState({
             statusModalState: "saved"
           });
           setTimeout(() => {
             this.handleSuccess();
-          }, 1000);
+          }, config.statusShowTime);
         });
       })
       .catch(err => {
@@ -141,7 +140,7 @@ export class EditCustomer extends Component {
           this.setState({
             statusModal: false
           });
-        }, 1000);
+        }, config.statusShowTime);
       });
   };
 
