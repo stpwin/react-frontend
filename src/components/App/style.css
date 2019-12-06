@@ -86,7 +86,7 @@ hr {
   min-width: 8em;
 }
 
-.td-tools-button .btn-toolbar>*+* {
+.td-tools-button .btn-toolbar > * + * {
   margin-left: 0.3em;
 }
 
@@ -94,7 +94,7 @@ hr {
   margin: 0 auto;
 }
 
-.custom-control-input:checked~.custom-control-label::before {
+.custom-control-input:checked ~ .custom-control-label::before {
   color: #fff;
   border-color: #563d7c;
   background-color: #563d7c;
@@ -119,10 +119,10 @@ mark {
   align-items: center;
 }
 
-.icon-before-text>*+*,
-.perPageDropdown>*+*,
-.spinner-margin>*+*,
-.btn-toolbar>*+* {
+.icon-before-text > * + *,
+.perPageDropdown > * + *,
+.spinner-margin > * + *,
+.btn-toolbar > * + * {
   margin-left: 0.5em;
 }
 
@@ -133,7 +133,6 @@ mark {
 .react-datepicker__header,
 .react-datepicker__day--selected,
 .react-datepicker__today-button {
-
   background-color: #563d7c !important;
 }
 
@@ -152,4 +151,8 @@ mark {
 
 .vertical-divider {
   border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.not-found {
+  margin-top: 1em;
 }

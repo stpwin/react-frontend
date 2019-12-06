@@ -6,6 +6,8 @@ import { authHeader, handleFetchError, addressToString } from "../../helpers";
 
 import moment from "moment";
 import "moment/locale/th";
+
+import { FaTimes, FaCheck, FaEdit } from "react-icons/fa";
 import { ModalConfirm, ModalStatus } from "../Modals";
 import { DataTable } from "../DataTable";
 
@@ -47,6 +49,27 @@ class ListCustomer extends Component {
     { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
     { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
     { text: "วันที่มาแสดงตน", dataField: "dateAppear", valign: "true" }
+  ];
+
+  tools = [
+    {
+      overlaytext: "ยืนยันสิทธิ์",
+      icon: <FaCheck />,
+      onclick: peaId => this.onVerifyClick(peaId)
+    },
+    {
+      overlaytext: "แก้ไข",
+      icon: <FaEdit />,
+      onclick: peaId => this.onEditClick(peaId),
+      key: "edit"
+    },
+    {
+      overlaytext: "ลบ",
+      icon: <FaTimes />,
+      onclick: (peaId, customValue) => this.onDeleteClick(peaId, customValue),
+      key: "delete",
+      customValue: true
+    }
   ];
 
   UNSAFE_componentWillMount() {
@@ -355,12 +378,12 @@ class ListCustomer extends Component {
     this.props.history.push(`/customers/edit/${peaId}`);
   };
 
-  onDeleteClick = peaId => {
+  onDeleteClick = (peaId, customValue) => {
     if (!peaId) return;
 
     this.setState({
       confirmDelete: true,
-      confirmDeleteText: peaId,
+      confirmDeleteText: `${peaId} ${customValue}`,
       confirmDeletePeaId: peaId
     });
     // this.props.history.push(`/customers/verify/${peaId}`);
@@ -402,7 +425,7 @@ class ListCustomer extends Component {
       <Fragment>
         {/* <ScrollPositionManager /> */}
         <DataTable
-          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)'
+          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)"
           columns={this.columns}
           data={customers}
           maxPage={maxPage}
@@ -411,22 +434,25 @@ class ListCustomer extends Component {
           onPrevPage={this.onPrevPage}
           onPageChange={this.onPageChange}
           onPerPageChange={this.onPerPageChange}
-          onVerify={this.onVerifyClick}
-          onEdit={this.onEditClick}
-          onDelete={this.onDeleteClick}
+          // onVerify={this.onVerifyClick}
+          // onEdit={this.onEditClick}
+          // onDelete={this.onDeleteClick}
           perPage={perPage}
           perPages={perPages}
           filters={this.filters}
           filterChecked={filterChecked}
           onFilterCheckedChange={this.onFilterCheckedChange}
           filterTextChange={this.onFilterTextChange}
+          tools={this.tools}
+          idKey="peaId"
+          customValueKey="name"
           // redirectTo={"/customers"}
         />
         <ModalConfirm
           show={confirmDelete}
           onHide={this.handleDeleteModalClose}
           confirm={this.handleConfirmClick}
-          status='delete'
+          status="delete"
           confirmtext={confirmDeleteText}
         />
         <ModalStatus

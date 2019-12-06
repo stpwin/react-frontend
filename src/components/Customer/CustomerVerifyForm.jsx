@@ -7,7 +7,7 @@ import th from "date-fns/locale/th";
 import Signature from "./Signature";
 import { Form, Col, Row, Button, ButtonToolbar } from "react-bootstrap";
 
-class CustomerVerifyForm extends Component {
+export class CustomerVerifyForm extends Component {
   state = {
     dateAppear: new Date(),
     signatureBase64: null,
@@ -36,19 +36,19 @@ class CustomerVerifyForm extends Component {
     return (
       <React.Fragment>
         <Form.Group as={Row}>
-          <Form.Label as='legend' column sm={2}>
+          <Form.Label as="legend" column sm={2}>
             วันที่มาแสดงตน
           </Form.Label>
           <Col sm={3}>
             <DatePicker
-              locale='th'
-              todayButton='เลือกวันนี้'
-              className='form-control'
+              locale="th"
+              todayButton="เลือกวันนี้"
+              className="form-control"
               selected={dateAppear}
-              dateFormatCalendar='LLLL yyyy'
-              dateFormat='d MMMM y'
+              dateFormatCalendar="LLLL yyyy"
+              dateFormat="d MMMM y"
               onChange={this.handleDateChange}
-              name='dateAppear'
+              name="dateAppear"
             ></DatePicker>
           </Col>
         </Form.Group>
@@ -57,31 +57,31 @@ class CustomerVerifyForm extends Component {
           <Form.Label column sm={2}>
             ลายเซ็น
           </Form.Label>
-          <Col className='vertical-divider'>
+          <Col className="vertical-divider">
             <Signature setRef={setSigpadRef}></Signature>
           </Col>
-          <Col className='text-center align-self-center'>
+          <Col className="text-center align-self-center">
             <ButtonToolbar>
               <Button
-                variant='outline'
-                className='pea-color'
-                size='sm'
+                variant="outline"
+                className="pea-color"
+                size="sm"
                 onClick={this.getQRLink}
               >
                 รับลิ้งก์ QR Code
               </Button>
               <Button
-                variant='outline'
-                className='pea-color'
-                size='sm'
+                variant="outline"
+                className="pea-color"
+                size="sm"
                 onClick={this.camera}
               >
                 กล้อง
               </Button>
               <Button
-                variant='outline'
-                className='pea-color'
-                size='sm'
+                variant="outline"
+                className="pea-color"
+                size="sm"
                 onClick={this.camera}
               >
                 อัพโหลด

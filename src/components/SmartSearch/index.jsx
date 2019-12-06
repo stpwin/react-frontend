@@ -129,23 +129,23 @@ export class SmartSearch extends Component {
     } = this.state;
 
     return (
-      <Container className='p-5 text-center'>
+      <Container className="p-5 text-center">
         <Jumbotron>
-          <h2 className='text-white'>
+          <h2 className="text-white">
             PEA War Veterans Privilege Managment System
           </h2>
 
-          <Row className='justify-content-md-center'>
-            <Col xs lg='5'>
-              <Form.Group className='smart-search-input'>
-                <Form.Label className='text-white'>
+          <Row className="justify-content-md-center">
+            <Col xs lg="5">
+              <Form.Group className="smart-search-input">
+                <Form.Label className="text-white">
                   หมายเลขผู้ใช้ไฟฟ้า(CA)
                 </Form.Label>
                 <Form.Control
-                  className='ca-text text-center'
-                  size='lg'
-                  type='text'
-                  placeholder='xxxxxxxxxxx'
+                  className="ca-text text-center"
+                  size="lg"
+                  type="text"
+                  placeholder="xxxxxxxxxxx"
                   maxLength={11}
                   onChange={this.handleTextChange}
                   value={peaId}
@@ -160,11 +160,11 @@ export class SmartSearch extends Component {
               ) : fetchSuccess ? (
                 fetchResult ? (
                   <Fragment>
-                    <div className='icon-before-text'>
-                      <span className='text-white'>
+                    <div className="icon-before-text">
+                      <span className="text-white">
                         <FaInfoCircle />
                       </span>
-                      <span className='text-white'>{statusText}</span>
+                      <span className="text-white">{statusText}</span>
                     </div>
 
                     <CustomerView customer={customer} />
@@ -177,41 +177,41 @@ export class SmartSearch extends Component {
             </Col>
           </Row>
 
-          <Collapse key='collapse-first-button' in={createButtonOpen}>
-            <Row className='justify-content-md-center'>
+          <Collapse key="collapse-first-button" in={createButtonOpen}>
+            <Row className="justify-content-md-center">
               <Col>
                 <Button
-                  variant='outline-light'
-                  size='lg'
+                  variant="outline-light"
+                  size="lg"
                   // href={`/customers/add/${peaId}`}
                   onClick={this.handleAdd}
-                  className='btn-block'
+                  className="btn-block"
                 >
                   เพิ่มข้อมูล
                 </Button>
               </Col>
             </Row>
           </Collapse>
-          <Collapse key='collapse-second-button' in={editVerifyButtonOpen}>
-            <Row className='justify-content-md-center'>
-              <Col xs lg='3'>
+          <Collapse key="collapse-second-button" in={editVerifyButtonOpen}>
+            <Row className="justify-content-md-center">
+              <Col xs lg="3">
                 <Button
-                  variant='outline-light'
-                  size='lg'
+                  variant="outline-light"
+                  size="lg"
                   // href={`/customers/edit/${peaId}`}
-                  className='btn-block'
+                  className="btn-block"
                   onClick={this.handleEdit}
                 >
                   แก้ไขข้อมูล
                 </Button>
               </Col>
-              <Col xs lg='3'>
+              <Col xs lg="3">
                 <Button
-                  variant='outline-light'
-                  size='lg'
+                  variant="outline-light"
+                  size="lg"
                   // href={`/customers/verify/${peaId}`}
                   onClick={this.handleVerify}
-                  className='btn-block'
+                  className="btn-block"
                 >
                   ยืนยันสิทธิ์
                 </Button>
@@ -224,43 +224,43 @@ export class SmartSearch extends Component {
   }
 }
 
-const Fetching = ({}) => {
+const Fetching = () => {
   return (
-    <div className='spinner-margin' id='data-collapse'>
+    <div className="spinner-margin" id="data-collapse">
       <Spinner
-        animation='border'
-        role='status'
-        as='span'
-        size='sm'
-        aria-hidden='true'
-        variant='light'
+        animation="border"
+        role="status"
+        as="span"
+        size="sm"
+        aria-hidden="true"
+        variant="light"
       >
-        <span className='sr-only text-white'>กำลังเรียกข้อมูล...</span>
+        <span className="sr-only text-white">กำลังเรียกข้อมูล...</span>
       </Spinner>
 
-      <span className='text-white'>กำลังเรียกข้อมูล...</span>
+      <span className="text-white">กำลังเรียกข้อมูล...</span>
     </div>
   );
 };
 
 const NotFound = ({ statusText }) => {
   return (
-    <div className='icon-before-text'>
-      <span className='text-white'>
+    <div className="icon-before-text">
+      <span className="text-white">
         <FaInfoCircle />
       </span>
-      <span className='text-white'>ไม่พบข้อมูล</span>
+      <span className="text-white">ไม่พบข้อมูล</span>
     </div>
   );
 };
 
 const FetchError = ({ statusText }) => {
   return (
-    <div className='icon-before-text'>
-      <span className='text-warning'>
+    <div className="icon-before-text">
+      <span className="text-warning">
         <FaExclamationTriangle />
       </span>
-      <span className='text-warning'>{`${statusText}`}</span>
+      <span className="text-warning">{`${statusText}`}</span>
     </div>
   );
 };
@@ -274,13 +274,13 @@ const CustomerView = ({ customer }) => {
           {" " + (customer && customer.firstName)}
           {" " + (customer && customer.lastName)}
         </Card.Title>
-        <Card.Subtitle className='mb-2 text-muted'>
+        <Card.Subtitle className="mb-2 text-muted">
           สงคราม {customer && customer.war}{" "}
           {getWarType(customer && customer.war)}
         </Card.Subtitle>
         <Card.Text>{addressToString(customer && customer.address)}</Card.Text>
       </Card.Body>
-      <ListGroup className='list-group-flush'>
+      <ListGroup className="list-group-flush">
         <ListGroupItem>
           หมายเลขทหาร {customer && customer.soldierNo}
         </ListGroupItem>
@@ -288,16 +288,16 @@ const CustomerView = ({ customer }) => {
           <ListGroupItem>Vestibulum at eros</ListGroupItem> */}
       </ListGroup>
       <Card.Body>
-        <Card.Link href='#'>พิมพ์</Card.Link>
+        <Card.Link href="#">พิมพ์</Card.Link>
       </Card.Body>
       <Card.Footer>
-        <small className='text-muted'>
+        <small className="text-muted">
           {customer && customer.verifies && customer.verifies.length > 0 ? (
             <Fragment>
               ยืนยันสิทธิ์ครั้งล่าสุดเมื่อ{" "}
               <Moment
-                locale='th'
-                format='LL'
+                locale="th"
+                format="LL"
                 date={
                   customer.verifies[customer.verifies.length - 1].dateAppear
                 }

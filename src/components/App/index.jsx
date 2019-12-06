@@ -20,16 +20,16 @@ function App() {
     <Router history={history}>
       <Navigation />
       <Switch>
-        <PrivateRoute exact path='/' component={Home} />
+        <PrivateRoute exact path="/" component={Home} />
 
-        <Route path='/login' component={LoginPage}></Route>
-        <PrivateRoute exact path='/users' component={Users} />
+        <Route path="/login" component={LoginPage}></Route>
+        <PrivateRoute path="/users/:method?" component={Users} />
 
         <PrivateRoute
-          path='/customers/:method?/:peaId?'
+          path="/customers/:method?/:peaId?"
           component={Customers}
         />
-        <Route path='*'>
+        <Route path="*">
           <NotFound />
         </Route>
       </Switch>

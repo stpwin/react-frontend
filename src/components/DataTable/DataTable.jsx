@@ -16,7 +16,7 @@ import {
 
 import "./table.css";
 
-import { FaSearch, FaTimes, FaSlidersH, FaCheck, FaEdit } from "react-icons/fa";
+import { FaSearch, FaTimes, FaSlidersH } from "react-icons/fa";
 
 import Highlight from "react-highlighter";
 
@@ -56,20 +56,36 @@ export class DataTable extends Component {
       onPrevPage,
       onPageChange,
       onPerPageChange,
-      onVerify,
-      onEdit,
-      onDelete,
       perPage,
       perPages,
       filters,
       filterChecked,
-      onFilterCheckedChange
+      onFilterCheckedChange,
+      tools,
+      idKey,
+      customValueKey,
+      topButtons
       // searchText
     } = this.props;
     return (
       <div className="data-table">
         <Row>
-          <Col />
+          <Col>
+            {topButtons && topButtons.length > 0
+              ? topButtons.map((item, index) => {
+                  return (
+                    <Button
+                      key={`button-${item.key}`}
+                      variant="outline"
+                      className="pea-color"
+                      onClick={() => item.onClick()}
+                    >
+                      {item.text}
+                    </Button>
+                  );
+                })
+              : null}
+          </Col>
           <Col />
           <Col className="text-right align-self-center">
             {perPage ? (
@@ -77,7 +93,7 @@ export class DataTable extends Component {
                 <div className="perPageDropdown">
                   <span>แสดง</span>
                   <Dropdown
-                    id="dropdown-item-button justify-content-end"
+                    id="dropdown-item-button"
                     onSelect={onPerPageChange}
                   >
                     <Dropdown.Toggle
@@ -212,66 +228,46 @@ export class DataTable extends Component {
                           </td>
                         ); //////////////////List data
                       })}
-                    <td
-                      key={`td-toolsbar`}
-                      className="align-middle text-center td-tools-button"
-                    >
-                      <ButtonToolbar aria-label="Toolbar with button groups">
-                        <OverlayTrigger
-                          key={"verify"}
-                          placement={"top"}
-                          overlay={
-                            <Tooltip id={`tooltip-verify`}>
-                              ยืนยันสิทธิ์
-                            </Tooltip>
-                          }
-                        >
-                          <Button
-                            key={`verify-button-${dataIndex}`}
-                            variant={"outline"}
-                            size={"sm"}
-                            className={"pea-color"}
-                            onClick={() => onVerify(item.peaId)}
-                          >
-                            <FaCheck />
-                          </Button>
-                        </OverlayTrigger>
-
-                        <OverlayTrigger
-                          key={"edit"}
-                          placement={"top"}
-                          overlay={
-                            <Tooltip id={`tooltip-edit`}>แก้ไขข้อมูล</Tooltip>
-                          }
-                        >
-                          <Button
-                            key={`edit-button-${dataIndex}`}
-                            size={"sm"}
-                            variant={"outline"}
-                            className={"pea-color"}
-                            onClick={() => onEdit(item.peaId)}
-                          >
-                            <FaEdit />
-                          </Button>
-                        </OverlayTrigger>
-
-                        <OverlayTrigger
-                          key="delete"
-                          placement="top"
-                          overlay={<Tooltip id={`tooltip-delete`}>ลบ</Tooltip>}
-                        >
-                          <Button
-                            key={`delete-button-${dataIndex}`}
-                            variant="outline"
-                            size="sm"
-                            className={"pea-color"}
-                            onClick={() => onDelete(item.peaId)}
-                          >
-                            <FaTimes />
-                          </Button>
-                        </OverlayTrigger>
-                      </ButtonToolbar>
-                    </td>
+                    {tools && tools.length > 0 ? (
+                      <td
+                        key={`td-toolsbar`}
+                        className="align-middle text-center td-tools-button"
+                      >
+                        <ButtonToolbar aria-label="Toolbar with button groups">
+                          {tools.map((data, index) => {
+                            // console.log(data);
+                            return (
+                              <OverlayTrigger
+                                key={`overlay-${data.key}`}
+                                placement={"top"}
+                                overlay={
+                                  <Tooltip id={`tooltip-${data.key}`}>
+                                    {data.overlaytext}
+                                  </Tooltip>
+                                }
+                              >
+                                <Button
+                                  key={`button-${data.key}`}
+                                  variant={"outline"}
+                                  size={"sm"}
+                                  className={"pea-color"}
+                                  onClick={() =>
+                                    data.customValue
+                                      ? data.onclick(
+                                          item[idKey],
+                                          item[customValueKey]
+                                        )
+                                      : data.onclick(item[idKey])
+                                  }
+                                >
+                                  {data.icon}
+                                </Button>
+                              </OverlayTrigger>
+                            );
+                          })}
+                        </ButtonToolbar>
+                      </td>
+                    ) : null}
                   </tr>
                 );
               })
@@ -279,7 +275,7 @@ export class DataTable extends Component {
               <tr>
                 <td
                   className="text-center align-middle"
-                  colSpan={columns && columns.length + 1}
+                  colSpan={columns && columns.length + (tools ? 1 : 0)}
                 >
                   ไม่มีข้อมูล
                 </td>
