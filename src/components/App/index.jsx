@@ -1,6 +1,8 @@
 import React from "react";
 import "./style.css";
 
+import { connect } from "react-redux";
+
 import { Router, Switch, Route } from "react-router-dom";
 import { history } from "../../helpers";
 // import config from "../../config";
@@ -20,21 +22,30 @@ function App() {
     <Router history={history}>
       <Navigation />
       <Switch>
-        <PrivateRoute exact path="/" component={Home} />
+        <PrivateRoute exact path='/' component={Home} />
 
-        <Route path="/login" component={LoginPage}></Route>
-        <PrivateRoute path="/users/:method?" component={Users} />
+        <Route path='/login' component={LoginPage}></Route>
+        <PrivateRoute path='/users/:method?/:uid?' component={Users} />
 
         <PrivateRoute
-          path="/customers/:method?/:peaId?"
+          path='/customers/:method?/:peaId?'
           component={Customers}
         />
-        <Route path="*">
+        <Route path='*'>
           <NotFound />
         </Route>
       </Switch>
     </Router>
   );
 }
+
+// const mapStateToProps = state => {
+//   console.log(state);
+//   return {};
+// };
+
+// const mapDispatchToProps = dispatch => {
+//   return {};
+// };
 
 export default App;

@@ -3,13 +3,7 @@ import { userService } from "../services";
 import { alertActions } from "./";
 import { history } from "../helpers";
 
-export const userActions = {
-  login,
-  logout,
-  getAll
-};
-
-function login(username, password) {
+const login = (username, password) => {
   return dispatch => {
     dispatch(request({ username }));
 
@@ -34,19 +28,19 @@ function login(username, password) {
   function failure(error) {
     return { type: userConstants.LOGIN_FAILURE, error };
   }
-}
+};
 
-function logout() {
+const logout = () => {
   userService.logout();
   return { type: userConstants.LOGOUT };
-}
+};
 
-function getAll() {
+const getAll = (page, pages) => {
   return dispatch => {
     dispatch(request());
 
-    userService.getAll().then(
-      users => dispatch(success(users)),
+    userService.getAll(page, pages).then(
+      data => dispatch(success(data)),
       error => dispatch(failure(error))
     );
   };
@@ -54,10 +48,38 @@ function getAll() {
   function request() {
     return { type: userConstants.GETALL_REQUEST };
   }
-  function success(users) {
-    return { type: userConstants.GETALL_SUCCESS, users };
+  function success(data) {
+    return { type: userConstants.GETALL_SUCCESS, data };
   }
   function failure(error) {
     return { type: userConstants.GETALL_FAILURE, error };
   }
-}
+};
+
+const getFilter = (filter, page, pages) => {
+  return dispatch => {
+    dispatch(request());
+
+    userService.getFilter(filter, page, pages).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: userConstants.GETFILTER_REQUEST };
+  }
+  function success(data) {
+    return { type: userConstants.GETFILTER_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: userConstants.GETFILTER_FAILURE, error };
+  }
+};
+
+export const userActions = {
+  login,
+  logout,
+  getAll,
+  getFilter
+};

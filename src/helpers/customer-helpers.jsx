@@ -10,14 +10,10 @@ export const getCustomerByPeaId = peaId => {
 
   return fetch(`${config.apiUrl}/api/customers/peaid/${peaId}`, requestOptions)
     .then(handleFetchError)
-    .then(rep => {
-      if (rep.status === 200) {
-        return rep.json();
+    .then(({ err, rep }) => {
+      if (err) {
+        return null;
       }
-      return null;
-    })
-    .then(data => {
-      // console.log(data);
-      return data;
+      return rep;
     });
 };

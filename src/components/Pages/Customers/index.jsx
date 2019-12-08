@@ -1,53 +1,61 @@
-import React, { Fragment } from "react";
+import React, { Component, Fragment } from "react";
 
-import { useParams } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+
 import { Container } from "react-bootstrap";
 
-import ListCustomer from "../../Customer/ListCustomer";
-import AddCustomer from "../../Customer/AddCustomer";
-import VerifyCustomer from "../../Customer/VerifyCustomer";
-import EditCustomer from "../../Customer/EditCustomer";
+import ListCustomer from "./ListCustomer";
+import AddCustomer from "./AddCustomer";
+import VerifyCustomer from "./VerifyCustomer";
+import EditCustomer from "./EditCustomer";
 
-export function Customers() {
-  const { method, peaId } = useParams();
+class Customers extends Component {
+  render() {
+    const {
+      match: {
+        params: { method, peaId }
+      }
+    } = this.props;
 
-  return (
-    <Container>
-      {method === "add" ? (
-        <Fragment>
-          <h1 className='header-text text-center'>เพิ่มลูกค้า</h1>
-          <AddCustomer peaId={peaId} />
-        </Fragment>
-      ) : method === "edit" ? (
-        peaId ? (
+    // const { method, peaId } = this.props.params;
+    return (
+      <Container>
+        {method === "add" ? (
           <Fragment>
-            <h1 className='header-text text-center'>แก้ไขข้อมูลลูกค้า</h1>
-            <EditCustomer peaId={peaId} />
+            <h1 className='header-text text-center'>เพิ่มลูกค้า</h1>
+            <AddCustomer peaId={peaId} />
           </Fragment>
+        ) : method === "edit" ? (
+          peaId ? (
+            <Fragment>
+              <h1 className='header-text text-center'>แก้ไขข้อมูลลูกค้า</h1>
+              <EditCustomer peaId={peaId} />
+            </Fragment>
+          ) : (
+            <NoPeaID />
+          )
+        ) : method === "verify" ? (
+          peaId ? (
+            <Fragment>
+              <h1 className='header-text text-center'>ยืนยันสิทธิ์</h1>
+              <VerifyCustomer peaId={peaId} />
+            </Fragment>
+          ) : (
+            <NoPeaID />
+          )
         ) : (
-          <NoPeaID />
-        )
-      ) : method === "verify" ? (
-        peaId ? (
           <Fragment>
-            <h1 className='header-text text-center'>ยืนยันสิทธิ์</h1>
-            <VerifyCustomer peaId={peaId} />
+            <h1 className='header-text text-center'>จัดการข้อมูลลูกค้า</h1>
+            <ListCustomer />
           </Fragment>
-        ) : (
-          <NoPeaID />
-        )
-      ) : (
-        <Fragment>
-          <h1 className='header-text text-center'>จัดการข้อมูลลูกค้า</h1>
-          <ListCustomer />
-        </Fragment>
-      )}
-    </Container>
-  );
+        )}
+      </Container>
+    );
+  }
 }
 
 const NoPeaID = () => {
   return <h3 className='text-center'>กรุณาระบุ peaId</h3>;
 };
 
-export default Customers;
+export default withRouter(Customers);

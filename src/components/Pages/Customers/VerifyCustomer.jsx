@@ -2,26 +2,28 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import config from "../../config";
+import config from "../../../config";
 import {
   authHeader,
   handleFetchError,
   correctPostcode,
   getCustomerByPeaId
-} from "../../helpers";
+} from "../../../helpers";
 
 import { Form } from "react-bootstrap";
 
-import { ModalStatus } from "../Modals";
-import CustomerDataForm from "./CustomerDataForm";
-import CustomerVerifyForm from "./CustomerVerifyForm";
-import FormButton from "./FormButton";
+import { ModalStatus } from "../../Modals";
+import CustomerDataForm from "../../Customer/CustomerDataForm";
+import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
+import FormButton from "../../Customer/FormButton";
 
 class VerifyCustomer extends Component {
   state = {
+    dateAppear: Date(),
     initial: {},
     statusModal: true,
-    statusModalState: "loading"
+    statusModalState: "loading",
+    failtext: ""
     // redirectTo: "/"
   };
 
@@ -50,6 +52,7 @@ class VerifyCustomer extends Component {
             mooNo: customer.address.mooNo,
             districtNo: customer.address.districtNo,
             postcode: correctPostcode(customer.address.districtNo),
+            authorize: customer.authorize,
             soldierNo: customer.soldierNo,
             war: customer.war
           },
@@ -58,10 +61,11 @@ class VerifyCustomer extends Component {
         });
       })
       .catch(() => {
-        console.log("get fail");
+        // console.log("get fail");
         this.setState({
           statusModal: true,
-          statusModalState: "getfail"
+          statusModalState: "getfail",
+          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
         });
       });
   }
@@ -81,6 +85,18 @@ class VerifyCustomer extends Component {
     this.props.history.goBack();
   };
 
+  handleAppearDateChange = date => {
+    this.setState({
+      dateAppear: date
+    });
+  };
+
+  handleStatusClose = () => {
+    this.setState({
+      statusModal: false
+    });
+  };
+
   verifyData = event => {
     event.preventDefault();
     this.setState({
@@ -95,7 +111,7 @@ class VerifyCustomer extends Component {
       headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify({
         verify: {
-          dateAppear: event.target.dateAppear.value,
+          dateAppear: this.state.dateAppear,
           signatureBase64: signatureData
         }
       })
@@ -109,15 +125,15 @@ class VerifyCustomer extends Component {
 
     fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
       .then(handleFetchError)
-      .then(rep => {
-        // console.log(rep.status);
-        if (rep.status === 200) {
-          return rep.json();
+      .then(({ err, rep }) => {
+        if (err) {
+          this.setState({
+            statusModalState: "savefail",
+            failtext: err
+          });
+          return;
         }
-        return null;
-      })
-      .then(data => {
-        // console.log(data);
+
         this.setState({
           statusModalState: "saved"
         });
@@ -127,19 +143,15 @@ class VerifyCustomer extends Component {
       })
       .catch(err => {
         console.log(err);
+
         this.setState({
           statusModalState: "savefail"
         });
-        setTimeout(() => {
-          this.setState({
-            statusModal: false
-          });
-        }, config.statusShowTime);
       });
   };
 
   render() {
-    const { initial, statusModal, statusModalState } = this.state;
+    const { initial, statusModal, statusModalState, failtext } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.verifyData}>
@@ -147,12 +159,20 @@ class VerifyCustomer extends Component {
             <React.Fragment>
               <CustomerDataForm initial={initial} readOnly={true} />
               <hr />
-              <CustomerVerifyForm setSigpadRef={this.setSigpadRef} />
+              <CustomerVerifyForm
+                setSigpadRef={this.setSigpadRef}
+                handleAppearDateChange={this.handleAppearDateChange}
+              />
               <FormButton loading={statusModal} cancel={this.handleCancel} />
             </React.Fragment>
           ) : null}
         </Form>
-        <ModalStatus show={statusModal} status={statusModalState} />
+        <ModalStatus
+          show={statusModal}
+          status={statusModalState}
+          failtext={failtext}
+          onHide={this.handleStatusClose}
+        />
       </React.Fragment>
     );
   }

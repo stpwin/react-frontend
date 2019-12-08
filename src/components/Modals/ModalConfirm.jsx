@@ -17,18 +17,18 @@ export class ModalConfirm extends Component {
         // size="sm"
         show={show}
         onHide={onHide}
-        aria-labelledby="contained-modal-title-vcenter"
+        aria-labelledby='contained-modal-title-vcenter'
         centered
         // backdrop="static"
       >
         <Modal.Header>
-          <div className="pea-color">
+          <div className='pea-color'>
             <FaQuestionCircle size={32} />
           </div>
           {/* <Modal.Title>Modal title</Modal.Title> */}
         </Modal.Header>
 
-        <Modal.Body className="text-center">
+        <Modal.Body className='text-center'>
           {status === "datachanged" ? (
             <DataChanged />
           ) : status === "delete" ? (
@@ -51,10 +51,14 @@ export class ModalConfirm extends Component {
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="warning" onClick={confirm}>
+          <Button
+            variant='outline-danger'
+            className='pea-color'
+            onClick={confirm}
+          >
             ยืนยัน
           </Button>
-          <Button variant="secondary" onClick={onHide}>
+          <Button variant='outline-success' onClick={onHide}>
             ปิด
           </Button>
         </Modal.Footer>
@@ -75,7 +79,7 @@ const ConfirmDelete = ({ confirmtext }) => {
   return (
     <React.Fragment>
       <h4>
-        คุณต้องการลบ <span className="text-danger">{confirmtext}</span> หรือไม่
+        คุณต้องการลบ <span className='text-danger'>{confirmtext}</span> หรือไม่
       </h4>
     </React.Fragment>
   );
@@ -84,7 +88,7 @@ const ConfirmDelete = ({ confirmtext }) => {
 const Require = () => {
   return (
     <React.Fragment>
-      <div className="text-danger">
+      <div className='text-danger'>
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -96,7 +100,7 @@ const Require = () => {
 const FetchFail = () => {
   return (
     <React.Fragment>
-      <div className="text-danger">
+      <div className='text-danger'>
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -109,11 +113,11 @@ const Saving = () => {
   return (
     <React.Fragment>
       <Spinner
-        as="span"
-        animation="border"
-        size="lg"
-        role="status"
-        aria-hidden="true"
+        as='span'
+        animation='border'
+        size='lg'
+        role='status'
+        aria-hidden='true'
       />
       <h4>กำลังบันทึกข้อมูล...</h4>
     </React.Fragment>
@@ -123,7 +127,7 @@ const Saving = () => {
 const Saved = () => {
   return (
     <React.Fragment>
-      <div className="text-success">
+      <div className='text-success'>
         <FaCheck size={32} />
       </div>
 
@@ -135,7 +139,7 @@ const Saved = () => {
 const SaveFail = () => {
   return (
     <React.Fragment>
-      <div className="text-danger">
+      <div className='text-danger'>
         <FaExclamationTriangle size={32} />
       </div>
 
@@ -148,11 +152,11 @@ const Loading = () => {
   return (
     <React.Fragment>
       <Spinner
-        as="span"
-        animation="border"
-        size="lg"
-        role="status"
-        aria-hidden="true"
+        as='span'
+        animation='border'
+        size='lg'
+        role='status'
+        aria-hidden='true'
       />
 
       <h4>กำลังโหลด...</h4>
@@ -163,7 +167,7 @@ const Loading = () => {
 const NoData = () => {
   return (
     <React.Fragment>
-      <div className="text-danger">
+      <div className='text-danger'>
         <FaExclamationTriangle size={32} />
       </div>
 

@@ -3,28 +3,29 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { userActions } from "../../../actions";
 import config from "../../../config";
+import { authHeader, handleFetchSuccessResponse } from "../../../helpers";
 
 import moment from "moment";
 import "moment/locale/th";
 
-import { FaTimes, FaEdit } from "react-icons/fa";
-
-// import { Fragment } from "react-bootstrap";
+import { FaTrash, FaEdit } from "react-icons/fa";
 import { DataTable } from "../../DataTable";
 import { ModalStatus, ModalConfirm } from "../../Modals";
 
 class ListUsers extends Component {
   state = {
-    pageNo: 0,
-    maxPage: 0,
+    pageNo: 1,
+    maxPage: 1,
     perPage: 10,
     perPages: [10, 20, 50, 100],
     users: [],
-    modalStatusShow: false,
-    modalStatusState: "getting",
+    modalStatusShow: true,
+    status: "getting",
+    failtext: "",
     modalConfirmShow: false,
     selectedUid: "",
-    confirmtext: ""
+    confirmtext: "",
+    filterText: ""
   };
 
   columns = [
@@ -37,7 +38,8 @@ class ListUsers extends Component {
       canSearch: true
     },
     { text: "ระดับ", dataField: "role", valign: "true" },
-    { text: "สร้างเมื่อง", dataField: "createdAt", valign: "true" }
+    { text: "สร้างเมื่อง", dataField: "createdAt", valign: "true" },
+    { text: "รายละเอียด", dataField: "description", valign: "true" }
   ];
 
   tools = [
@@ -49,7 +51,7 @@ class ListUsers extends Component {
     },
     {
       overlaytext: "ลบ",
-      icon: <FaTimes />,
+      icon: <FaTrash />,
       onclick: (userId, customValue) => this.handleRemove(userId, customValue),
       key: "delete",
       customValue: true
@@ -65,73 +67,134 @@ class ListUsers extends Component {
   ];
 
   UNSAFE_componentWillMount() {
-    this.props.dispatch(userActions.getAll());
     moment.locale("th");
+    this.fetchNew();
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // console.log(nextProps);
-    const { users, user } = nextProps;
-    if (users && users.metadata) {
-      const page = users.metadata.page;
-      const pages = users.metadata.pages;
+    // console.log("componentDidUpdate", this.props);
+    const { users } = nextProps;
+
+    if (users.error) {
       this.setState({
+        status: "getfail",
+        failtext: `${users.error}`
+      });
+      return;
+    }
+
+    if (users.loading) {
+      return;
+    }
+    // console.log(users);
+    if (users.metadata) {
+      let { page = +page, pages } = users.metadata;
+
+      const startNumber = page > 1 ? (page - 1) * this.state.perPage : 0;
+      return this.setState({
+        modalStatusShow: false,
         pageNo: page,
         maxPage: pages,
         users:
           users.users &&
           users.users
-            .filter(userFilter => {
-              return user.username !== userFilter.username;
-            })
+            // .filter(userFilter => {
+            //   return user.username !== userFilter.username;
+            // })
             .map((userItem, index) => {
-              console.log(userItem._id);
-              if (user.username === userItem.username) return null;
               return {
                 uid: userItem._id,
-                index: index + 1,
+                index: startNumber + index + 1,
                 displayName: userItem.displayName,
                 username: userItem.username,
                 role: userItem.role,
+                description: userItem.description,
                 createdAt: moment(userItem.createdAt).format("lll")
               };
             })
       });
     }
+
+    this.setState({
+      modalStatusShow: false,
+      users: []
+    });
   }
 
-  handleRemove = (userId, text) => {
-    if (!userId) return;
+  fetchNew = () => {
+    const { pageNo, perPage, filterText } = this.state;
+    if (filterText) {
+      this.props.getFilter(filterText, pageNo, perPage);
+      // console.log("Hello");
+      return;
+    }
+    this.props.getAll(pageNo, perPage);
+    // console.log("Hello");
+  };
+
+  handleRemove = (uid, text) => {
+    if (!uid) return;
     this.setState({
-      selectedUid: userId,
+      selectedUid: uid,
       confirmtext: text,
       modalConfirmShow: true
     });
   };
 
-  handleEdit = userId => {
-    if (!userId) return;
-    this.props.history.push(`/users/edit?uid=${userId}`);
+  handleEdit = uid => {
+    if (!uid) return;
+    this.props.history.push(`/users/edit/${uid}`);
+  };
+
+  handleChangePassword = uid => {
+    if (!uid) return;
+    this.props.history.push(`/users/change-password/${uid}`);
   };
 
   handleConfirmClick = () => {
-    console.log("Confirmed UID:", this.state.selectedUid);
+    const { selectedUid } = this.state;
+    console.log("Confirmed UID:", selectedUid);
     this.handleConfirmClose();
-    if (!this.state.selectedUid) return;
+    if (!selectedUid) return;
+
     this.setState({
       modalStatusShow: true,
-      modalStatusState: "deleting"
+      status: "deleting"
     });
-    setTimeout(() => {
-      this.setState({
-        modalStatusState: "deleted"
-      });
-      setTimeout(() => {
+
+    const reqConf = {
+      method: "DELETE",
+      headers: authHeader(),
+      body: JSON.stringify({
+        uid: selectedUid
+      })
+    };
+
+    fetch(`${config.apiUrl}/api/users`, reqConf)
+      .then(handleFetchSuccessResponse)
+      .then(({ err, rep }) => {
+        if (err) {
+          this.setState({
+            status: "deletefail",
+            failtext: err
+          });
+          return;
+        }
+
+        this.setState(
+          {
+            status: "deleted",
+            failtext: ""
+          },
+          this.fetchNew
+        );
+      })
+      .catch(() => {
         this.setState({
-          modalStatusShow: false
+          status: "deletefail",
+          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
         });
-      }, config.statusShowTime);
-    }, config.statusShowTime);
+      });
   };
 
   handleConfirmClose = () => {
@@ -140,9 +203,72 @@ class ListUsers extends Component {
     });
   };
 
+  handleStatusClose = () => {
+    this.setState({
+      modalStatusShow: false
+    });
+  };
+
   handleCreateUser = () => {
-    console.log("Create User");
+    // console.log("Create User");
     this.props.history.push("/users/create");
+  };
+
+  handleFilterChange = text => {
+    this.setState(
+      {
+        filterText: text,
+        pageNo: 1,
+        maxPage: 1
+      },
+      this.fetchNew
+    );
+  };
+
+  handlePerPageChange = perPage => {
+    this.setState(
+      {
+        perPage: perPage
+      },
+      this.fetchNew
+    );
+    // console.log(perPage);
+  };
+
+  handlePageChange = event => {
+    if (!event.target.text) return;
+
+    const pageNo = parseInt(event.target.text);
+
+    // console.log(pageNo);
+    this.setState(
+      {
+        pageNo: pageNo
+      },
+      this.fetchNew
+    );
+  };
+
+  handleNextPage = () => {
+    this.setState(
+      {
+        pageNo:
+          this.state.pageNo < this.state.maxPage
+            ? this.state.pageNo + 1
+            : this.state.pageNo
+      },
+      this.fetchNew
+    );
+  };
+
+  handlePrevPage = () => {
+    this.setState(
+      {
+        pageNo:
+          this.state.pageNo > 2 ? this.state.pageNo - 1 : this.state.pageNo
+      },
+      this.fetchNew
+    );
   };
 
   render() {
@@ -153,9 +279,10 @@ class ListUsers extends Component {
       perPages,
       users,
       modalStatusShow,
-      modalStatusState,
+      status,
       modalConfirmShow,
-      confirmtext
+      confirmtext,
+      failtext
     } = this.state;
     // const { users } = this.props;
 
@@ -166,24 +293,30 @@ class ListUsers extends Component {
           data={users}
           maxPage={maxPage}
           pageNo={pageNo}
-          onNextPage={this.onNextPage}
-          onPrevPage={this.onPrevPage}
-          onPageChange={this.onPageChange}
-          onPerPageChange={this.onPerPageChange}
+          onNextPage={this.handleNextPage}
+          onPrevPage={this.handlePrevPage}
+          onPageChange={this.handlePageChange}
+          onPerPageChange={this.handlePerPageChange}
+          filterTextChange={this.handleFilterChange}
           perPage={perPage}
           perPages={perPages}
           filterPlaceholder={"ค้นหาชื่อ หรือ Username"}
           tools={this.tools}
-          idKey="uid"
-          customValueKey="displayName"
+          idKey='uid'
+          customValueKey='displayName'
           topButtons={this.topButtons}
         />
-        <ModalStatus show={modalStatusShow} status={modalStatusState} />
+        <ModalStatus
+          show={modalStatusShow}
+          status={status}
+          onHide={this.handleStatusClose}
+          failtext={failtext}
+        />
         <ModalConfirm
           show={modalConfirmShow}
           onHide={this.handleConfirmClose}
           confirm={this.handleConfirmClick}
-          status="delete"
+          status='delete'
           confirmtext={confirmtext}
         />
       </Fragment>
@@ -191,14 +324,24 @@ class ListUsers extends Component {
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   const { users, authentication } = state;
   const { user } = authentication;
-  // console.log(users);
+  // console.log("mapStateToProps", state);
   return {
-    user,
+    // user,
     users
   };
-}
+};
 
-export default withRouter(connect(mapStateToProps)(ListUsers));
+const mapDispatchToProps = dispatch => {
+  return {
+    getFilter: (filter, page, pages) =>
+      dispatch(userActions.getFilter(filter, page, pages)),
+    getAll: (page, pages) => dispatch(userActions.getAll(page, pages))
+  };
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(ListUsers)
+);

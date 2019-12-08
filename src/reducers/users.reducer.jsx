@@ -1,18 +1,29 @@
 import { userConstants } from "../constants";
 
-export function users(state = {}, action) {
+export const users = (state = {}, action) => {
   switch (action.type) {
     case userConstants.GETALL_REQUEST:
       return {
         loading: true
       };
     case userConstants.GETALL_SUCCESS:
-      return action.users;
+      // console.log("GETALL_SUCCESS", action);
+      return action.data;
     case userConstants.GETALL_FAILURE:
+      return {
+        error: action.error
+      };
+    case userConstants.GETFILTER_REQUEST:
+      return {
+        loading: true
+      };
+    case userConstants.GETFILTER_SUCCESS:
+      return action.data;
+    case userConstants.GETFILTER_FAILURE:
       return {
         error: action.error
       };
     default:
       return state;
   }
-}
+};

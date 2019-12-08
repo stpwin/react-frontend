@@ -2,19 +2,19 @@ import React, { Component, Fragment } from "react";
 // import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import config from "../../config";
+import config from "../../../config";
 import {
   authHeader,
   handleFetchError,
   getCustomerByPeaId,
   correctPostcode
-} from "../../helpers";
+} from "../../../helpers";
 
 import { Form } from "react-bootstrap";
 
-import { ModalStatus } from "../Modals";
-import CustomerDataForm from "./CustomerDataForm";
-import FormButton from "./FormButton";
+import { ModalStatus } from "../../Modals";
+import CustomerDataForm from "../../Customer/CustomerDataForm";
+import FormButton from "../../Customer/FormButton";
 
 export class EditCustomer extends Component {
   state = {
@@ -75,6 +75,12 @@ export class EditCustomer extends Component {
     this.props.history.goBack();
   };
 
+  handleStatusClose = () => {
+    this.setState({
+      statusModal: false
+    });
+  };
+
   updateData = event => {
     event.preventDefault();
     this.setState({
@@ -119,33 +125,34 @@ export class EditCustomer extends Component {
         return rep;
       })
       .then(handleFetchError)
-      .then(rep => {
-        if (!rep) return;
-        rep.json().then(data => {
-          // console.log(data);
+      .then(({ err, rep }) => {
+        if (err) {
           this.setState({
-            statusModalState: "saved"
+            statusModalState: "savefail",
+            failtext: err
           });
-          setTimeout(() => {
-            this.handleSuccess();
-          }, config.statusShowTime);
+          return;
+        }
+
+        this.setState({
+          statusModalState: "saved"
         });
+        setTimeout(() => {
+          this.handleSuccess();
+        }, config.statusShowTime);
       })
       .catch(err => {
         console.log(err);
+
         this.setState({
-          statusModalState: "savefail"
+          statusModalState: "savefail",
+          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
         });
-        setTimeout(() => {
-          this.setState({
-            statusModal: false
-          });
-        }, config.statusShowTime);
       });
   };
 
   render() {
-    const { statusModal, statusModalState, initial } = this.state;
+    const { statusModal, statusModalState, initial, failtext } = this.state;
     return (
       <Fragment>
         {statusModalState !== "getting" ? (
@@ -159,7 +166,12 @@ export class EditCustomer extends Component {
           </Form>
         ) : null}
 
-        <ModalStatus show={statusModal} status={statusModalState} />
+        <ModalStatus
+          show={statusModal}
+          status={statusModalState}
+          failtext={failtext}
+          onHide={this.handleStatusClose}
+        />
       </Fragment>
     );
   }

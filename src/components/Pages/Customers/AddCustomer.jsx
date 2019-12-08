@@ -2,15 +2,15 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import config from "../../config";
-import { authHeader, handleFetchError } from "../../helpers";
+import config from "../../../config";
+import { authHeader, handleFetchError } from "../../../helpers";
 
 import { Form } from "react-bootstrap";
 
-import { ModalStatus, ModalConfirm } from "../Modals";
-import CustomerDataForm from "./CustomerDataForm";
-import CustomerVerifyForm from "./CustomerVerifyForm";
-import FormButton from "./FormButton";
+import { ModalStatus, ModalConfirm } from "../../Modals";
+import CustomerDataForm from "../../Customer/CustomerDataForm";
+import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
+import FormButton from "../../Customer/FormButton";
 
 class AddCustomer extends Component {
   state = {
@@ -20,7 +20,8 @@ class AddCustomer extends Component {
     peaIdOk: true,
     peaWarnText: "",
     statusModal: false,
-    statusModalState: "loading",
+    failtext: "",
+    status: "loading",
     confirmModal: false
   };
 
@@ -46,11 +47,17 @@ class AddCustomer extends Component {
     });
   };
 
+  handleStatusClose = () => {
+    this.setState({
+      statusModal: false
+    });
+  };
+
   insertData = event => {
     event.preventDefault();
     this.setState({
       statusModal: true,
-      statusModalState: "saving"
+      status: "saving"
     });
     const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
     const requestOptions = {
@@ -82,7 +89,7 @@ class AddCustomer extends Component {
       .then(rep => {
         if (rep.status === 422) {
           this.setState({
-            statusModalState: "require"
+            status: "require"
           });
           setTimeout(() => {
             this.setState({
@@ -94,31 +101,32 @@ class AddCustomer extends Component {
         return rep;
       })
       .then(handleFetchError)
-      .then(rep => {
-        if (!rep) return;
-        rep.json().then(data => {
+      .then(({ err, rep }) => {
+        if (err) {
           this.setState({
-            statusModalState: "saved"
+            status: "savefail",
+            failtext: err
           });
-          setTimeout(() => {
-            this.handleSuccess();
-          }, config.statusShowTime);
-        });
-      })
-      .catch(err => {
+          return;
+        }
+
         this.setState({
-          statusModalState: "savefail"
+          status: "saved"
         });
         setTimeout(() => {
-          this.setState({
-            statusModal: false
-          });
+          this.handleSuccess();
         }, config.statusShowTime);
+      })
+      .catch(() => {
+        this.setState({
+          status: "savefail",
+          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
+        });
       });
   };
 
   render() {
-    const { statusModal, statusModalState, confirmModal } = this.state;
+    const { statusModal, status, confirmModal, failtext } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.insertData}>
@@ -131,7 +139,12 @@ class AddCustomer extends Component {
           <CustomerVerifyForm setSigpadRef={this.setSigpadRef} />
           <FormButton loading={statusModal} cancel={this.handleCancel} />
         </Form>
-        <ModalStatus show={statusModal} status={statusModalState} />
+        <ModalStatus
+          show={statusModal}
+          status={status}
+          failtext={failtext}
+          onHide={this.handleStatusClose}
+        />
         <ModalConfirm
           show={confirmModal}
           status='datachanged'
