@@ -1,17 +1,20 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 
 import DatePicker, { registerLocale } from "react-datepicker";
 import th from "date-fns/locale/th";
 
-import Signature from "./Signature";
 import { Form, Col, Row, Button, ButtonToolbar } from "react-bootstrap";
+
+import Signature from "./Signature";
+import { ModalCamera } from "../Modals";
 
 export class CustomerVerifyForm extends Component {
   state = {
     dateAppear: new Date(),
     signatureBase64: null,
-    authorizeNameOpen: false
+    authorizeNameOpen: false,
+    showCamera: true
   };
 
   UNSAFE_componentWillMount() {
@@ -33,11 +36,25 @@ export class CustomerVerifyForm extends Component {
     handleAppearDateChange && handleAppearDateChange(date);
   };
 
+  handleShowCamera = () => {
+    this.setState({
+      showCamera: true
+    });
+  };
+
+  handleCaptureCamera = () => {};
+
+  handleCameraClose = () => {
+    this.setState({
+      showCamera: false
+    });
+  };
+
   render() {
-    const { dateAppear } = this.state;
+    const { dateAppear, showCamera } = this.state;
     const { setSigpadRef } = this.props;
     return (
-      <React.Fragment>
+      <Fragment>
         <Form.Group as={Row}>
           <Form.Label as='legend' column sm={2}>
             วันที่มาแสดงตน
@@ -77,22 +94,22 @@ export class CustomerVerifyForm extends Component {
                 variant='outline'
                 className='pea-color'
                 size='sm'
-                onClick={this.camera}
+                onClick={this.handleShowCamera}
               >
                 กล้อง
               </Button>
-              <Button
-                variant='outline'
-                className='pea-color'
-                size='sm'
-                onClick={this.camera}
-              >
+              <Button variant='outline' className='pea-color' size='sm'>
                 อัพโหลด
               </Button>
             </ButtonToolbar>
           </Col>
         </Form.Group>
-      </React.Fragment>
+        <ModalCamera
+          show={showCamera}
+          onHide={this.handleCameraClose}
+          onCapture={this.handleCaptureCamera}
+        />
+      </Fragment>
     );
   }
 }
