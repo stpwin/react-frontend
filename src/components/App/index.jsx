@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 
 import { Router, Switch, Route } from "react-router-dom";
 import { history } from "../../helpers";
@@ -17,21 +17,23 @@ import { LoginPage } from "../Pages/Login";
 import { Home } from "../Pages/Home";
 import Users from "../Pages/Users";
 
+// import PrintPage from "../Customer/PrintPage";
+
 function App() {
   return (
     <Router history={history}>
       <Navigation />
       <Switch>
-        <PrivateRoute exact path='/' component={Home} />
+        <PrivateRoute exact path="/" component={Home} />
 
-        <Route path='/login' component={LoginPage}></Route>
-        <PrivateRoute path='/users/:method?/:uid?' component={Users} />
-
+        <Route path="/login" component={LoginPage}></Route>
+        <PrivateRoute path="/users/:method?/:uid?" component={Users} />
+        {/* <PrivateRoute path="/1" component={PrintPage} /> */}
         <PrivateRoute
-          path='/customers/:method?/:peaId?'
+          path="/customers/:method?/:peaId?"
           component={Customers}
         />
-        <Route path='*'>
+        <Route path="*">
           <NotFound />
         </Route>
       </Switch>

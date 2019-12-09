@@ -1,6 +1,5 @@
 import config from "../config";
 import { authHeader } from "../helpers";
-import { history } from "../helpers";
 
 const login = (username, password) => {
   const requestOptions = {

@@ -88,8 +88,8 @@ class ListUsers extends Component {
     }
     // console.log(users);
     if (users.metadata) {
-      let { page = +page, pages } = users.metadata;
-
+      let { page, pages } = users.metadata;
+      page = parseInt(page);
       const startNumber = page > 1 ? (page - 1) * this.state.perPage : 0;
       return this.setState({
         modalStatusShow: false,
@@ -302,8 +302,8 @@ class ListUsers extends Component {
           perPages={perPages}
           filterPlaceholder={"ค้นหาชื่อ หรือ Username"}
           tools={this.tools}
-          idKey='uid'
-          customValueKey='displayName'
+          idKey="uid"
+          customValueKey="displayName"
           topButtons={this.topButtons}
         />
         <ModalStatus
@@ -316,7 +316,7 @@ class ListUsers extends Component {
           show={modalConfirmShow}
           onHide={this.handleConfirmClose}
           confirm={this.handleConfirmClick}
-          status='delete'
+          status="delete"
           confirmtext={confirmtext}
         />
       </Fragment>
@@ -325,9 +325,7 @@ class ListUsers extends Component {
 }
 
 const mapStateToProps = state => {
-  const { users, authentication } = state;
-  const { user } = authentication;
-  // console.log("mapStateToProps", state);
+  const { users } = state;
   return {
     // user,
     users
