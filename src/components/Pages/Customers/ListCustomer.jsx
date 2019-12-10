@@ -11,7 +11,7 @@ import {
 import moment from "moment";
 import "moment/locale/th";
 
-import { FaTrash, FaCheck, FaEdit } from "react-icons/fa";
+import { FaTrash, FaCheck, FaEdit, FaPrint } from "react-icons/fa";
 import { ModalConfirm, ModalStatus } from "../../Modals";
 import { DataTable } from "../../DataTable";
 
@@ -57,8 +57,15 @@ class ListCustomer extends Component {
 
   tools = [
     {
+      overlaytext: "พิมพ์",
+      icon: <FaPrint />,
+      key: "print",
+      onclick: peaId => this.onPrintClick(peaId)
+    },
+    {
       overlaytext: "ยืนยันสิทธิ์",
       icon: <FaCheck />,
+      key: "verify",
       onclick: peaId => this.onVerifyClick(peaId)
     },
     {
@@ -400,6 +407,11 @@ class ListCustomer extends Component {
       confirmDeletePeaId: peaId
     });
     // this.props.history.push(`/customers/verify/${peaId}`);
+  };
+
+  onPrintClick = peaId => {
+    console.log("onPrint", peaId);
+    this.props.history.push(`/customers/print/${peaId}`);
   };
 
   handleDeleteModalClose = () => {

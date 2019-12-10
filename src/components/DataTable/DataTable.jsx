@@ -68,7 +68,7 @@ export class DataTable extends Component {
       // searchText
     } = this.props;
     return (
-      <div className="data-table">
+      <div className='data-table'>
         <Row>
           <Col>
             {topButtons && topButtons.length > 0
@@ -76,8 +76,8 @@ export class DataTable extends Component {
                   return (
                     <Button
                       key={`button-${item.key}`}
-                      variant="outline"
-                      className="pea-color"
+                      variant='outline'
+                      className='pea-color'
                       onClick={() => item.onClick()}
                     >
                       {item.text}
@@ -87,18 +87,18 @@ export class DataTable extends Component {
               : null}
           </Col>
           <Col />
-          <Col className="text-right align-self-center">
+          <Col className='text-right align-self-center'>
             {perPage ? (
               <Fragment>
-                <div className="perPageDropdown">
+                <div className='perPageDropdown'>
                   <span>แสดง</span>
                   <Dropdown
-                    id="dropdown-item-button"
+                    id='dropdown-item-button'
                     onSelect={onPerPageChange}
                   >
                     <Dropdown.Toggle
-                      variant="outline-secondary"
-                      id="dropdown-basic"
+                      variant='outline-secondary'
+                      id='dropdown-basic'
                     >
                       {perPage}
                     </Dropdown.Toggle>
@@ -124,17 +124,17 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Row className="filterRow">
-          <Col className="align-self-center">
+        <Row className='filterRow'>
+          <Col className='align-self-center'>
             <InputGroup>
               <InputGroup.Prepend>
-                <InputGroup.Text id="inputGroup-sizing-sm">
+                <InputGroup.Text id='inputGroup-sizing-sm'>
                   <FaSearch />
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                aria-label="Small"
-                aria-describedby="inputGroup-sizing-sm"
+                aria-label='Small'
+                aria-describedby='inputGroup-sizing-sm'
                 placeholder={filterPlaceholder}
                 onChange={this.handleFilterTextChange}
                 value={filterText}
@@ -142,7 +142,7 @@ export class DataTable extends Component {
               {filterText.length > 0 ? (
                 <InputGroup.Append>
                   <Button
-                    variant="outline-secondary"
+                    variant='outline-secondary'
                     onClick={this.clearFilterText}
                   >
                     <FaTimes />
@@ -151,7 +151,7 @@ export class DataTable extends Component {
               ) : null}
             </InputGroup>
           </Col>
-          <Col className="align-self-center">
+          <Col className='align-self-center'>
             {filters &&
               filters.map((filter, index) => {
                 return (
@@ -170,7 +170,7 @@ export class DataTable extends Component {
             {/* <Form.Check custom inline label='G1' id='inline-1' />
             <Form.Check custom inline label='G2' id='inline-2' /> */}
           </Col>
-          <Col className="text-right align-self-center">
+          <Col className='text-right align-self-center'>
             <Paginator
               curPage={pageNo}
               maxPage={maxPage}
@@ -181,18 +181,18 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Table responsive bordered hover size="sm">
-          <thead className="text-center thread-pea">
+        <Table responsive bordered hover size='sm'>
+          <thead className='text-center thread-pea'>
             <tr>
               {columns &&
                 columns.map((col, index) => {
                   return (
-                    <th key={`th-${index}`} className="align-middle">
+                    <th key={`th-${index}`} className='align-middle'>
                       {col.text}
                     </th>
                   );
                 })}
-              <th key={`th-toolsbar`} className="align-middle">
+              <th key={`th-toolsbar`} className='align-middle'>
                 <FaSlidersH />
               </th>
             </tr>
@@ -231,9 +231,9 @@ export class DataTable extends Component {
                     {tools && tools.length > 0 ? (
                       <td
                         key={`td-toolsbar`}
-                        className="align-middle text-center td-tools-button"
+                        className='align-middle text-center td-tools-button'
                       >
-                        <ButtonToolbar aria-label="Toolbar with button groups">
+                        <ButtonToolbar aria-label='Toolbar with button groups'>
                           {tools.map((data, index) => {
                             // console.log(data);
                             return (
@@ -274,7 +274,7 @@ export class DataTable extends Component {
             ) : (
               <tr>
                 <td
-                  className="text-center align-middle"
+                  className='text-center align-middle'
                   colSpan={columns && columns.length + (tools ? 1 : 0)}
                 >
                   ไม่มีข้อมูล

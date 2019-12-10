@@ -18,7 +18,7 @@ class LoginPage extends React.Component {
     super(props);
 
     // reset login status
-    this.props.dispatch(userActions.logout());
+    this.props.logout();
 
     this.state = {
       username: "stpwin",
@@ -37,9 +37,9 @@ class LoginPage extends React.Component {
 
     this.setState({ submitted: true });
     const { username, password } = this.state;
-    const { dispatch } = this.props;
+
     if (username && password) {
-      dispatch(userActions.login(username, password));
+      this.props.login(username, password);
     }
   };
 
@@ -51,16 +51,17 @@ class LoginPage extends React.Component {
         <Col md={{ span: 6, offset: 3 }} className='text-center p-5'>
           <h2>เข้าสู่ระบบ</h2>
           <Form onSubmit={this.handleSubmit}>
-            <FormGroup className={submitted && !username ? " has-error" : ""}>
+            <FormGroup>
               <Form.Label htmlFor='username'>ชื่อผู้ใช้งาน</Form.Label>
               <Form.Control
                 name='username'
                 value={username}
                 placeholder='ชื่อผู้ใช้งาน'
                 onChange={this.handleChange}
+                isInvalid={submitted && !username}
               />
             </FormGroup>
-            <FormGroup className={submitted && !username ? " has-error" : ""}>
+            <FormGroup>
               <Form.Label htmlFor='username'>รหัสผ่าน</Form.Label>
               <Form.Control
                 name='password'
@@ -68,6 +69,7 @@ class LoginPage extends React.Component {
                 value={password}
                 placeholder='รหัสผ่าน'
                 onChange={this.handleChange}
+                isInvalid={submitted && !password}
               />
             </FormGroup>
             <FormGroup>
@@ -95,64 +97,28 @@ class LoginPage extends React.Component {
             </FormGroup>
           </Form>
         </Col>
-        {/* <div className='col-md-6 col-md-offset-3 p-5 text-center'>
-          <form name='form' onSubmit={this.handleSubmit}>
-            <div
-              className={
-                "form-group" + (submitted && !username ? " has-error" : "")
-              }
-            >
-              <label htmlFor='username'>ชื่อผู้ใช้งาน</label>
-              <input
-                type='text'
-                className='form-control'
-                name='username'
-                value={username}
-                onChange={this.handleChange}
-              />
-              {submitted && !username && (
-                <div className='help-block'>Username is required</div>
-              )}
-            </div>
-            <div
-              className={
-                "form-group" + (submitted && !password ? " has-error" : "")
-              }
-            >
-              <label htmlFor='password'>Password</label>
-              <input
-                type='password'
-                className='form-control'
-                name='password'
-                value={password}
-                onChange={this.handleChange}
-              />
-              {submitted && !password && (
-                <div className='help-block'>Password is required</div>
-              )}
-            </div>
-            <div className='form-group'>
-              <button className='btn btn-primary'>Login</button>
-              {loggingIn && (
-                <img
-                  alt='ABC'
-                  src='data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA=='
-                />
-              )}
-            </div>
-          </form>
-        </div> */}
       </Container>
     );
   }
 }
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   const { loggingIn } = state.authentication;
   return {
     loggingIn
   };
-}
+};
 
-const connectedLoginPage = connect(mapStateToProps)(LoginPage);
+const mapDispatchToProps = dispatch => {
+  return {
+    login: (username, password) =>
+      dispatch(userActions.login(username, password)),
+    logout: () => dispatch(userActions.logout())
+  };
+};
+
+const connectedLoginPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginPage);
 export { connectedLoginPage as LoginPage };

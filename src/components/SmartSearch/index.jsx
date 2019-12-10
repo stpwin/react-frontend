@@ -3,9 +3,6 @@ import React, { Component, Fragment } from "react";
 import "./style.css";
 import { getCustomerByPeaId, addressToString, getWarType } from "../../helpers";
 import { withRouter } from "react-router-dom";
-import Moment from "react-moment";
-import "moment-timezone";
-import "moment/locale/th";
 
 import {
   Container,
@@ -29,7 +26,7 @@ export class SmartSearch extends Component {
   state = {
     createButtonOpen: false,
     editVerifyButtonOpen: false,
-    peaId: "0025123555",
+    peaId: "020005975806",
     statusOpen: false,
     fetching: false,
     fetchError: false,
@@ -63,7 +60,7 @@ export class SmartSearch extends Component {
       fetchResult: false
     });
 
-    if (peaId.length === 11) {
+    if (peaId.length === 12) {
       this.setState({
         statusOpen: true,
         fetching: true
@@ -115,6 +112,10 @@ export class SmartSearch extends Component {
     this.props.history.push(`/customers/verify/${this.state.peaId}`);
   };
 
+  handlePrint = peaId => {
+    this.props.history.push(`/customers/print/${peaId}`);
+  };
+
   render() {
     const {
       createButtonOpen,
@@ -132,21 +133,24 @@ export class SmartSearch extends Component {
       <Container className='p-5 text-center'>
         <Jumbotron>
           <h2 className='text-white'>
-            PEA War Veterans Privilege Management System
+            ระบบจัดการการขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก
           </h2>
+          <h4 className='text-white '>
+            PEA War Veterans Privilege Management System
+          </h4>
 
           <Row className='justify-content-md-center'>
             <Col xs lg='5'>
               <Form.Group className='smart-search-input'>
                 <Form.Label className='text-white'>
-                  หมายเลขผู้ใช้ไฟฟ้า(CA)
+                  ระบุหมายเลขผู้ใช้ไฟฟ้า(CA)
                 </Form.Label>
                 <Form.Control
                   className='ca-text text-center'
                   size='lg'
                   type='text'
                   placeholder='xxxxxxxxxxx'
-                  maxLength={11}
+                  maxLength={12}
                   onChange={this.handleTextChange}
                   value={peaId}
                 />
@@ -167,7 +171,10 @@ export class SmartSearch extends Component {
                       <span className='text-white'>{statusText}</span>
                     </div>
 
-                    <CustomerView customer={customer} />
+                    <CustomerView
+                      customer={customer}
+                      handlePrint={this.handlePrint}
+                    />
                   </Fragment>
                 ) : (
                   <NotFound />
@@ -265,7 +272,7 @@ const FetchError = ({ statusText }) => {
   );
 };
 
-const CustomerView = ({ customer }) => {
+const CustomerView = ({ customer, handlePrint }) => {
   return (
     <Card>
       <Card.Body>
@@ -288,20 +295,23 @@ const CustomerView = ({ customer }) => {
           <ListGroupItem>Vestibulum at eros</ListGroupItem> */}
       </ListGroup>
       <Card.Body>
-        <Card.Link href='#'>พิมพ์</Card.Link>
+        <Card.Link href='' onClick={() => handlePrint(customer.peaId)}>
+          พิมพ์
+        </Card.Link>
       </Card.Body>
       <Card.Footer>
         <small className='text-muted'>
           {customer && customer.verifies && customer.verifies.length > 0 ? (
             <Fragment>
               ยืนยันสิทธิ์ครั้งล่าสุดเมื่อ{" "}
-              <Moment
-                locale='th'
-                format='LL'
-                date={
-                  customer.verifies[customer.verifies.length - 1].dateAppear
-                }
-              />
+              {new Date(
+                customer.verifies[customer.verifies.length - 1].dateAppear
+              ).toLocaleDateString("th-TH", {
+                // weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              })}
             </Fragment>
           ) : (
             "ไม่เคยยืนยันสิทธิ์"

@@ -128,9 +128,9 @@ export class CustomerDataForm extends Component {
           </Form.Label>
           <Col sm={5}>
             <InputGroup className='mb-0'>
-              <InputGroup.Prepend>
+              {/* <InputGroup.Prepend>
                 <InputGroup.Text id='basic-addon3'>02</InputGroup.Text>
-              </InputGroup.Prepend>
+              </InputGroup.Prepend> */}
               <FormControl
                 aria-describedby='basic-addon3'
                 maxLength={11}
