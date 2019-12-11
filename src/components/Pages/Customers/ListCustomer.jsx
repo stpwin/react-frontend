@@ -143,23 +143,30 @@ class ListCustomer extends Component {
           maxPage: pages,
           pageNo: page,
           customers: rep.customers.map((key, index) => {
-            const lastDateAppear =
-              key.verifies &&
-              key.verifies.length > 0 &&
-              moment(key.verifies[key.verifies.length - 1].dateAppear).format(
-                "ll"
-              );
-            const privilegeDate =
-              key.privilegeDate && moment(key.privilegeDate).format("ll");
+            let lastDateAppear;
+            let privilegeDate;
+            if (key.verifies && key.verifies.length > 0) {
+              const lastVerify = key.verifies[key.verifies.length - 1];
+
+              lastDateAppear =
+                lastVerify.dateAppear &&
+                moment(lastVerify.dateAppear).format("ll");
+
+              privilegeDate =
+                lastVerify.privilegeDate &&
+                moment(lastVerify.privilegeDate).format("ll");
+            }
+
+            // console.log(privilegeDate);
             return {
               index: startNumber + index + 1,
               name: `${key.title} ${key.firstName} ${key.lastName}`,
               peaId: key.peaId,
               address: addressToString(key.address),
-              authorize: key.authorize,
-              soldierNo: key.soldierNo,
-              privilegeDate: privilegeDate,
-              dateAppear: lastDateAppear,
+              authorize: key.authorize || "-",
+              soldierNo: key.soldierNo || "-",
+              privilegeDate: privilegeDate || "-",
+              dateAppear: lastDateAppear || "-",
               war: key.war
             };
           })
@@ -177,7 +184,7 @@ class ListCustomer extends Component {
 
   fillCustomer = () => {
     const { pageNo, perPage, filterText } = this.state;
-    const reqConf = {
+    const reqConf = -{
       method: "GET",
       headers: authHeader()
     };
@@ -229,7 +236,11 @@ class ListCustomer extends Component {
                     key.verifies[key.verifies.length - 1].dateAppear
                   ).format("ll");
                 const privilegeDate =
-                  key.privilegeDate && moment(key.privilegeDate).format("ll");
+                  key.verifies &&
+                  moment(
+                    key.verifies[key.verifies.length - 1].privilegeDate
+                  ).format("ll");
+                console.log(privilegeDate);
                 return {
                   index: startNumber + index + 1,
                   name: `${key.title} ${key.firstName} ${key.lastName}`,
@@ -456,7 +467,7 @@ class ListCustomer extends Component {
       <Fragment>
         {/* <ScrollPositionManager /> */}
         <DataTable
-          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)'
+          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)"
           columns={this.columns}
           data={customers}
           maxPage={maxPage}
@@ -475,15 +486,15 @@ class ListCustomer extends Component {
           onFilterCheckedChange={this.onFilterCheckedChange}
           filterTextChange={this.onFilterTextChange}
           tools={this.tools}
-          idKey='peaId'
-          customValueKey='name'
+          idKey="peaId"
+          customValueKey="name"
           // redirectTo={"/customers"}
         />
         <ModalConfirm
           show={confirmDelete}
           onHide={this.handleDeleteModalClose}
           confirm={this.handleConfirmClick}
-          status='delete'
+          status="delete"
           confirmtext={confirmDeleteText}
         />
         <ModalStatus

@@ -27,7 +27,7 @@
   padding: 1cm;
   padding-top: 0.5cm;
   height: 257mm;
-  font-family: 'Sarabun', sans-serif;
+  font-family: "Sarabun", sans-serif;
   /* border: 1px #ebebeb solid; */
   /* outline: 2cm #ffeaea solid; */
 }
@@ -38,12 +38,12 @@
 }
 
 @media print {
-
   html,
   body {
     min-width: 210mm !important;
+    /* min-height: 257mm !important; */
     width: 210mm;
-    height: 297mm;
+    /* height: 297mm; */
   }
 
   .page {
@@ -67,7 +67,7 @@
   min-height: 90%;
 }
 
-.footer {
+/* .footer {
   position: relative;
   min-height: 10%;
   width: 100%;
@@ -77,4 +77,4 @@
   position: absolute;
   width: 100%;
   bottom: 0;
-}
+} */

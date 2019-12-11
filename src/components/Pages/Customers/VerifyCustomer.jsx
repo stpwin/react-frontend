@@ -19,7 +19,8 @@ import FormButton from "../../Customer/FormButton";
 
 class VerifyCustomer extends Component {
   state = {
-    dateAppear: Date(),
+    dateAppear: new Date(),
+    privilegeDate: new Date(),
     initial: {},
     statusModal: true,
     statusModalState: "loading",
@@ -41,8 +42,17 @@ class VerifyCustomer extends Component {
           });
           return;
         }
-        // console.log(customer);
+        const privilegeDate =
+          customer.verifies &&
+          customer.verifies.length > 0 &&
+          customer.verifies[customer.verifies.length - 1].privilegeDate
+            ? new Date(
+                customer.verifies[customer.verifies.length - 1].privilegeDate
+              )
+            : null;
+        // console.log(typeof privilegeDate);
         this.setState({
+          privilegeDate: privilegeDate,
           initial: {
             peaId: this.props.peaId,
             title: customer.title,
@@ -91,6 +101,12 @@ class VerifyCustomer extends Component {
     });
   };
 
+  handlePrivilegeDateChange = date => {
+    this.setState({
+      privilegeDate: date
+    });
+  };
+
   handleStatusClose = () => {
     this.setState({
       statusModal: false
@@ -105,13 +121,15 @@ class VerifyCustomer extends Component {
     });
     // this.trimSigPad();
     const { peaId } = this.props;
+    const { dateAppear, privilegeDate } = this.state;
     const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
     const requestOptions = {
       method: "PUT",
       headers: { "Content-Type": "application/json", ...authHeader() },
       body: JSON.stringify({
         verify: {
-          dateAppear: this.state.dateAppear,
+          dateAppear: dateAppear,
+          privilegeDate: privilegeDate,
           signatureBase64: signatureData
         }
       })
@@ -151,7 +169,13 @@ class VerifyCustomer extends Component {
   };
 
   render() {
-    const { initial, statusModal, statusModalState, failtext } = this.state;
+    const {
+      initial,
+      statusModal,
+      statusModalState,
+      failtext,
+      privilegeDate
+    } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.verifyData}>
@@ -161,7 +185,9 @@ class VerifyCustomer extends Component {
               <hr />
               <CustomerVerifyForm
                 setSigpadRef={this.setSigpadRef}
+                privilegeDate={privilegeDate}
                 handleAppearDateChange={this.handleAppearDateChange}
+                handlePrivilegeDateChange={this.handlePrivilegeDateChange}
               />
               <FormButton loading={statusModal} cancel={this.handleCancel} />
             </React.Fragment>

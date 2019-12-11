@@ -17,31 +17,54 @@ class CustomerPrintData extends Component {
       authorize,
       soldierNo,
       war,
-      privilegeDate,
       verifies
     } = customer;
+    let privilegeDate;
+    let dateAppear;
+    if (verifies && verifies.length > 0) {
+      const lastVerify = verifies[verifies.length - 1];
+
+      privilegeDate =
+        lastVerify.privilegeDate &&
+        new Date(lastVerify.privilegeDate).toLocaleDateString("th-TH", {
+          // weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        });
+      dateAppear =
+        lastVerify.dateAppear &&
+        new Date(lastVerify.dateAppear).toLocaleDateString("th-TH", {
+          // weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        });
+    }
 
     return (
       // <div className='print-page-bg'>
-      <div className='page'>
-        <div className='subpage'>
-          <div className='content'>
-            <div className='text-center'>
-              <PEALogo width='200px' />
+      <div className="page">
+        <div className="subpage">
+          <div className="content">
+            <div className="text-center">
+              <PEALogo width="200px" />
             </div>
 
             <br />
             <br />
-            <h4 className='text-center'>การขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก</h4>
+            <h4 className="text-center">การขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก</h4>
             <br />
-            <p className=''>
-              หมายเลขผู้ใช้ไฟ: <span>{`${peaId}`}</span>
+            <p className="">
+              หมายเลขผู้ใช้ไฟ:{"\u00A0\u00A0"}
+              <span>{`${peaId}`}</span>
             </p>
-            <p className=''>
-              ชื่อ-สกุล: <span>{`${title}${firstName} ${lastName}`}</span>
+            <p className="">
+              ชื่อ-สกุล:{"\u00A0\u00A0"}
+              <span>{`${title}${firstName}\u00A0\u00A0${lastName}`}</span>
             </p>
-            <p className=''>
-              ที่อยู่:{" "}
+            <p className="">
+              ที่อยู่:{"\u00A0\u00A0"}
               {address ? (
                 <span>
                   {`เลขที่ ${address.houseNo} หมู่ ${
@@ -52,53 +75,36 @@ class CustomerPrintData extends Component {
                 <span>ไม่มีที่อยู่</span>
               )}
             </p>
-            <p className=''>
-              กรณีเป็น: <span>{`${authorize}`}</span>
+            <p className="">
+              กรณีเป็น:{"\u00A0\u00A0"}
+              {authorize ? <span>{`${authorize}`}</span> : <SpaceUnderline />}
             </p>
-            <p className=''>
-              เลขที่บัตรประจำตัวทหาร: <span>{`${soldierNo}`}</span>
+            <p className="">
+              เลขประจำตัวทหาร:{"\u00A0\u00A0"}
+              {soldierNo ? <span>{`${soldierNo}`}</span> : <SpaceUnderline />}
             </p>
-            <p className=''>
-              ลดสิทธิ์สงคราม: <span>{`${war} ${getWarType(war)}`}</span>
+            <p className="">
+              ลดสิทธิ์สงคราม:{"\u00A0\u00A0"}
+              <span>{`${war} ${getWarType(war)}`}</span>
             </p>
-            <p className=''>
-              วันที่ได้รับสิทธิ์:{" "}
+            <p className="">
+              วันที่ได้รับสิทธิ์:{"\u00A0\u00A0"}
               {privilegeDate ? (
-                <span>
-                  {new Date(privilegeDate).toLocaleDateString("th-TH", {
-                    // weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                  })}
-                </span>
+                <span>{privilegeDate}</span>
               ) : (
-                <span>_____________________________</span>
+                <SpaceUnderline />
               )}
             </p>
-            <p className=''>
-              วันที่แสดงตน:{" "}
-              {verifies ? (
-                <span>
-                  {new Date(
-                    verifies[verifies.length - 1].dateAppear
-                  ).toLocaleDateString("th-TH", {
-                    // weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                  })}
-                </span>
-              ) : (
-                <span>_____________________________</span>
-              )}
+            <p className="">
+              วันที่แสดงตน:{"\u00A0\u00A0"}
+              {dateAppear ? <span>{dateAppear}</span> : <SpaceUnderline />}
             </p>
           </div>
 
-          <div className='footer'>
-            <div className='footer-content'>
-              <p className='text-right small-text'>
-                พิมพ์เมื่อ{" "}
+          <div className="footer">
+            <div className="footer-content">
+              <p className="text-right small-text">
+                พิมพ์เมื่อ{"\u00A0\u00A0"}
                 {new Date().toLocaleDateString("th-TH", {
                   // weekday: "long",
                   year: "numeric",
@@ -109,8 +115,8 @@ class CustomerPrintData extends Component {
                 })}
               </p>
               <hr />
-              <h6 className='text-center'>การไฟฟ้าส่วนภูมิภาคจังหวัดลำปาง</h6>
-              <p className='text-center small-text'>
+              <h6 className="text-center">การไฟฟ้าส่วนภูมิภาคจังหวัดลำปาง</h6>
+              <p className="text-center small-text">
                 Lampang Provincial Electricity Authority
               </p>
             </div>
@@ -121,5 +127,13 @@ class CustomerPrintData extends Component {
     );
   }
 }
+
+const SpaceUnderline = () => {
+  return (
+    <span style={{ textDecoration: "underline", whiteSpace: "pre" }}>
+      {"\u00A0".repeat(30)}
+    </span>
+  );
+};
 
 export default CustomerPrintData;

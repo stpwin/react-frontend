@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import Webcam from "react-webcam";
+// import Webcam from "react-webcam";
+import { Webcam } from "../Webcam";
 
 import {
   Modal,
@@ -13,20 +14,21 @@ import {
 
 export class ModalCamera extends Component {
   state = {
-    mirrored: false,
-    videoConstraints: {
-      width: 1280,
-      height: 720,
-      facingMode: "user"
-    }
+    mirrored: false
   };
 
   webcamRef = {};
+  setWebcamRef = ref => {
+    this.webcamRef = ref;
+  };
 
   handleCapture = () => {
     console.log("on capture");
-    const imageSrc = this.webcamRef.getScreenshot();
-    console.log(imageSrc);
+    const dataUri = this.webcamRef.takePhoto();
+    const { onCapture } = this.props;
+    onCapture && onCapture(dataUri);
+    // const imageSrc = this.webcamRef.getScreenshot();
+    // console.log(imageSrc);
   };
 
   handleMirroredChange = e => {
@@ -37,30 +39,39 @@ export class ModalCamera extends Component {
   };
 
   render() {
-    const { videoConstraints, mirrored } = this.state;
+    const { mirrored } = this.state;
     const { show, onHide } = this.props;
     return (
-      <Modal size='lg' show={show} onHide={onHide}>
+      <Modal size="lg" show={show} onHide={onHide}>
         <Modal.Header>
           <Modal.Title>ถ่ายภาพ</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Container>
             <Row>
-              <Col className='text-center'>
+              <Col className="text-center">
                 <Webcam
+                  ref={this.setWebcamRef}
+                  showFocus={false}
+                  width={600}
+                  height={200}
+                  mirrored={mirrored}
+                  style={{ overflow: "auto" }}
+                />
+                {/* <Webcam
                   width={600}
                   height={200}
                   ref={ref => (this.webcamRef = ref)}
                   audio={false}
-                  screenshotFormat='image/jpeg'
+                  screenshotFormat="image/jpeg"
                   videoConstraints={videoConstraints}
                   // minScreenshotWidth={600}
                   // minScreenshotHeight={200}
                   screenshotQuality={1}
                   mirrored={mirrored}
-                />
-                <canvas width={600} height={200} />
+                /> */}
+
+                {/* <canvas width={600} height={200} /> */}
               </Col>
             </Row>
           </Container>
@@ -81,18 +92,18 @@ export class ModalCamera extends Component {
                   id={`check-mirrored`}
                 />
               </Col>
-              <Col className='text-right align-self-center'>
+              <Col className="text-right align-self-center">
                 <ButtonToolbar>
                   <Button
-                    variant='outline-success'
-                    className='pea-color'
+                    variant="outline-success"
+                    className="pea-color"
                     onClick={this.handleCapture}
                   >
                     ถ่ายภาพ
                   </Button>
                   <Button
-                    variant='outline-secondary'
-                    className='pea-color'
+                    variant="outline-secondary"
+                    className="pea-color"
                     onClick={onHide}
                   >
                     ปิด

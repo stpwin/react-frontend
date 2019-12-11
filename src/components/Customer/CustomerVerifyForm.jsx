@@ -12,10 +12,14 @@ import { ModalCamera } from "../Modals";
 export class CustomerVerifyForm extends Component {
   state = {
     dateAppear: new Date(),
+    privilegeDate: this.props.privilegeDate || new Date(),
     signatureBase64: null,
-    authorizeNameOpen: false,
-    showCamera: true
+    // authorizeNameOpen: false,
+    showCamera: true,
+    capturedImage: null
   };
+
+  sigPadRef = {};
 
   UNSAFE_componentWillMount() {
     registerLocale("th", th);
@@ -42,7 +46,16 @@ export class CustomerVerifyForm extends Component {
     });
   };
 
-  handleCaptureCamera = () => {};
+  handleCaptureCamera = data => {
+    this.sigPadRef.fromDataURL(data);
+    // const image = new Image();
+    // image.src = data;
+    // image.onload = () => {
+    //   // const sigpad = this.props.getSigpadRef();
+    //   console.log(this.sigPadRef.fromDataURL(data));
+    //   // this.sigPadRef.drawImage(image, 0, 0);
+    // };
+  };
 
   handleCameraClose = () => {
     this.setState({
@@ -50,23 +63,56 @@ export class CustomerVerifyForm extends Component {
     });
   };
 
-  render() {
-    const { dateAppear, showCamera } = this.state;
+  handlePrivilegeDateChange = date => {
+    this.setState({
+      privilegeDate: date
+    });
+    const { handlePrivilegeDateChange } = this.props;
+    handlePrivilegeDateChange && handlePrivilegeDateChange(date);
+  };
+
+  setSigpadRef = ref => {
+    this.sigPadRef = ref;
     const { setSigpadRef } = this.props;
+    setSigpadRef && setSigpadRef(ref);
+  };
+
+  render() {
+    const { dateAppear, showCamera, privilegeDate } = this.state;
+    // console.log("privilegeDate", typeof privilegeDate);
+    // const { setSigpadRef } = this.props;
     return (
       <Fragment>
         <Form.Group as={Row}>
-          <Form.Label as='legend' column sm={2}>
+          <Form.Label as="legend" column sm={2}>
+            วันที่ได้รับสิทธิ์
+          </Form.Label>
+          <Col sm={3}>
+            <DatePicker
+              locale="th"
+              todayButton="เลือกวันนี้"
+              className="form-control"
+              selected={privilegeDate}
+              dateFormatCalendar="LLLL yyyy"
+              dateFormat="d MMMM y"
+              onChange={this.handlePrivilegeDateChange}
+              // name='dateAppear'
+            ></DatePicker>
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row}>
+          <Form.Label as="legend" column sm={2}>
             วันที่มาแสดงตน
           </Form.Label>
           <Col sm={3}>
             <DatePicker
-              locale='th'
-              todayButton='เลือกวันนี้'
-              className='form-control'
+              locale="th"
+              todayButton="เลือกวันนี้"
+              className="form-control"
               selected={dateAppear}
-              dateFormatCalendar='LLLL yyyy'
-              dateFormat='d MMMM y'
+              dateFormatCalendar="LLLL yyyy"
+              dateFormat="d MMMM y"
               onChange={this.handleDateChange}
               // name='dateAppear'
             ></DatePicker>
@@ -77,28 +123,28 @@ export class CustomerVerifyForm extends Component {
           <Form.Label column sm={2}>
             ลายเซ็น
           </Form.Label>
-          <Col className='vertical-divider'>
-            <Signature setRef={setSigpadRef}></Signature>
+          <Col className="vertical-divider">
+            <Signature setRef={this.setSigpadRef}></Signature>
           </Col>
-          <Col className='text-center align-self-center'>
+          <Col className="text-center align-self-center">
             <ButtonToolbar>
               <Button
-                variant='outline'
-                className='pea-color'
-                size='sm'
+                variant="outline"
+                className="pea-color"
+                size="sm"
                 onClick={this.getQRLink}
               >
                 รับลิ้งก์ QR Code
               </Button>
               <Button
-                variant='outline'
-                className='pea-color'
-                size='sm'
+                variant="outline"
+                className="pea-color"
+                size="sm"
                 onClick={this.handleShowCamera}
               >
                 กล้อง
               </Button>
-              <Button variant='outline' className='pea-color' size='sm'>
+              <Button variant="outline" className="pea-color" size="sm">
                 อัพโหลด
               </Button>
             </ButtonToolbar>

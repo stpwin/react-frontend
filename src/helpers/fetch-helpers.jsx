@@ -7,8 +7,9 @@ export const handleFetchError = rep => {
   }
 
   if (rep.status === 200) {
-    return rep.json().then(rep => {
-      return Promise.resolve({ err: null, rep });
+    return rep.json().then(res => {
+      // console.log(res);
+      return Promise.resolve({ err: null, rep: res });
     });
   }
 
