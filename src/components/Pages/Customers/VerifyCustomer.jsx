@@ -6,8 +6,10 @@ import config from "../../../config";
 import {
   authHeader,
   handleFetchError,
+  handleFetchSuccessResponse,
   correctPostcode,
-  getCustomerByPeaId
+  getCustomerByPeaId,
+  b64toBlob
 } from "../../../helpers";
 
 import { Form } from "react-bootstrap";
@@ -122,17 +124,22 @@ class VerifyCustomer extends Component {
     // this.trimSigPad();
     const { peaId } = this.props;
     const { dateAppear, privilegeDate } = this.state;
-    // const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
+    const signatureData = this.sigPad
+      .getTrimmedCanvas()
+      .toDataURL("image/png")
+      .replace("data:image/png;base64,", "");
+    // console.log(signatureData);
+    const signatureBlob = b64toBlob(signatureData, "image/png");
     // console.log(this.sigPad.toData());
     const formData = new FormData();
 
     formData.append("dateAppear", dateAppear);
     formData.append("privilegeDate", privilegeDate);
-    formData.append("signature", this.sigPad.toData());
+    formData.append("signature", signatureBlob, "signature.png");
     // console.log(signatureData);
     const requestOptions = {
-      method: "PUT",
-      headers: { "Content-Type": "multipart/form-data", ...authHeader() },
+      method: "POST",
+      headers: authHeader(),
       body: formData
     };
 
@@ -143,7 +150,7 @@ class VerifyCustomer extends Component {
     // return;
 
     fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
-      .then(handleFetchError)
+      .then(handleFetchSuccessResponse)
       .then(({ err, rep }) => {
         if (err) {
           this.setState({
@@ -179,7 +186,7 @@ class VerifyCustomer extends Component {
     } = this.state;
     return (
       <React.Fragment>
-        <Form onSubmit={this.verifyData} encType="multipart/form-data">
+        <Form onSubmit={this.verifyData}>
           {statusModalState !== "getting" ? (
             <React.Fragment>
               <CustomerDataForm initial={initial} readOnly={true} />
