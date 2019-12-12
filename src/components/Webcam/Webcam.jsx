@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import "./webcam.css";
 
 import CameraPhoto, {
@@ -7,23 +7,19 @@ import CameraPhoto, {
 } from "jslib-html5-camera-photo";
 
 export class Webcam extends Component {
-  //   state = {
-  //     dataUri: "",
-  //     mirrored: true
-  //   };
   cameraPhoto = null;
   videoRef = React.createRef();
+
   componentDidMount() {
     this.cameraPhoto = new CameraPhoto(this.videoRef.current);
-    const idealResolution = { width: 600, height: 200 };
-    this.startCamera(FACING_MODES.USER, idealResolution);
+    this.startWebcam();
   }
 
   startCamera = (idealFacingMode, idealResolution) => {
     this.cameraPhoto
       .startCamera(idealFacingMode, idealResolution)
       .then(() => {
-        console.log("camera is started");
+        // console.log("camera is started");
       })
       .catch(err => {
         console.error(err);
@@ -34,7 +30,7 @@ export class Webcam extends Component {
     this.cameraPhoto
       .startCameraMaxResolution(idealFacingMode)
       .then(() => {
-        console.log("camera is started");
+        // console.log("camera is started");
       })
       .catch(err => {
         console.log(err);
@@ -42,26 +38,27 @@ export class Webcam extends Component {
   };
 
   takePhoto = () => {
-    console.log("take photo");
+    // console.log("take photo");
     const config = {
       sizeFactor: 1,
       imageType: IMAGE_TYPES.PNG,
       imageCompression: 0,
       isImageMirror: this.props.mirrored || false
     };
-
-    return this.cameraPhoto.getDataUri(config);
-    // console.log(dataUri);
-    // this.setState({
-    //   dataUri
-    // });
+    const dataUrl = this.cameraPhoto.getDataUri(config);
+    return dataUrl;
   };
 
-  stopCamera = () => {
+  startWebcam = () => {
+    const { width, height } = this.props;
+    this.startCamera(FACING_MODES.USER, { width, height });
+  };
+
+  stopWebcam = () => {
     this.cameraPhoto
       .stopCamera()
       .then(() => {
-        console.log("camera stopped.");
+        // console.log("camera stopped.");
       })
       .catch(err => {
         console.log(err);
@@ -69,19 +66,20 @@ export class Webcam extends Component {
   };
 
   componentWillUnmount() {
-    this.stopCamera();
+    this.stopWebcam();
   }
 
   render() {
-    // const { mirrored } = this.state;
     const { style = {}, mirrored } = this.props;
     const videoStyle = mirrored
       ? { ...style, transform: `${style.transform || ""} scaleX(-1)` }
       : style;
     return (
-      <div style={videoStyle}>
-        <video ref={this.videoRef} autoPlay={true} />
-      </div>
+      <Fragment>
+        <div style={videoStyle}>
+          <video ref={this.videoRef} autoPlay={true} />
+        </div>
+      </Fragment>
     );
   }
 }

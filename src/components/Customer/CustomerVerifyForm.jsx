@@ -15,7 +15,7 @@ export class CustomerVerifyForm extends Component {
     privilegeDate: this.props.privilegeDate || new Date(),
     signatureBase64: null,
     // authorizeNameOpen: false,
-    showCamera: true,
+    showCamera: false,
     capturedImage: null
   };
 
@@ -46,15 +46,9 @@ export class CustomerVerifyForm extends Component {
     });
   };
 
-  handleCaptureCamera = data => {
+  handleCaptureFinish = data => {
     this.sigPadRef.fromDataURL(data);
-    // const image = new Image();
-    // image.src = data;
-    // image.onload = () => {
-    //   // const sigpad = this.props.getSigpadRef();
-    //   console.log(this.sigPadRef.fromDataURL(data));
-    //   // this.sigPadRef.drawImage(image, 0, 0);
-    // };
+    this.handleCameraClose();
   };
 
   handleCameraClose = () => {
@@ -153,7 +147,7 @@ export class CustomerVerifyForm extends Component {
         <ModalCamera
           show={showCamera}
           onHide={this.handleCameraClose}
-          onCapture={this.handleCaptureCamera}
+          onFinish={this.handleCaptureFinish}
         />
       </Fragment>
     );

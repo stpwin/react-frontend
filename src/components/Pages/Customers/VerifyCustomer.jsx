@@ -70,8 +70,8 @@ class VerifyCustomer extends Component {
           statusModalState: "getok"
         });
       })
-      .catch(() => {
-        // console.log("get fail");
+      .catch(err => {
+        console.error(err);
         this.setState({
           statusModal: true,
           statusModalState: "getfail",
@@ -122,17 +122,18 @@ class VerifyCustomer extends Component {
     // this.trimSigPad();
     const { peaId } = this.props;
     const { dateAppear, privilegeDate } = this.state;
-    const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
+    // const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
+    // console.log(this.sigPad.toData());
+    const formData = new FormData();
+
+    formData.append("dateAppear", dateAppear);
+    formData.append("privilegeDate", privilegeDate);
+    formData.append("signature", this.sigPad.toData());
+    // console.log(signatureData);
     const requestOptions = {
       method: "PUT",
-      headers: { "Content-Type": "application/json", ...authHeader() },
-      body: JSON.stringify({
-        verify: {
-          dateAppear: dateAppear,
-          privilegeDate: privilegeDate,
-          signatureBase64: signatureData
-        }
-      })
+      headers: { "Content-Type": "multipart/form-data", ...authHeader() },
+      body: formData
     };
 
     // this.setState({
@@ -178,7 +179,7 @@ class VerifyCustomer extends Component {
     } = this.state;
     return (
       <React.Fragment>
-        <Form onSubmit={this.verifyData}>
+        <Form onSubmit={this.verifyData} encType="multipart/form-data">
           {statusModalState !== "getting" ? (
             <React.Fragment>
               <CustomerDataForm initial={initial} readOnly={true} />

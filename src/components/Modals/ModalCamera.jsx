@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 // import Webcam from "react-webcam";
 import { Webcam } from "../Webcam";
 
@@ -14,7 +14,9 @@ import {
 
 export class ModalCamera extends Component {
   state = {
-    mirrored: false
+    mirrored: false,
+    preview: false,
+    dataUrl: ""
   };
 
   webcamRef = {};
@@ -23,12 +25,18 @@ export class ModalCamera extends Component {
   };
 
   handleCapture = () => {
-    console.log("on capture");
     const dataUri = this.webcamRef.takePhoto();
-    const { onCapture } = this.props;
-    onCapture && onCapture(dataUri);
-    // const imageSrc = this.webcamRef.getScreenshot();
-    // console.log(imageSrc);
+    this.setState({
+      preview: true,
+      dataUrl: dataUri
+    });
+  };
+
+  handleReTake = () => {
+    this.setState({
+      preview: false,
+      dataUrl: ""
+    });
   };
 
   handleMirroredChange = e => {
@@ -38,8 +46,13 @@ export class ModalCamera extends Component {
     });
   };
 
+  handleFinish = () => {
+    const { onFinish } = this.props;
+    onFinish && onFinish(this.state.dataUrl);
+  };
+
   render() {
-    const { mirrored } = this.state;
+    const { mirrored, preview, dataUrl } = this.state;
     const { show, onHide } = this.props;
     return (
       <Modal size="lg" show={show} onHide={onHide}>
@@ -50,28 +63,20 @@ export class ModalCamera extends Component {
           <Container>
             <Row>
               <Col className="text-center">
-                <Webcam
-                  ref={this.setWebcamRef}
-                  showFocus={false}
-                  width={600}
-                  height={200}
-                  mirrored={mirrored}
-                  style={{ overflow: "auto" }}
-                />
-                {/* <Webcam
-                  width={600}
-                  height={200}
-                  ref={ref => (this.webcamRef = ref)}
-                  audio={false}
-                  screenshotFormat="image/jpeg"
-                  videoConstraints={videoConstraints}
-                  // minScreenshotWidth={600}
-                  // minScreenshotHeight={200}
-                  screenshotQuality={1}
-                  mirrored={mirrored}
-                /> */}
-
-                {/* <canvas width={600} height={200} /> */}
+                {preview ? (
+                  <div style={{ overflow: "auto" }}>
+                    <img alt="preview" src={dataUrl} width={600} height={200} />
+                  </div>
+                ) : (
+                  <Webcam
+                    ref={this.setWebcamRef}
+                    showFocus={false}
+                    width={600}
+                    height={200}
+                    mirrored={mirrored}
+                    style={{ overflow: "auto" }}
+                  />
+                )}
               </Col>
             </Row>
           </Container>
@@ -94,19 +99,39 @@ export class ModalCamera extends Component {
               </Col>
               <Col className="text-right align-self-center">
                 <ButtonToolbar>
-                  <Button
-                    variant="outline-success"
-                    className="pea-color"
-                    onClick={this.handleCapture}
-                  >
-                    ถ่ายภาพ
-                  </Button>
+                  {preview ? (
+                    <Fragment>
+                      <Button
+                        variant="outline-success"
+                        className="pea-color"
+                        onClick={this.handleReTake}
+                      >
+                        ถ่ายใหม่
+                      </Button>
+                      <Button
+                        variant="outline-primary"
+                        className="pea-color"
+                        onClick={this.handleFinish}
+                      >
+                        เสร็จสิ้น
+                      </Button>
+                    </Fragment>
+                  ) : (
+                    <Button
+                      variant="outline-success"
+                      className="pea-color"
+                      onClick={this.handleCapture}
+                    >
+                      ถ่ายภาพ
+                    </Button>
+                  )}
+
                   <Button
                     variant="outline-secondary"
                     className="pea-color"
                     onClick={onHide}
                   >
-                    ปิด
+                    ยกเลิก
                   </Button>
                 </ButtonToolbar>
               </Col>
