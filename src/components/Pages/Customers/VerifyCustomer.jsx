@@ -35,7 +35,8 @@ class VerifyCustomer extends Component {
       statusModal: true,
       statusModalState: "getting"
     });
-    getCustomerByPeaId(this.props.peaId)
+    const { peaId } = this.props;
+    getCustomerByPeaId(peaId)
       .then(customer => {
         if (!customer) {
           this.setState({
@@ -51,12 +52,12 @@ class VerifyCustomer extends Component {
             ? new Date(
                 customer.verifies[customer.verifies.length - 1].privilegeDate
               )
-            : null;
-        // console.log(typeof privilegeDate);
+            : new Date();
+
         this.setState({
           privilegeDate: privilegeDate,
           initial: {
-            peaId: this.props.peaId,
+            peaId: peaId,
             title: customer.title,
             firstName: customer.firstName,
             lastName: customer.lastName,
@@ -104,6 +105,7 @@ class VerifyCustomer extends Component {
   };
 
   handlePrivilegeDateChange = date => {
+    console.log("handlePrivilegeDateChange:", date);
     this.setState({
       privilegeDate: date
     });
@@ -133,12 +135,12 @@ class VerifyCustomer extends Component {
     // console.log(this.sigPad.toData());
     const formData = new FormData();
 
-    formData.append("dateAppear", dateAppear);
-    formData.append("privilegeDate", privilegeDate);
+    formData.append("dateAppear", JSON.stringify(dateAppear));
+    formData.append("privilegeDate", JSON.stringify(privilegeDate));
     formData.append("signature", signatureBlob, "signature.png");
     // console.log(signatureData);
     const requestOptions = {
-      method: "POST",
+      method: "PUT",
       headers: authHeader(),
       body: formData
     };
