@@ -122,14 +122,14 @@ export class CustomerVerifyForm extends Component {
           </Col>
           <Col className="text-center align-self-center">
             <ButtonToolbar>
-              <Button
+              {/* <Button
                 variant="outline"
                 className="pea-color"
                 size="sm"
                 onClick={this.getQRLink}
               >
                 รับลิ้งก์ QR Code
-              </Button>
+              </Button> */}
               <Button
                 variant="outline"
                 className="pea-color"

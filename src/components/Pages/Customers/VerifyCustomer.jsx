@@ -5,7 +5,6 @@ import { withRouter } from "react-router-dom";
 import config from "../../../config";
 import {
   authHeader,
-  handleFetchError,
   handleFetchSuccessResponse,
   correctPostcode,
   getCustomerByPeaId,
@@ -130,26 +129,18 @@ class VerifyCustomer extends Component {
       .getTrimmedCanvas()
       .toDataURL("image/png")
       .replace("data:image/png;base64,", "");
-    // console.log(signatureData);
-    const signatureBlob = b64toBlob(signatureData, "image/png");
-    // console.log(this.sigPad.toData());
-    const formData = new FormData();
 
+    const signatureBlob = b64toBlob(signatureData, "image/png");
+    const formData = new FormData();
     formData.append("dateAppear", JSON.stringify(dateAppear));
     formData.append("privilegeDate", JSON.stringify(privilegeDate));
     formData.append("signature", signatureBlob, "signature.png");
-    // console.log(signatureData);
+
     const requestOptions = {
       method: "PUT",
       headers: authHeader(),
       body: formData
     };
-
-    // this.setState({
-    //   saveSuccess: true
-    // });
-
-    // return;
 
     fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
       .then(handleFetchSuccessResponse)

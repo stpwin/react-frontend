@@ -77,7 +77,7 @@ hr {
   min-width: 9.5em;
 }
 
-.td-tools-button .btn-toolbar>*+* {
+.td-tools-button .btn-toolbar > * + * {
   margin-left: 0.3em;
 }
 
@@ -85,13 +85,15 @@ hr {
   margin: 0 auto;
 }
 
-.custom-control-input:checked~.custom-control-label::before {
+.custom-control-input:checked ~ .custom-control-label::before {
   color: #fff;
   border-color: #563d7c;
   background-color: #563d7c;
 }
 
-.custom-radio .custom-control-input:disabled:checked~.custom-control-label::before {
+.custom-radio
+  .custom-control-input:disabled:checked
+  ~ .custom-control-label::before {
   background-color: #563d7c8a;
 }
 
@@ -114,10 +116,10 @@ mark {
   align-items: center;
 }
 
-.icon-before-text>*+*,
-.perPageDropdown>*+*,
-.spinner-margin>*+*,
-.btn-toolbar>*+* {
+.icon-before-text > * + *,
+.perPageDropdown > * + *,
+.spinner-margin > * + *,
+.btn-toolbar > * + * {
   margin-left: 0.5em;
 }
 
@@ -150,4 +152,37 @@ mark {
 
 .not-found {
   margin-top: 1em;
+}
+
+.btn-outline-secondary {
+  color: #563d7c;
+  border-color: #563d7c;
+}
+
+.btn-outline-secondary:hover {
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
+
+.btn-outline-secondary:focus,
+.btn-outline-secondary.focus {
+  box-shadow: 0 0 0 0.05rem #563d7c;
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled):active,
+.btn-outline-secondary:not(:disabled):not(.disabled).active,
+.show > .btn-outline-secondary.dropdown-toggle {
+  color: #fff;
+  background-color: #563d7c;
+  border-color: #563d7c;
+}
+
+.card-header {
+  padding: 0;
+  background-color: #563d7c;
+}
+
+.card-header > .btn-link {
+  color: #fff;
 }

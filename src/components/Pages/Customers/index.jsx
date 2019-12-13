@@ -9,6 +9,7 @@ import AddCustomer from "./AddCustomer";
 import VerifyCustomer from "./VerifyCustomer";
 import EditCustomer from "./EditCustomer";
 import PrintCustomer from "./PrintCustomer";
+import ViewCustomer from "./ViewCustomer";
 
 class Customers extends Component {
   render() {
@@ -23,13 +24,22 @@ class Customers extends Component {
       <Container>
         {method === "add" ? (
           <Fragment>
-            <h1 className='header-text text-center'>เพิ่มลูกค้า</h1>
+            <h1 className="header-text text-center">เพิ่มลูกค้า</h1>
             <AddCustomer peaId={peaId} />
           </Fragment>
+        ) : method === "view" ? (
+          peaId ? (
+            <Fragment>
+              <h1 className="header-text text-center">แสดงข้อมูลลูกค้า</h1>
+              <ViewCustomer peaId={peaId} history={this.props.history} />
+            </Fragment>
+          ) : (
+            <NoPeaID />
+          )
         ) : method === "edit" ? (
           peaId ? (
             <Fragment>
-              <h1 className='header-text text-center'>แก้ไขข้อมูลลูกค้า</h1>
+              <h1 className="header-text text-center">แก้ไขข้อมูลลูกค้า</h1>
               <EditCustomer peaId={peaId} />
             </Fragment>
           ) : (
@@ -38,7 +48,7 @@ class Customers extends Component {
         ) : method === "verify" ? (
           peaId ? (
             <Fragment>
-              <h1 className='header-text text-center'>ยืนยันสิทธิ์</h1>
+              <h1 className="header-text text-center">ยืนยันสิทธิ์</h1>
               <VerifyCustomer peaId={peaId} />
             </Fragment>
           ) : (
@@ -47,7 +57,7 @@ class Customers extends Component {
         ) : method === "print" ? (
           peaId ? (
             <Fragment>
-              <h1 className='header-text text-center'>พิมพ์ข้อมูลลูกค้า</h1>
+              <h1 className="header-text text-center">พิมพ์ข้อมูลลูกค้า</h1>
               <PrintCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
@@ -55,7 +65,7 @@ class Customers extends Component {
           )
         ) : (
           <Fragment>
-            <h1 className='header-text text-center'>จัดการข้อมูลลูกค้า</h1>
+            <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
             <ListCustomer />
           </Fragment>
         )}
@@ -65,7 +75,7 @@ class Customers extends Component {
 }
 
 const NoPeaID = () => {
-  return <h3 className='text-center mt-5'>กรุณาระบุหมายเลขผู้ใช้ไฟ</h3>;
+  return <h3 className="text-center mt-5">กรุณาระบุหมายเลขผู้ใช้ไฟ</h3>;
 };
 
 export default withRouter(Customers);

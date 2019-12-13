@@ -11,7 +11,13 @@ import {
 import moment from "moment";
 import "moment/locale/th";
 
-import { FaTrash, FaCheck, FaEdit, FaPrint } from "react-icons/fa";
+import {
+  FaTrash,
+  FaCheck,
+  FaEdit,
+  FaPrint,
+  FaExternalLinkAlt
+} from "react-icons/fa";
 import { ModalConfirm, ModalStatus } from "../../Modals";
 import { DataTable } from "../../DataTable";
 
@@ -73,6 +79,12 @@ class ListCustomer extends Component {
       icon: <FaEdit />,
       onclick: peaId => this.onEditClick(peaId),
       key: "edit"
+    },
+    {
+      overlaytext: "แสดงข้อมูล",
+      icon: <FaExternalLinkAlt />,
+      onclick: peaId => this.onViewClick(peaId),
+      key: "view"
     },
     {
       overlaytext: "ลบ",
@@ -401,6 +413,10 @@ class ListCustomer extends Component {
     );
   };
 
+  onViewClick = peaId => {
+    this.props.history.push(`/customers/view/${peaId}`);
+  };
+
   onVerifyClick = peaId => {
     this.props.history.push(`/customers/verify/${peaId}`);
   };
@@ -414,7 +430,7 @@ class ListCustomer extends Component {
 
     this.setState({
       confirmDelete: true,
-      confirmDeleteText: `${peaId} ${customValue}`,
+      confirmDeleteText: `${peaId}\n${customValue}`,
       confirmDeletePeaId: peaId
     });
     // this.props.history.push(`/customers/verify/${peaId}`);

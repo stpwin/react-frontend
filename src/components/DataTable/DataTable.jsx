@@ -11,12 +11,13 @@ import {
   Dropdown,
   ButtonToolbar,
   OverlayTrigger,
-  Tooltip
+  Tooltip,
+  DropdownButton
 } from "react-bootstrap";
 
 import "./table.css";
 
-import { FaSearch, FaTimes, FaSlidersH } from "react-icons/fa";
+import { FaSearch, FaTimes, FaSlidersH, FaListUl } from "react-icons/fa";
 
 import Highlight from "react-highlighter";
 
@@ -68,7 +69,7 @@ export class DataTable extends Component {
       // searchText
     } = this.props;
     return (
-      <div className='data-table'>
+      <div className="data-table">
         <Row>
           <Col>
             {topButtons && topButtons.length > 0
@@ -76,8 +77,8 @@ export class DataTable extends Component {
                   return (
                     <Button
                       key={`button-${item.key}`}
-                      variant='outline'
-                      className='pea-color'
+                      variant="outline"
+                      className="pea-color"
                       onClick={() => item.onClick()}
                     >
                       {item.text}
@@ -87,18 +88,18 @@ export class DataTable extends Component {
               : null}
           </Col>
           <Col />
-          <Col className='text-right align-self-center'>
+          <Col className="text-right align-self-center">
             {perPage ? (
               <Fragment>
-                <div className='perPageDropdown'>
+                <div className="perPageDropdown">
                   <span>แสดง</span>
                   <Dropdown
-                    id='dropdown-item-button'
+                    id="dropdown-item-button"
                     onSelect={onPerPageChange}
                   >
                     <Dropdown.Toggle
-                      variant='outline-secondary'
-                      id='dropdown-basic'
+                      variant="outline-secondary"
+                      id="dropdown-basic"
                     >
                       {perPage}
                     </Dropdown.Toggle>
@@ -124,17 +125,17 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Row className='filterRow'>
-          <Col className='align-self-center'>
+        <Row className="filterRow">
+          <Col className="align-self-center">
             <InputGroup>
               <InputGroup.Prepend>
-                <InputGroup.Text id='inputGroup-sizing-sm'>
+                <InputGroup.Text id="inputGroup-sizing-sm">
                   <FaSearch />
                 </InputGroup.Text>
               </InputGroup.Prepend>
               <FormControl
-                aria-label='Small'
-                aria-describedby='inputGroup-sizing-sm'
+                aria-label="Small"
+                aria-describedby="inputGroup-sizing-sm"
                 placeholder={filterPlaceholder}
                 onChange={this.handleFilterTextChange}
                 value={filterText}
@@ -142,7 +143,7 @@ export class DataTable extends Component {
               {filterText.length > 0 ? (
                 <InputGroup.Append>
                   <Button
-                    variant='outline-secondary'
+                    variant="outline-secondary"
                     onClick={this.clearFilterText}
                   >
                     <FaTimes />
@@ -151,7 +152,7 @@ export class DataTable extends Component {
               ) : null}
             </InputGroup>
           </Col>
-          <Col className='align-self-center'>
+          <Col className="align-self-center">
             {filters &&
               filters.map((filter, index) => {
                 return (
@@ -170,7 +171,7 @@ export class DataTable extends Component {
             {/* <Form.Check custom inline label='G1' id='inline-1' />
             <Form.Check custom inline label='G2' id='inline-2' /> */}
           </Col>
-          <Col className='text-right align-self-center'>
+          <Col className="text-right align-self-center">
             <Paginator
               curPage={pageNo}
               maxPage={maxPage}
@@ -181,18 +182,18 @@ export class DataTable extends Component {
           </Col>
         </Row>
 
-        <Table responsive bordered hover size='sm'>
-          <thead className='text-center thread-pea'>
+        <Table responsive bordered hover size="sm">
+          <thead className="text-center thread-pea">
             <tr>
               {columns &&
                 columns.map((col, index) => {
                   return (
-                    <th key={`th-${index}`} className='align-middle'>
+                    <th key={`th-${index}`} className="align-middle">
                       {col.text}
                     </th>
                   );
                 })}
-              <th key={`th-toolsbar`} className='align-middle'>
+              <th key={`th-toolsbar`} className="align-middle">
                 <FaSlidersH />
               </th>
             </tr>
@@ -231,41 +232,15 @@ export class DataTable extends Component {
                     {tools && tools.length > 0 ? (
                       <td
                         key={`td-toolsbar`}
-                        className='align-middle text-center td-tools-button'
+                        className="align-middle text-center td-tools-button"
                       >
-                        <ButtonToolbar aria-label='Toolbar with button groups'>
-                          {tools.map((data, index) => {
-                            // console.log(data);
-                            return (
-                              <OverlayTrigger
-                                key={`overlay-${data.key}`}
-                                placement={"top"}
-                                overlay={
-                                  <Tooltip id={`tooltip-${data.key}`}>
-                                    {data.overlaytext}
-                                  </Tooltip>
-                                }
-                              >
-                                <Button
-                                  key={`button-${data.key}`}
-                                  variant={"outline"}
-                                  size={"sm"}
-                                  className={"pea-color"}
-                                  onClick={() =>
-                                    data.customValue
-                                      ? data.onclick(
-                                          item[idKey],
-                                          item[customValueKey]
-                                        )
-                                      : data.onclick(item[idKey])
-                                  }
-                                >
-                                  {data.icon}
-                                </Button>
-                              </OverlayTrigger>
-                            );
-                          })}
-                        </ButtonToolbar>
+                        <ActionButtons
+                          // key={`action-buttons-${item.key}-${dataIndex}`}
+                          tools={tools}
+                          item={item}
+                          idKey={idKey}
+                          customValueKey={customValueKey}
+                        />
                       </td>
                     ) : null}
                   </tr>
@@ -274,7 +249,7 @@ export class DataTable extends Component {
             ) : (
               <tr>
                 <td
-                  className='text-center align-middle'
+                  className="text-center align-middle"
                   colSpan={columns && columns.length + (tools ? 1 : 0)}
                 >
                   ไม่มีข้อมูล
@@ -300,5 +275,77 @@ export class DataTable extends Component {
     );
   }
 }
+
+const ActionButtons = ({ tools, item, idKey, customValueKey }) => {
+  return (
+    <ButtonToolbar aria-label="Toolbar with button groups">
+      {tools.map((data, index) => {
+        if (tools.length > 4 && index >= 2) {
+          if (index === 2) {
+            return (
+              <DropdownButton
+                key={`dropdown-button-${data.key}-${index}`}
+                size="sm"
+                title={<FaListUl />}
+                id="bg-nested-dropdown"
+                className="pea-color"
+                variant="outline-secondary"
+                drop="right"
+                style={{ display: "inherit" }}
+              >
+                {tools.map((data1, index1) => {
+                  if (index1 > 1) {
+                    return (
+                      <Dropdown.Item
+                        key={`dropdown-item-${data1.key}-${index1}`}
+                        eventKey="1"
+                        className="pea-color"
+                        onClick={() =>
+                          data1.customValue
+                            ? data1.onclick(item[idKey], item[customValueKey])
+                            : data1.onclick(item[idKey])
+                        }
+                      >
+                        {data1.icon}
+                        <span className="ml-2">{data1.overlaytext}</span>
+                      </Dropdown.Item>
+                    );
+                  }
+                  return null;
+                })}
+              </DropdownButton>
+            );
+          }
+          return null;
+        }
+        return (
+          <OverlayTrigger
+            key={`overlay-button-${data.key}-${index}`}
+            placement={"top"}
+            overlay={
+              <Tooltip id={`tooltip-${data.key}-${index}`}>
+                {data.overlaytext}
+              </Tooltip>
+            }
+          >
+            <Button
+              key={`button-${data.key}`}
+              variant={"outline-secondary"}
+              size={"sm"}
+              className={"pea-color"}
+              onClick={() =>
+                data.customValue
+                  ? data.onclick(item[idKey], item[customValueKey])
+                  : data.onclick(item[idKey])
+              }
+            >
+              {data.icon}
+            </Button>
+          </OverlayTrigger>
+        );
+      })}
+    </ButtonToolbar>
+  );
+};
 
 export default DataTable;

@@ -14,13 +14,11 @@ class PrintCustomer extends Component {
   };
   componentDidMount() {
     const { peaId } = this.props;
-    // console.log(peaId);
     if (!peaId) return;
     getCustomerByPeaId(peaId).then(data => {
       this.setState({
         customer: data
       });
-      // console.log(data);
     });
   }
 
@@ -48,18 +46,18 @@ class PrintCustomer extends Component {
     return (
       <Fragment>
         <Row>
-          <Col className='text-center'>
+          <Col className="text-center">
             <ButtonToolbar>
               <Button
-                variant='outline-primary'
-                className='pea-color'
+                variant="outline-secondary"
+                className="pea-color"
                 onClick={this.handlePrint}
               >
                 พิมพ์
               </Button>
               <Button
-                variant='outline-secondary'
-                className='pea-color'
+                variant="outline-secondary"
+                className="pea-color"
                 onClick={this.handleBack}
               >
                 กลับ
@@ -81,8 +79,8 @@ class PrintCustomer extends Component {
             />
           </Fragment>
         ) : (
-          <div className='text-center mt-5'>
-            <Spinner animation='border'></Spinner>
+          <div className="text-center mt-5">
+            <Spinner animation="border"></Spinner>
           </div>
         )}
       </Fragment>
