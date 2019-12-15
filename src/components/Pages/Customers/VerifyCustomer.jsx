@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import PropTypes from "prop-types"
 
 import config from "../../../config";
 import {
@@ -46,11 +47,11 @@ class VerifyCustomer extends Component {
         }
         const privilegeDate =
           customer.verifies &&
-          customer.verifies.length > 0 &&
-          customer.verifies[customer.verifies.length - 1].privilegeDate
+            customer.verifies.length > 0 &&
+            customer.verifies[customer.verifies.length - 1].privilegeDate
             ? new Date(
-                customer.verifies[customer.verifies.length - 1].privilegeDate
-              )
+              customer.verifies[customer.verifies.length - 1].privilegeDate
+            )
             : new Date();
 
         this.setState({
@@ -142,6 +143,7 @@ class VerifyCustomer extends Component {
       body: formData
     };
 
+
     fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
       .then(handleFetchSuccessResponse)
       .then(({ err, rep }) => {
@@ -211,6 +213,10 @@ function mapStateToProps(state) {
   return {
     user
   };
+}
+
+VerifyCustomer.propTypes = {
+  peaId: PropTypes.string.isRequired
 }
 
 export default withRouter(connect(mapStateToProps)(VerifyCustomer));
