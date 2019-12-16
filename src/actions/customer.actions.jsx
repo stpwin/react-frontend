@@ -150,6 +150,27 @@ const remove = peaId => {
   }
 };
 
+const getSignature = (peaId, sigId) => {
+  return dispatch => {
+    dispatch(request());
+
+    customerService.getSignature(peaId, sigId).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.GET_SIGNATURE_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.GET_SIGNATURE_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.GET_SIGNATURE_FAILURE, error };
+  }
+};
+
 export const customerActions = {
   create,
   get,
@@ -157,5 +178,6 @@ export const customerActions = {
   getFilter,
   update,
   verify,
-  remove
+  remove,
+  getSignature
 };

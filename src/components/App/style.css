@@ -190,3 +190,7 @@ mark {
 .card-header > .btn-link {
   color: #fff;
 }
+
+.react-datepicker-wrapper {
+  display: block;
+}

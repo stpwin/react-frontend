@@ -80,6 +80,17 @@ export const customers = (state = {}, action) => {
         error: action.error
       };
 
+    case customerConstants.GET_SIGNATURE_REQUEST:
+      return {
+        loading: true
+      };
+    case customerConstants.GET_SIGNATURE_SUCCESS:
+      return action.data;
+    case customerConstants.GET_SIGNATURE_FAILURE:
+      return {
+        error: action.error
+      };
+
     default:
       return state;
   }

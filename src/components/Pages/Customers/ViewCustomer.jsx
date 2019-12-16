@@ -1,5 +1,8 @@
 import React, { Component, Fragment } from "react";
 
+import { connect } from "react-redux"
+import { customerActions } from "../../../actions"
+
 import {
   Row,
   Col,
@@ -15,10 +18,11 @@ import config from "../../../config";
 import {
   getCustomerByPeaId,
   authHeader,
-  addressToString
+  addressToString,
+  getWarType
 } from "../../../helpers";
 
-export default class ViewCustomer extends Component {
+class ViewCustomer extends Component {
   state = {
     customer: null,
     isLoading: true,
@@ -36,13 +40,13 @@ export default class ViewCustomer extends Component {
         address: addressToString(data.address),
         authorize: data.authorize,
         soldierNo: data.soldierNo,
-        war: data.war
+        war: `${data.war} ${getWarType(data.war)}`
       };
-      console.log(
-        data.verifies.sort((a, b) => {
-          return new Date(b.privilegeDate) - new Date(a.privilegeDate);
-        })
-      );
+
+      data.verifies.sort((a, b) => {
+        return new Date(b.appearDate) - new Date(a.appearDate);
+      })
+
       this.setState({
         customer: translated,
         verifies: data.verifies
@@ -167,7 +171,7 @@ export default class ViewCustomer extends Component {
                           <span>{item.title}</span>
                           <span className="ml-1">{`${
                             customer[item.field]
-                          }`}</span>
+                            }`}</span>
                         </ListGroup.Item>
                       );
                     })}
@@ -179,24 +183,27 @@ export default class ViewCustomer extends Component {
             <h4 className="text-center">ข้อมูลการยืนยัน</h4>
             <Row>
               <Col>
-                <Accordion defaultActiveKey="0">
-                  {isLoading ? (
-                    <div>Loading</div>
-                  ) : (
-                    verifies &&
-                    verifies.map((data, index) => {
-                      // this.fetchSignature(data._id);
-                      return (
-                        <VerifyData
-                          key={`card-${index}`}
-                          index={index}
-                          signatureUrl={signatures[index]}
-                          {...data}
-                        />
-                      );
-                    })
+
+                {isLoading ? (
+                  <div className="text-center"><span>กำลังประมวลผล...</span></div>
+                ) : (
+                    verifies && verifies.length > 0 ?
+                      <Accordion defaultActiveKey="0">
+                        {verifies.map((data, index) => {
+                          return (
+                            <VerifyData
+                              key={`card-${index}`}
+                              index={index}
+                              signatureUrl={signatures[index]}
+                              {...data}
+                            />
+                          );
+
+                        })}
+                      </Accordion>
+                      : <div className="text-center"><span className="text-secondary">ไม่มีข้อมูลการยืนยัน</span></div>
                   )}
-                </Accordion>
+
               </Col>
             </Row>
           </Col>
@@ -206,31 +213,47 @@ export default class ViewCustomer extends Component {
   }
 }
 
-const VerifyData = ({ appearDate, privilegeDate, signatureUrl, index }) => {
+const VerifyData = ({ appearDate, signatureUrl, index }) => {
   return (
     <Card>
       <Card.Header as="h5">
         <Accordion.Toggle as={Button} variant="link" eventKey={index}>
-          {new Date(privilegeDate).toLocaleDateString("th-TH", {
-            year: "numeric"
-          })}
+          <div>
+            <span className="mr-1">วันที่แสดงตน:</span>
+            <span>{new Date(appearDate).toLocaleDateString("th-TH", {
+              year: "numeric",
+              month: "long",
+              day: "numeric"
+            })}</span>
+          </div>
+
         </Accordion.Toggle>
       </Card.Header>
       <Accordion.Collapse eventKey={index}>
         <Card.Body>
-          <span className="mr-1">วันที่แสดงตน:</span>
-          {new Date(appearDate).toLocaleDateString("th-TH", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-          })}
           <div>
             {signatureUrl ? (
               <Image fluid alt="signature" src={signatureUrl} />
-            ) : null}
+            ) : <span className="text-secondary">ไม่พบไฟล์ภาพ</span>}
           </div>
         </Card.Body>
       </Accordion.Collapse>
     </Card>
   );
 };
+
+const mapStateToProps = state => {
+  const { customers } = state
+  return {
+    customers
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getCustomer: peaId => dispatch(customerActions.get(peaId)),
+    getSignature: (peaId, sigId) => dispatch(customerActions.getSignature(peaId, sigId))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewCustomer) 

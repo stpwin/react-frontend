@@ -12,7 +12,8 @@ import { ModalCamera } from "../Modals";
 export class CustomerVerifyForm extends Component {
   state = {
     appearDate: new Date(),
-    privilegeDate: this.props.privilegeDate || new Date(),
+    privilegeDate: new Date(),
+    noPrivilegeDate: true,
     signatureBase64: null,
     // authorizeNameOpen: false,
     showCamera: false,
@@ -71,8 +72,18 @@ export class CustomerVerifyForm extends Component {
     setSigpadRef && setSigpadRef(ref);
   };
 
+  handleNoPrivilegeDateChange = e => {
+    this.setState({
+      noPrivilegeDate: e.target.checked
+    }, () => {
+      const { onPrivilegeDateChange } = this.props;
+      onPrivilegeDateChange && onPrivilegeDateChange(this.state.noPrivilegeDate ? null : this.state.privilegeDate);
+    })
+    // console.log(e)
+  }
+
   render() {
-    const { appearDate, showCamera, privilegeDate } = this.state;
+    const { appearDate, showCamera, privilegeDate, noPrivilegeDate } = this.state;
     // console.log("privilegeDate", typeof privilegeDate);
     // const { setSigpadRef } = this.props;
     return (
@@ -83,15 +94,30 @@ export class CustomerVerifyForm extends Component {
           </Form.Label>
           <Col sm={3}>
             <DatePicker
+              inline={!noPrivilegeDate}
               locale="th"
               todayButton="เลือกวันนี้"
               className="form-control"
-              selected={privilegeDate}
+              selected={noPrivilegeDate ? null : privilegeDate}
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handlePrivilegeDateChange}
-              // name='appearDate'
-            ></DatePicker>
+              disabled={noPrivilegeDate}
+              placeholderText="ไม่ระบุ"
+            />
+          </Col>
+          <Col className="align-self-center">
+            <Form.Check
+              id="noPrivilegeDate"
+              inline
+              custom
+              type="checkbox"
+              label="ไม่ระบุ"
+              name="noPrivilegeDate"
+              // value="noPrivilegeDate"
+              checked={noPrivilegeDate}
+              onChange={this.handleNoPrivilegeDateChange}
+            />
           </Col>
         </Form.Group>
 
@@ -101,6 +127,7 @@ export class CustomerVerifyForm extends Component {
           </Form.Label>
           <Col sm={3}>
             <DatePicker
+              inline
               locale="th"
               todayButton="เลือกวันนี้"
               className="form-control"
@@ -108,7 +135,7 @@ export class CustomerVerifyForm extends Component {
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handleAppearDateChange}
-              // name='appearDate'
+            // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>

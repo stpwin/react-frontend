@@ -69,11 +69,11 @@ class CustomerPrintData extends Component {
                 <span>
                   {`เลขที่ ${address.houseNo} หมู่ ${
                     address.mooNo
-                  } ${getAddressStringByDistrictNo(address.districtNo)}`}
+                    } ${getAddressStringByDistrictNo(address.districtNo)}`}
                 </span>
               ) : (
-                <span>ไม่มีที่อยู่</span>
-              )}
+                  <span>ไม่มีที่อยู่</span>
+                )}
             </p>
             <p className="">
               กรณีเป็น:{"\u00A0\u00A0"}
@@ -92,8 +92,8 @@ class CustomerPrintData extends Component {
               {privilegeDate ? (
                 <span>{privilegeDate}</span>
               ) : (
-                <SpaceUnderline />
-              )}
+                  <SpaceUnderline />
+                )}
             </p>
             <p className="">
               วันที่แสดงตน:{"\u00A0\u00A0"}
@@ -103,6 +103,10 @@ class CustomerPrintData extends Component {
 
           <div className="footer">
             <div className="footer-content">
+              <p className="text-danger">
+                <span>*ถ้าท่านไม่ได้รับสิทธิ์ตั้งแต่เดือนกุมภาพันธ์เป็นต้นไป โปรดแจ้งที่เบอร์ <u>08-6431-0603</u></span><br />
+                <span>*หากท่านไม่โทรแจ้ง ท่านจะไม่ได้รับสิทธิ์ภายในเดือนถัดไป จนกว่าจะมีการแจ้งมายัง กฟภ.ลำปาง</span>
+              </p>
               <p className="text-right small-text">
                 พิมพ์เมื่อ{"\u00A0\u00A0"}
                 {new Date().toLocaleDateString("th-TH", {

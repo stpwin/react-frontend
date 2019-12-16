@@ -116,9 +116,8 @@ const verify = (peaId, { appearDate, privilegeDate, signature }) => {
   const signatureData = signature.replace("data:image/png;base64,", "");
   const signatureBlob = b64toBlob(signatureData, "image/png");
   const formData = new FormData();
-
   formData.append("appearDate", JSON.stringify(appearDate));
-  formData.append("privilegeDate", JSON.stringify(privilegeDate));
+  privilegeDate && formData.append("privilegeDate", JSON.stringify(privilegeDate));
   formData.append("signature", signatureBlob, "signature.png");
 
   const requestOptions = {
@@ -139,6 +138,16 @@ const remove = peaId => {
     headers: authHeader()
   };
   return fetch(`${config.apiUrl}/api/customers/${peaId}`, requestOptions).then(
+    handleResponse
+  );
+};
+
+const getSignature = (peaId, sigId) => {
+  const requestOptions = {
+    method: "GET",
+    headers: authHeader()
+  };
+  return fetch(`${config.apiUrl}/api/customers/signature/${peaId}/${sigId}`, requestOptions).then(
     handleResponse
   );
 };
@@ -169,5 +178,6 @@ export const customerService = {
   getFilter,
   update,
   verify,
-  remove
+  remove,
+  getSignature
 };

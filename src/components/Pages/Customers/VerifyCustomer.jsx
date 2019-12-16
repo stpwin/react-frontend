@@ -15,28 +15,15 @@ import FormButton from "../../Customer/FormButton";
 class VerifyCustomer extends Component {
   state = {
     appearDate: new Date(),
-    privilegeDate: new Date(),
+    privilegeDate: null,
     initial: {}
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
-      customers: { customer, status }
+      customers: { status }
     } = nextProps;
-    if (customer) {
-      const privilegeDate =
-        customer.verifies &&
-        customer.verifies.length > 0 &&
-        customer.verifies[customer.verifies.length - 1].privilegeDate
-          ? new Date(
-              customer.verifies[customer.verifies.length - 1].privilegeDate
-            )
-          : new Date();
 
-      this.setState({
-        privilegeDate
-      });
-    }
     if (status === "verify_success") {
       this.props.history.goBack();
     }
@@ -63,6 +50,7 @@ class VerifyCustomer extends Component {
   };
 
   handlePrivilegeDateChange = date => {
+    console.log(date)
     this.setState({
       privilegeDate: date
     });
@@ -79,7 +67,6 @@ class VerifyCustomer extends Component {
   };
 
   render() {
-    const { privilegeDate } = this.state;
     const { peaId, customers } = this.props;
     const { customer, loading } = customers;
     let initial;
@@ -107,9 +94,8 @@ class VerifyCustomer extends Component {
             <hr />
             <CustomerVerifyForm
               setSigpadRef={this.setSigpadRef}
-              privilegeDate={privilegeDate}
-              handleAppearDateChange={this.handleAppearDateChange}
-              handlePrivilegeDateChange={this.handlePrivilegeDateChange}
+              onAppearDateChange={this.handleAppearDateChange}
+              onPrivilegeDateChange={this.handlePrivilegeDateChange}
             />
             <FormButton loading={loading} cancel={this.handleCancel} />
           </React.Fragment>
