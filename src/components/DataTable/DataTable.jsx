@@ -45,19 +45,18 @@ export class DataTable extends Component {
   };
 
   render() {
-    // console.log(this.props);
     const { filterText } = this.state;
     const {
       filterPlaceholder,
       columns,
       data,
-      pageNo,
-      maxPage,
+      page,
+      pages,
       onNextPage,
       onPrevPage,
       onPageChange,
       onPerPageChange,
-      perPage,
+      limit,
       perPages,
       filters,
       filterChecked,
@@ -72,24 +71,26 @@ export class DataTable extends Component {
       <div className="data-table">
         <Row>
           <Col>
-            {topButtons && topButtons.length > 0
-              ? topButtons.map((item, index) => {
-                  return (
-                    <Button
-                      key={`button-${item.key}`}
-                      variant="outline"
-                      className="pea-color"
-                      onClick={() => item.onClick()}
-                    >
-                      {item.text}
-                    </Button>
-                  );
-                })
-              : null}
+            <div className="top-button">
+              {topButtons && topButtons.length > 0
+                ? topButtons.map((item, index) => {
+                    return (
+                      <Button
+                        key={`button-${item.key}`}
+                        variant="outline"
+                        className="pea-color"
+                        onClick={() => item.onClick()}
+                      >
+                        {item.text}
+                      </Button>
+                    );
+                  })
+                : null}
+            </div>
           </Col>
           <Col />
           <Col className="text-right align-self-center">
-            {perPage ? (
+            {limit ? (
               <Fragment>
                 <div className="perPageDropdown">
                   <span>แสดง</span>
@@ -101,7 +102,7 @@ export class DataTable extends Component {
                       variant="outline-secondary"
                       id="dropdown-basic"
                     >
-                      {perPage}
+                      {limit}
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
@@ -173,8 +174,8 @@ export class DataTable extends Component {
           </Col>
           <Col className="text-right align-self-center">
             <Paginator
-              curPage={pageNo}
-              maxPage={maxPage}
+              page={page}
+              pages={pages}
               pageChange={onPageChange}
               pageChangePrev={onPrevPage}
               pageChangeNext={onNextPage}
@@ -263,8 +264,8 @@ export class DataTable extends Component {
           <Col />
           <Col>
             <Paginator
-              curPage={pageNo}
-              maxPage={maxPage}
+              page={page}
+              pages={pages}
               pageChange={onPageChange}
               pageChangePrev={onPrevPage}
               pageChangeNext={onNextPage}

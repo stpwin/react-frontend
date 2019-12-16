@@ -12,7 +12,11 @@ import {
 } from "react-bootstrap";
 
 import config from "../../../config";
-import { getCustomerByPeaId, authHeader, addressToString } from "../../../helpers";
+import {
+  getCustomerByPeaId,
+  authHeader,
+  addressToString
+} from "../../../helpers";
 
 export default class ViewCustomer extends Component {
   state = {
@@ -33,22 +37,26 @@ export default class ViewCustomer extends Component {
         authorize: data.authorize,
         soldierNo: data.soldierNo,
         war: data.war
-      }
-      console.log(data.verifies.sort((a, b) => {
-        return new Date(b.privilegeDate) - new Date(a.privilegeDate)
-      }))
+      };
+      console.log(
+        data.verifies.sort((a, b) => {
+          return new Date(b.privilegeDate) - new Date(a.privilegeDate);
+        })
+      );
       this.setState({
         customer: translated,
         verifies: data.verifies
       });
-      Promise.all(data.verifies.map(item => {
-        return this.fetchSignature(item._id)
-      })).then(values => {
+      Promise.all(
+        data.verifies.map(item => {
+          return this.fetchSignature(item._id);
+        })
+      ).then(values => {
         this.setState({
           signatures: values,
           isLoading: false
-        })
-      })
+        });
+      });
     });
   }
 
@@ -62,7 +70,6 @@ export default class ViewCustomer extends Component {
   };
 
   fetchSignature = sigId => {
-
     const { peaId } = this.props;
     const requestOptions = {
       method: "GET",
@@ -74,14 +81,14 @@ export default class ViewCustomer extends Component {
       requestOptions
     ).then(rep => {
       if (!rep.ok) {
-        return Promise.reject()
+        return Promise.reject();
       }
       if (rep.status === 200) {
         return rep.arrayBuffer().then(buffer => {
           const base64Flag = "data:image/jpeg;base64,";
           const imageStr = this.arrayBufferToBase64(buffer);
           const image = base64Flag + imageStr;
-          return Promise.resolve(image)
+          return Promise.resolve(image);
         });
       }
     });
@@ -92,8 +99,8 @@ export default class ViewCustomer extends Component {
     { field: "address", title: "ที่อยู่", key: "address" },
     { field: "authorize", title: "กรณีเป็น", key: "authorize" },
     { field: "soldierNo", title: "หมายเลขทหาร", key: "soldierNo" },
-    { field: "war", title: "ลดสิทธิ์สงคราม", key: "war" },
-  ]
+    { field: "war", title: "ลดสิทธิ์สงคราม", key: "war" }
+  ];
 
   render() {
     const { peaId } = this.props;
@@ -102,12 +109,12 @@ export default class ViewCustomer extends Component {
     return (
       <Fragment>
         <Row>
-          <Col className='text-center'>
+          <Col className="text-center">
             <ButtonToolbar>
               <Button
-                key='button-print'
-                variant='outline-secondary'
-                className='pea-color'
+                key="button-print"
+                variant="outline-secondary"
+                className="pea-color"
                 onClick={() => {
                   this.props.history.push(`/customers/print/${peaId}`);
                 }}
@@ -115,9 +122,9 @@ export default class ViewCustomer extends Component {
                 พิมพ์
               </Button>
               <Button
-                key='button-verify'
-                variant='outline-secondary'
-                className='pea-color'
+                key="button-verify"
+                variant="outline-secondary"
+                className="pea-color"
                 onClick={() => {
                   this.props.history.push(`/customers/verify/${peaId}`);
                 }}
@@ -125,9 +132,9 @@ export default class ViewCustomer extends Component {
                 ยืนยันสิทธิ์
               </Button>
               <Button
-                key='button-edit'
-                variant='outline-secondary'
-                className='pea-color'
+                key="button-edit"
+                variant="outline-secondary"
+                className="pea-color"
                 onClick={() => {
                   this.props.history.push(`/customers/edit/${peaId}`);
                 }}
@@ -135,9 +142,9 @@ export default class ViewCustomer extends Component {
                 แก้ไข
               </Button>
               <Button
-                key='button-back'
-                variant='outline-secondary'
-                className='pea-color'
+                key="button-back"
+                variant="outline-secondary"
+                className="pea-color"
                 onClick={() => {
                   this.props.history.goBack();
                 }}
@@ -147,25 +154,35 @@ export default class ViewCustomer extends Component {
             </ButtonToolbar>
           </Col>
         </Row>
-        <Row className='mt-4'>
+        <Row className="mt-4">
           <Col>
-            <h4 className='text-center'>ข้อมูลพื้นฐาน</h4>
+            <h4 className="text-center">ข้อมูลพื้นฐาน</h4>
             <Row>
               <Col>
                 <ListGroup variant="flush">
-                  {customer && this.basicDataRow.map(item => {
-                    return <ListGroup.Item key={item.key}><span>{item.title}</span><span className="ml-1">{`${customer[item.field]}`}</span></ListGroup.Item>
-                  })}
+                  {customer &&
+                    this.basicDataRow.map(item => {
+                      return (
+                        <ListGroup.Item key={item.key}>
+                          <span>{item.title}</span>
+                          <span className="ml-1">{`${
+                            customer[item.field]
+                          }`}</span>
+                        </ListGroup.Item>
+                      );
+                    })}
                 </ListGroup>
               </Col>
             </Row>
           </Col>
           <Col>
-            <h4 className='text-center'>ข้อมูลการยืนยัน</h4>
+            <h4 className="text-center">ข้อมูลการยืนยัน</h4>
             <Row>
               <Col>
-                <Accordion defaultActiveKey='0'>
-                  {isLoading ? <div>Loading</div> :
+                <Accordion defaultActiveKey="0">
+                  {isLoading ? (
+                    <div>Loading</div>
+                  ) : (
                     verifies &&
                     verifies.map((data, index) => {
                       // this.fetchSignature(data._id);
@@ -177,7 +194,8 @@ export default class ViewCustomer extends Component {
                           {...data}
                         />
                       );
-                    })}
+                    })
+                  )}
                 </Accordion>
               </Col>
             </Row>
@@ -188,17 +206,11 @@ export default class ViewCustomer extends Component {
   }
 }
 
-const VerifyData = ({
-  dateAppear,
-  privilegeDate,
-  signatureUrl,
-  index
-}) => {
-
+const VerifyData = ({ appearDate, privilegeDate, signatureUrl, index }) => {
   return (
     <Card>
-      <Card.Header as='h5'>
-        <Accordion.Toggle as={Button} variant='link' eventKey={index}>
+      <Card.Header as="h5">
+        <Accordion.Toggle as={Button} variant="link" eventKey={index}>
           {new Date(privilegeDate).toLocaleDateString("th-TH", {
             year: "numeric"
           })}
@@ -206,15 +218,16 @@ const VerifyData = ({
       </Card.Header>
       <Accordion.Collapse eventKey={index}>
         <Card.Body>
-          <span className='mr-1'>วันที่แสดงตน:</span>
-          {new Date(dateAppear).toLocaleDateString("th-TH", {
+          <span className="mr-1">วันที่แสดงตน:</span>
+          {new Date(appearDate).toLocaleDateString("th-TH", {
             year: "numeric",
             month: "long",
             day: "numeric"
           })}
           <div>
-            {signatureUrl ? <Image fluid alt='signature' src={signatureUrl} /> : null}
-
+            {signatureUrl ? (
+              <Image fluid alt="signature" src={signatureUrl} />
+            ) : null}
           </div>
         </Card.Body>
       </Accordion.Collapse>

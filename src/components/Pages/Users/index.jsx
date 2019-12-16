@@ -1,19 +1,48 @@
 import React, { Component, Fragment } from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
 import { Container } from "react-bootstrap";
+import { ModalStatus } from "../../Modals";
 import NotFound from "../NotFound";
 import CreateUser from "./CreateUser";
 import EditUser from "./EditUser";
 import ListUsers from "./ListUsers";
 
 class Users extends Component {
-  render() {
-    const {
-      match: { params }
-    } = this.props;
+  state = {
+    statusOpen: true
+  };
 
-    // console.log(params.method);
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { loading, error } = nextProps;
+
+    this.setState({
+      statusOpen: loading || error ? true : false
+    });
+  }
+
+  componentDidMount() {
+    const { loading, error } = this.props;
+
+    this.setState({
+      statusOpen: loading || error ? true : false
+    });
+  }
+
+  handleStatusClose = () => {
+    this.setState({
+      statusOpen: false
+    });
+  };
+
+  render() {
+    const { statusOpen } = this.state;
+    const {
+      match: { params },
+      loading,
+      error
+    } = this.props;
     return (
       <Container>
         {!params.method ? (
@@ -32,17 +61,27 @@ class Users extends Component {
             <EditUser />
           </Fragment>
         ) : (
-          // : params.method === "change-password" ? (
-          //   <Fragment>
-          //     <h1 className='header-text text-center'>เปลี่ยนรหัสผ่าน</h1>
-          //     <EditUser changePassword={true} />
-          //   </Fragment>
-          // )
           <NotFound />
         )}
+        <ModalStatus
+          show={statusOpen}
+          status={loading ? "loading" : error ? "error" : ""}
+          onHide={this.handleStatusClose}
+          failText={error}
+        />
       </Container>
     );
   }
 }
 
-export default withRouter(Users);
+const mapStateToProps = state => {
+  const {
+    users: { loading, error }
+  } = state;
+  return {
+    loading,
+    error
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(Users));

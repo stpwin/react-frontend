@@ -59,7 +59,11 @@ hr {
   border-color: #563d7c;
 }
 
-.col .dropdown {
+.data-table .row .col .top-button {
+  margin-bottom: 0.5rem;
+}
+
+.perPageDropdown {
   margin-bottom: 0.5rem;
 }
 

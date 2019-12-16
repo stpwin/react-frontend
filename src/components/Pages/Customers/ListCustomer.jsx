@@ -1,12 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import config from "../../../config";
-import {
-  authHeader,
-  handleFetchError,
-  addressToString
-} from "../../../helpers";
+import { customerActions } from "../../../actions";
+import { addressToString } from "../../../helpers";
 
 import moment from "moment";
 import "moment/locale/th";
@@ -18,25 +14,23 @@ import {
   FaPrint,
   FaExternalLinkAlt
 } from "react-icons/fa";
-import { ModalConfirm, ModalStatus } from "../../Modals";
+import { ModalConfirm } from "../../Modals";
 import { DataTable } from "../../DataTable";
 
 class ListCustomer extends Component {
   state = {
-    pageNo: 1,
-    maxPage: 0,
-    perPage: 10,
+    page: 1,
+    pages: 0,
+    limit: 10,
+    wars: "",
     perPages: [10, 20, 50, 100],
-    customers: [],
+
     filterText: "",
     filterChecked: [true, true],
 
     confirmDelete: false,
     confirmDeleteText: "",
-    confirmDeletePeaId: "",
-    statusModal: true,
-    statusModalState: "getting",
-    failtext: ""
+    confirmDeletePeaId: ""
   };
 
   filters = [
@@ -58,7 +52,7 @@ class ListCustomer extends Component {
     { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
     { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
     { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
-    { text: "วันที่มาแสดงตน", dataField: "dateAppear", valign: "true" }
+    { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
   ];
 
   tools = [
@@ -95,9 +89,17 @@ class ListCustomer extends Component {
     }
   ];
 
+  topButtons = [
+    {
+      text: "เพิ่มลูกค้า",
+      onClick: () => this.handleAddCustomer(),
+      key: "createCustomer"
+    }
+  ];
+
   UNSAFE_componentWillMount() {
     moment.locale("th");
-    this.fetchCustomers();
+    this.fetchNew();
   }
 
   getWarFilter = () => {
@@ -112,223 +114,20 @@ class ListCustomer extends Component {
           .join() || "-";
   };
 
-  fetchCustomers = () => {
-    const { pageNo, perPage } = this.state;
-    const reqConf = {
-      method: "GET",
-      headers: authHeader()
-    };
-
-    fetch(
-      `${
-        config.apiUrl
-      }/api/customers/all?war=${this.getWarFilter()}&page=${pageNo}&limit=${perPage}`,
-      reqConf
-    )
-      .then(handleFetchError)
-      .then(({ err, rep }) => {
-        if (err) {
-          // console.log(err);
-          this.setState({
-            statusModal: true,
-            statusModalState: "getfail",
-            failtext: err
-          });
-          return;
-        }
-
-        if (!rep) {
-          this.setState({
-            customers: [],
-            pageNo: 1,
-            maxPage: 1,
-            statusModal: false
-          });
-          return;
-        }
-
-        const pages = parseInt(rep.metadata.pages);
-        const page = parseInt(rep.metadata.page);
-        const startNumber = page > 1 ? (page - 1) * perPage : 0;
-        this.setState({
-          statusModal: false,
-          maxPage: pages,
-          pageNo: page,
-          customers: rep.customers.map((key, index) => {
-            let lastDateAppear;
-            let privilegeDate;
-            if (key.verifies && key.verifies.length > 0) {
-              const lastVerify = key.verifies[key.verifies.length - 1];
-
-              lastDateAppear =
-                lastVerify.dateAppear &&
-                moment(lastVerify.dateAppear).format("ll");
-
-              privilegeDate =
-                lastVerify.privilegeDate &&
-                moment(lastVerify.privilegeDate).format("ll");
-            }
-
-            // console.log(privilegeDate);
-            return {
-              index: startNumber + index + 1,
-              name: `${key.title} ${key.firstName} ${key.lastName}`,
-              peaId: key.peaId,
-              address: addressToString(key.address),
-              authorize: key.authorize || "-",
-              soldierNo: key.soldierNo || "-",
-              privilegeDate: privilegeDate || "-",
-              dateAppear: lastDateAppear || "-",
-              war: key.war
-            };
-          })
-        });
-      })
-      .catch(err => {
-        console.log(err);
-        this.setState({
-          statusModal: true,
-          statusModalState: "getfail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
-      });
-  };
-
-  fillCustomer = () => {
-    const { pageNo, perPage, filterText } = this.state;
-
-    const reqConf = {
-      method: "GET",
-      headers: authHeader()
-    };
-
-    fetch(
-      `${
-        config.apiUrl
-      }/api/customers/filter/${filterText}?war=${this.getWarFilter()}&page=${pageNo}&limit=${perPage}`,
-      reqConf
-    )
-      .then(handleFetchError)
-      .then(({ err, rep }) => {
-        if (err) {
-          // console.log(err);
-          this.setState({
-            statusModal: true,
-            statusModalState: "getfail",
-            failtext: err
-          });
-          return;
-        }
-
-        if (!rep) {
-          this.setState({
-            customers: [],
-            pageNo: 1,
-            maxPage: 1,
-            statusModal: false
-          });
-          return;
-        }
-
-        const page = (rep.metadata && parseInt(rep.metadata.page)) || 1;
-        const pages = (rep.metadata && parseInt(rep.metadata.pages)) || 1;
-
-        const startNumber = page > 1 ? (page - 1) * perPage : 0;
-
-        this.setState({
-          statusModal: false,
-          maxPage: pages,
-          pageNo: page,
-          customers:
-            (rep.customers &&
-              rep.customers.map((key, index) => {
-                const lastDateAppear =
-                  key.verifies &&
-                  key.verifies.length > 0 &&
-                  moment(
-                    key.verifies[key.verifies.length - 1].dateAppear
-                  ).format("ll");
-                const privilegeDate =
-                  key.verifies &&
-                  moment(
-                    key.verifies[key.verifies.length - 1].privilegeDate
-                  ).format("ll");
-                console.log(privilegeDate);
-                return {
-                  index: startNumber + index + 1,
-                  name: `${key.title} ${key.firstName} ${key.lastName}`,
-                  peaId: key.peaId,
-                  address: addressToString(key.address),
-                  authorize: key.authorize,
-                  soldierNo: key.soldierNo,
-                  privilegeDate: privilegeDate,
-                  dateAppear: lastDateAppear,
-                  war: key.war
-                };
-              })) ||
-            []
-        });
-      })
-      .catch(() => {
-        // console.log(err);
-        this.setState({
-          statusModal: true,
-          statusModalState: "getfail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
-      });
-  };
-
-  deleteCustomer = peaId => {
-    const reqConf = {
-      method: "DELETE",
-      headers: authHeader()
-    };
-    return fetch(`${config.apiUrl}/api/customers/${peaId}`, reqConf)
-      .then(handleFetchError)
-      .then(({ err, rep }) => {
-        if (err) {
-          this.setState({
-            statusModalState: "deletefail",
-            failtext: err
-          });
-          return;
-        }
-
-        this.setState({
-          statusModalState: "deleted"
-        });
-        setTimeout(() => {
-          this.setState({
-            statusModal: false
-          });
-          this.fetchNew();
-        }, config.statusShowTime);
-      })
-      .catch(() => {
-        this.setState({
-          statusModalState: "deletefail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
-      });
-  };
-
   fetchNew = () => {
-    if (this.state.filterText) {
-      this.fillCustomer(this.state.filterText);
+    const { filterText, page, limit, wars } = this.state;
+    if (filterText) {
+      this.props.getFilterCustomer(filterText, page, limit, wars);
     } else {
-      this.fetchCustomers();
+      this.props.getAllCustomer(page, limit, wars);
     }
   };
 
   onPerPageChange = value => {
-    // console.log(value);
     this.setState(
       {
-        pageNo: 1,
-        perPage: parseInt(value),
-        statusModal: true,
-        statusModalState: "getting"
+        page: 1,
+        limit: parseInt(value)
       },
       () => {
         this.fetchNew();
@@ -339,9 +138,7 @@ class ListCustomer extends Component {
   onPrevPage = () => {
     this.setState(
       {
-        pageNo: this.state.pageNo > 1 ? this.state.pageNo - 1 : 1,
-        statusModal: true,
-        statusModalState: "getting"
+        page: this.state.page > 1 ? this.state.page - 1 : 1
       },
       () => {
         this.fetchNew();
@@ -352,12 +149,10 @@ class ListCustomer extends Component {
   onNextPage = () => {
     this.setState(
       {
-        pageNo:
-          this.state.pageNo < this.state.maxPage
-            ? this.state.pageNo + 1
-            : this.state.pageNo,
-        statusModal: true,
-        statusModalState: "getting"
+        page:
+          this.state.page < this.state.pages
+            ? this.state.page + 1
+            : this.state.page
       },
       () => {
         this.fetchNew();
@@ -368,14 +163,12 @@ class ListCustomer extends Component {
   onPageChange = event => {
     if (!event.target.text) return;
 
-    const pageNo = parseInt(event.target.text);
+    const page = parseInt(event.target.text);
 
-    if (pageNo) {
+    if (page) {
       this.setState(
         {
-          pageNo: pageNo,
-          statusModal: true,
-          statusModalState: "getting"
+          page: page
         },
         () => {
           this.fetchNew();
@@ -388,12 +181,12 @@ class ListCustomer extends Component {
     const index = event.target.name.replace("filter-", "");
     let newChecked = this.state.filterChecked;
     newChecked[index] = event.target.checked;
+
     this.setState(
       {
         filterChecked: newChecked,
-        pageNo: 1,
-        statusModal: true,
-        statusModalState: "getting"
+        page: 1,
+        wars: this.getWarFilter()
       },
       () => {
         this.fetchNew();
@@ -405,8 +198,8 @@ class ListCustomer extends Component {
     this.setState(
       {
         filterText: text,
-        pageNo: 1,
-        maxPage: 1
+        page: 1,
+        pages: 1
       },
       () => {
         this.fetchNew();
@@ -434,11 +227,9 @@ class ListCustomer extends Component {
       confirmDeleteText: `${peaId}\n${customValue}`,
       confirmDeletePeaId: peaId
     });
-    // this.props.history.push(`/customers/verify/${peaId}`);
   };
 
   onPrintClick = peaId => {
-    console.log("onPrint", peaId);
     this.props.history.push(`/customers/print/${peaId}`);
   };
 
@@ -450,87 +241,134 @@ class ListCustomer extends Component {
 
   handleConfirmClick = () => {
     this.setState({
-      confirmDelete: false,
-      statusModal: true,
-      statusModalState: "deleting"
+      confirmDelete: false
     });
-    this.deleteCustomer(this.state.confirmDeletePeaId);
-
-    // console.log(this.state.confirmDeletePeaId);
+    this.props.removeCustomer(this.state.confirmDeletePeaId);
+    this.fetchNew();
   };
 
-  handleStatusClose = () => {
-    this.setState({
-      statusModal: false
-    });
+  // handleStatusClose = () => {
+  //   this.setState({
+  //     statusModal: false
+  //   });
+  // };
+
+  handleAddCustomer = () => {
+    this.props.history.push("/customers/add");
   };
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { data } = nextProps;
+    if (data && data.metadata) {
+      const page = (data.metadata && parseInt(data.metadata.page)) || 1;
+      const pages = (data.metadata && parseInt(data.metadata.pages)) || 1;
+
+      this.setState({
+        page,
+        pages
+      });
+    }
+  }
 
   render() {
-    // console.log(this.props);
     const {
-      customers,
-      maxPage,
-      pageNo,
-      perPage,
+      pages,
+      page,
       perPages,
+      limit,
       filterChecked,
       confirmDelete,
-      confirmDeleteText,
-      statusModal,
-      statusModalState,
-      failtext
+      confirmDeleteText
     } = this.state;
+    const { data } = this.props;
+
+    const startNumber = page > 1 ? (page - 1) * limit : 0;
+    const customers =
+      data &&
+      data.customers &&
+      data.customers.map((key, index) => {
+        // console.log(key);
+        const lastAppearDate =
+          key.verifies &&
+          key.verifies.length > 0 &&
+          moment(key.verifies[key.verifies.length - 1].appearDate).format("ll");
+        const privilegeDate =
+          key.verifies &&
+          key.verifies.length > 0 &&
+          moment(key.verifies[key.verifies.length - 1].privilegeDate).format(
+            "ll"
+          );
+
+        return {
+          index: startNumber + index + 1,
+          name: `${key.title} ${key.firstName} ${key.lastName}`,
+          peaId: key.peaId,
+          address: addressToString(key.address),
+          authorize: key.authorize,
+          soldierNo: key.soldierNo,
+          privilegeDate: privilegeDate,
+          appearDate: lastAppearDate,
+          war: key.war
+        };
+      });
+
     return (
       <Fragment>
         {/* <ScrollPositionManager /> */}
         <DataTable
-          filterPlaceholder='ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)'
+          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)"
           columns={this.columns}
           data={customers}
-          maxPage={maxPage}
-          pageNo={pageNo}
+          pages={pages}
+          page={page}
           onNextPage={this.onNextPage}
           onPrevPage={this.onPrevPage}
           onPageChange={this.onPageChange}
           onPerPageChange={this.onPerPageChange}
-          // onVerify={this.onVerifyClick}
-          // onEdit={this.onEditClick}
-          // onDelete={this.onDeleteClick}
-          perPage={perPage}
+          limit={limit}
           perPages={perPages}
           filters={this.filters}
           filterChecked={filterChecked}
           onFilterCheckedChange={this.onFilterCheckedChange}
           filterTextChange={this.onFilterTextChange}
           tools={this.tools}
-          idKey='peaId'
-          customValueKey='name'
-          // redirectTo={"/customers"}
+          idKey="peaId"
+          customValueKey="name"
+          topButtons={this.topButtons}
         />
         <ModalConfirm
           show={confirmDelete}
           onHide={this.handleDeleteModalClose}
           confirm={this.handleConfirmClick}
-          status='delete'
+          status="delete"
           confirmtext={confirmDeleteText}
-        />
-        <ModalStatus
-          show={statusModal}
-          status={statusModalState}
-          failtext={failtext}
-          onHide={this.handleStatusClose}
         />
       </Fragment>
     );
   }
 }
 
-function mapStateToProps(state) {
-  const { authentication } = state;
-  const { user } = authentication;
+const mapStateToProps = state => {
+  const {
+    customers: { data, loading, error }
+  } = state;
   return {
-    user
+    data,
+    loading,
+    error
   };
-}
+};
 
-export default withRouter(connect(mapStateToProps)(ListCustomer));
+const mapDispatchToProps = dispatch => {
+  return {
+    getAllCustomer: (page, limit, war) =>
+      dispatch(customerActions.getAll(page, limit, war)),
+    getFilterCustomer: (filter, page, limit, war) =>
+      dispatch(customerActions.getFilter(filter, page, limit, war)),
+    removeCustomer: peaId => dispatch(customerActions.remove(peaId))
+  };
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(ListCustomer)
+);

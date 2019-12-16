@@ -2,26 +2,21 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { userActions } from "../../../actions";
-import config from "../../../config";
-import { authHeader, handleFetchSuccessResponse } from "../../../helpers";
 
 import moment from "moment";
 import "moment/locale/th";
 
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { DataTable } from "../../DataTable";
-import { ModalStatus, ModalConfirm } from "../../Modals";
+import { ModalConfirm } from "../../Modals";
 
 class ListUsers extends Component {
   state = {
-    pageNo: 1,
-    maxPage: 1,
-    perPage: 10,
+    page: 1,
+    pages: 1,
+    limit: 10,
     perPages: [10, 20, 50, 100],
-    users: [],
-    modalStatusShow: true,
-    status: "getting",
-    failtext: "",
+
     modalConfirmShow: false,
     selectedUid: "",
     confirmtext: "",
@@ -72,64 +67,31 @@ class ListUsers extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // console.log("componentDidUpdate", this.props);
-    const { users } = nextProps;
+    const {
+      users: { data }
+    } = nextProps;
 
-    if (users.error) {
-      this.setState({
-        status: "getfail",
-        failtext: `${users.error}`
-      });
-      return;
-    }
-
-    if (users.loading) {
-      return;
-    }
-    // console.log(users);
-    if (users.metadata) {
-      let { page, pages } = users.metadata;
+    if (data && data.metadata) {
+      let { page, pages } = data.metadata;
       page = parseInt(page);
-      const startNumber = page > 1 ? (page - 1) * this.state.perPage : 0;
       return this.setState({
-        modalStatusShow: false,
-        pageNo: page,
-        maxPage: pages,
-        users:
-          users.users &&
-          users.users
-            // .filter(userFilter => {
-            //   return user.username !== userFilter.username;
-            // })
-            .map((userItem, index) => {
-              return {
-                uid: userItem._id,
-                index: startNumber + index + 1,
-                displayName: userItem.displayName,
-                username: userItem.username,
-                role: userItem.role,
-                description: userItem.description,
-                createdAt: moment(userItem.createdAt).format("lll")
-              };
-            })
+        page: page,
+        pages: pages
       });
     }
 
     this.setState({
-      modalStatusShow: false,
       users: []
     });
   }
 
   fetchNew = () => {
-    const { pageNo, perPage, filterText } = this.state;
+    const { page, limit, filterText } = this.state;
     if (filterText) {
-      this.props.getFilter(filterText, pageNo, perPage);
-      // console.log("Hello");
+      this.props.getFilterUsers(filterText, page, limit);
       return;
     }
-    this.props.getAll(pageNo, perPage);
-    // console.log("Hello");
+    this.props.getAllUsers(page, limit);
   };
 
   handleRemove = (uid, text) => {
@@ -157,44 +119,8 @@ class ListUsers extends Component {
     this.handleConfirmClose();
     if (!selectedUid) return;
 
-    this.setState({
-      modalStatusShow: true,
-      status: "deleting"
-    });
-
-    const reqConf = {
-      method: "DELETE",
-      headers: authHeader(),
-      body: JSON.stringify({
-        uid: selectedUid
-      })
-    };
-
-    fetch(`${config.apiUrl}/api/users`, reqConf)
-      .then(handleFetchSuccessResponse)
-      .then(({ err, rep }) => {
-        if (err) {
-          this.setState({
-            status: "deletefail",
-            failtext: err
-          });
-          return;
-        }
-
-        this.setState(
-          {
-            status: "deleted",
-            failtext: ""
-          },
-          this.fetchNew
-        );
-      })
-      .catch(() => {
-        this.setState({
-          status: "deletefail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
-      });
+    this.props.removeUser(selectedUid);
+    this.fetchNew();
   };
 
   handleConfirmClose = () => {
@@ -203,14 +129,7 @@ class ListUsers extends Component {
     });
   };
 
-  handleStatusClose = () => {
-    this.setState({
-      modalStatusShow: false
-    });
-  };
-
   handleCreateUser = () => {
-    // console.log("Create User");
     this.props.history.push("/users/create");
   };
 
@@ -218,32 +137,28 @@ class ListUsers extends Component {
     this.setState(
       {
         filterText: text,
-        pageNo: 1,
-        maxPage: 1
+        page: 1,
+        pages: 1
       },
       this.fetchNew
     );
   };
 
-  handlePerPageChange = perPage => {
+  handlePerPageChange = limit => {
     this.setState(
       {
-        perPage: perPage
+        limit: limit
       },
       this.fetchNew
     );
-    // console.log(perPage);
   };
 
   handlePageChange = event => {
     if (!event.target.text) return;
 
-    const pageNo = parseInt(event.target.text);
-
-    // console.log(pageNo);
     this.setState(
       {
-        pageNo: pageNo
+        page: parseInt(event.target.text)
       },
       this.fetchNew
     );
@@ -252,10 +167,10 @@ class ListUsers extends Component {
   handleNextPage = () => {
     this.setState(
       {
-        pageNo:
-          this.state.pageNo < this.state.maxPage
-            ? this.state.pageNo + 1
-            : this.state.pageNo
+        page:
+          this.state.page < this.state.pages
+            ? this.state.page + 1
+            : this.state.page
       },
       this.fetchNew
     );
@@ -264,8 +179,7 @@ class ListUsers extends Component {
   handlePrevPage = () => {
     this.setState(
       {
-        pageNo:
-          this.state.pageNo > 2 ? this.state.pageNo - 1 : this.state.pageNo
+        page: this.state.page > 2 ? this.state.page - 1 : this.state.page
       },
       this.fetchNew
     );
@@ -273,44 +187,52 @@ class ListUsers extends Component {
 
   render() {
     const {
-      pageNo,
-      maxPage,
-      perPage,
+      page,
+      pages,
+      limit,
       perPages,
-      users,
-      modalStatusShow,
-      status,
       modalConfirmShow,
-      confirmtext,
-      failtext
+      confirmtext
     } = this.state;
-    // const { users } = this.props;
 
+    const {
+      users: { data }
+    } = this.props;
+
+    const startNumber = page > 1 ? (page - 1) * limit : 0;
+    const users =
+      data &&
+      data.users &&
+      data.users.map((userItem, index) => {
+        return {
+          uid: userItem._id,
+          index: startNumber + index + 1,
+          displayName: userItem.displayName,
+          username: userItem.username,
+          role: userItem.role,
+          description: userItem.description,
+          createdAt: moment(userItem.createdAt).format("lll")
+        };
+      });
     return (
       <Fragment>
         <DataTable
           columns={this.columns}
           data={users}
-          maxPage={maxPage}
-          pageNo={pageNo}
+          pages={pages}
+          page={page}
           onNextPage={this.handleNextPage}
           onPrevPage={this.handlePrevPage}
           onPageChange={this.handlePageChange}
           onPerPageChange={this.handlePerPageChange}
           filterTextChange={this.handleFilterChange}
-          perPage={perPage}
+          limit={limit}
           perPages={perPages}
           filterPlaceholder={"ค้นหาชื่อ หรือ Username"}
           tools={this.tools}
           idKey="uid"
           customValueKey="displayName"
           topButtons={this.topButtons}
-        />
-        <ModalStatus
-          show={modalStatusShow}
-          status={status}
-          onHide={this.handleStatusClose}
-          failtext={failtext}
         />
         <ModalConfirm
           show={modalConfirmShow}
@@ -327,16 +249,16 @@ class ListUsers extends Component {
 const mapStateToProps = state => {
   const { users } = state;
   return {
-    // user,
     users
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getFilter: (filter, page, pages) =>
+    getFilterUsers: (filter, page, pages) =>
       dispatch(userActions.getFilter(filter, page, pages)),
-    getAll: (page, pages) => dispatch(userActions.getAll(page, pages))
+    getAllUsers: (page, pages) => dispatch(userActions.getAll(page, pages)),
+    removeUser: uid => dispatch(userActions.remove(uid))
   };
 };
 

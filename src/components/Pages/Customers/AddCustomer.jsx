@@ -1,29 +1,37 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
-
-import config from "../../../config";
-import { authHeader, handleFetchError } from "../../../helpers";
 
 import { Form } from "react-bootstrap";
 
-import { ModalStatus, ModalConfirm } from "../../Modals";
+import { ModalConfirm } from "../../Modals";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
 import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
 import FormButton from "../../Customer/FormButton";
 
 class AddCustomer extends Component {
   state = {
-    signatureBase64: null,
-    fetchPeaIdComplete: true,
-    existsPeaCustomer: false,
+    peaId: this.props.peaId,
     peaIdOk: true,
     peaWarnText: "",
-    statusModal: false,
-    failtext: "",
-    status: "loading",
-    confirmModal: false
+
+    confirmModal: false,
+    appearDate: new Date(),
+    privilegeDate: new Date()
   };
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const {
+      customers: { status }
+    } = nextProps;
+
+    if (status === "create_success") {
+      this.handleVerifyCustomer();
+    } else if (status === "verify_success") {
+      this.props.history.goBack();
+    }
+  }
 
   sigPad = {};
 
@@ -47,107 +55,83 @@ class AddCustomer extends Component {
     });
   };
 
-  handleStatusClose = () => {
-    this.setState({
-      statusModal: false
+  handleCreateCustomer = event => {
+    event.preventDefault();
+
+    const title = event.target.title.value;
+    const firstName = event.target.firstName.value;
+    const lastName = event.target.lastName.value;
+    const peaId = event.target.peaId.value;
+    const authorize = event.target.authorize.value;
+    const soldierNo = event.target.soldierNo.value;
+    const war = event.target.war.value;
+    const houseNo = event.target.houseNo.value;
+    const mooNo = event.target.mooNo.value;
+    const districtNo = event.target.districtNo.value;
+
+    this.props.createCustomer({
+      title,
+      firstName,
+      lastName,
+      peaId,
+      authorize,
+      soldierNo,
+      war,
+      houseNo,
+      mooNo,
+      districtNo
     });
   };
 
-  insertData = event => {
-    event.preventDefault();
+  handleVerifyCustomer = () => {
+    const { peaId } = this.state;
+    const { appearDate, privilegeDate } = this.state;
+    const signature = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
+    this.props.verifyCustomer(peaId, { appearDate, privilegeDate, signature });
+  };
+
+  handleAppearDateChange = date => {
     this.setState({
-      statusModal: true,
-      status: "saving"
+      appearDate: date
     });
-    const signatureData = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeader() },
-      body: JSON.stringify({
-        customer: {
-          title: event.target.title.value,
-          firstName: event.target.firstName.value,
-          lastName: event.target.lastName.value,
-          peaId: event.target.peaId.value,
-          authorize: event.target.authorize.value,
-          soldierNo: event.target.soldierNo.value,
-          war: event.target.war.value,
-          address: {
-            houseNo: event.target.houseNo.value,
-            mooNo: event.target.mooNo.value,
-            districtNo: event.target.districtNo.value
-          }
-        },
-        verify: {
-          dateAppear: event.target.dateAppear.value,
-          signatureBase64: signatureData
-        }
-      })
-    };
+  };
 
-    fetch(`${config.apiUrl}/api/customers`, requestOptions)
-      .then(rep => {
-        if (rep.status === 422) {
-          this.setState({
-            status: "require"
-          });
-          setTimeout(() => {
-            this.setState({
-              statusModal: false
-            });
-          }, config.statusShowTime);
-          return;
-        }
-        return rep;
-      })
-      .then(handleFetchError)
-      .then(({ err, rep }) => {
-        if (err) {
-          this.setState({
-            status: "savefail",
-            failtext: err
-          });
-          return;
-        }
+  handlePrivilegeDateChange = date => {
+    this.setState({
+      privilegeDate: date
+    });
+  };
 
-        this.setState({
-          status: "saved"
-        });
-        setTimeout(() => {
-          this.handleSuccess();
-        }, config.statusShowTime);
-      })
-      .catch(() => {
-        this.setState({
-          status: "savefail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
-      });
+  handlePeaIdChange = peaId => {
+    this.setState({
+      peaId
+    });
   };
 
   render() {
-    const { statusModal, status, confirmModal, failtext } = this.state;
+    const { statusModal, confirmModal } = this.state;
+    const { peaId } = this.props;
     return (
       <React.Fragment>
-        <Form onSubmit={this.insertData}>
+        <Form onSubmit={this.handleCreateCustomer}>
           <CustomerDataForm
-            initial={{ peaId: this.props.peaId }}
+            initial={{ peaId }}
             showPlaceholder={true}
             validatePeaId={true}
+            onPeaIdChange={this.handlePeaIdChange}
           />
           <hr />
-          <CustomerVerifyForm setSigpadRef={this.setSigpadRef} />
+          <CustomerVerifyForm
+            setSigpadRef={this.setSigpadRef}
+            onAppearDateChange={this.handleAppearDateChange}
+            onPrivilegeDateChange={this.handlePrivilegeDateChange}
+          />
           <FormButton loading={statusModal} cancel={this.handleCancel} />
         </Form>
-        <ModalStatus
-          show={statusModal}
-          status={status}
-          failtext={failtext}
-          onHide={this.handleStatusClose}
-        />
+
         <ModalConfirm
           show={confirmModal}
-          status='datachanged'
+          status="datachanged"
           confirm={this.handleSuccess}
           close={this.handleConfirmModalClose}
         />
@@ -156,12 +140,21 @@ class AddCustomer extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  const { authentication } = state;
-  const { user } = authentication;
+const mapStateToProps = state => {
+  const { customers } = state;
   return {
-    user
+    customers
   };
-}
+};
 
-export default withRouter(connect(mapStateToProps)(AddCustomer));
+const mapDispatchToProps = dispatch => {
+  return {
+    createCustomer: customer => dispatch(customerActions.create(customer)),
+    verifyCustomer: (peaId, verify) =>
+      dispatch(customerActions.verify(peaId, verify))
+  };
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(AddCustomer)
+);

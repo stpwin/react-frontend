@@ -35,6 +35,46 @@ const logout = () => {
   return { type: userConstants.LOGOUT };
 };
 
+const create = user => {
+  return dispatch => {
+    dispatch(request());
+
+    userService.create(user).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+  function request() {
+    return { type: userConstants.GET_REQUEST };
+  }
+  function success(data) {
+    return { type: userConstants.GET_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: userConstants.GET_FAILURE, error };
+  }
+};
+
+const get = uid => {
+  return dispatch => {
+    dispatch(request());
+
+    userService.get(uid).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+  function request() {
+    return { type: userConstants.GET_REQUEST };
+  }
+  function success(data) {
+    return { type: userConstants.GET_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: userConstants.GET_FAILURE, error };
+  }
+};
+
 const getAll = (page, pages) => {
   return dispatch => {
     dispatch(request());
@@ -46,13 +86,13 @@ const getAll = (page, pages) => {
   };
 
   function request() {
-    return { type: userConstants.GETALL_REQUEST };
+    return { type: userConstants.GET_ALL_REQUEST };
   }
   function success(data) {
-    return { type: userConstants.GETALL_SUCCESS, data };
+    return { type: userConstants.GET_ALL_SUCCESS, data };
   }
   function failure(error) {
-    return { type: userConstants.GETALL_FAILURE, error };
+    return { type: userConstants.GET_ALL_FAILURE, error };
   }
 };
 
@@ -67,19 +107,64 @@ const getFilter = (filter, page, pages) => {
   };
 
   function request() {
-    return { type: userConstants.GETFILTER_REQUEST };
+    return { type: userConstants.GET_FILTER_REQUEST };
   }
   function success(data) {
-    return { type: userConstants.GETFILTER_SUCCESS, data };
+    return { type: userConstants.GET_FILTER_SUCCESS, data };
   }
   function failure(error) {
-    return { type: userConstants.GETFILTER_FAILURE, error };
+    return { type: userConstants.GET_FILTER_FAILURE, error };
+  }
+};
+
+const update = (uid, user) => {
+  // console.log(uid);
+  return dispatch => {
+    dispatch(request());
+    userService.update(uid, user).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+  function request() {
+    return { type: userConstants.UPDATE_REQUEST };
+  }
+  function success(data) {
+    return { type: userConstants.UPDATE_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: userConstants.UPDATE_FAILURE, error };
+  }
+};
+
+const remove = uid => {
+  return dispatch => {
+    dispatch(request());
+
+    userService.remove(uid).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: userConstants.REMOVE_REQUEST };
+  }
+  function success(data) {
+    return { type: userConstants.REMOVE_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: userConstants.REMOVE_FAILURE, error };
   }
 };
 
 export const userActions = {
   login,
   logout,
+  create,
+  get,
   getAll,
-  getFilter
+  getFilter,
+  update,
+  remove
 };

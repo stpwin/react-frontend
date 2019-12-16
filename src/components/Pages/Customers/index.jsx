@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from "react";
 
 import { withRouter } from "react-router-dom";
-
+import { connect } from "react-redux";
 import { Container } from "react-bootstrap";
+
+import { ModalStatus } from "../../Modals";
 
 import ListCustomer from "./ListCustomer";
 import AddCustomer from "./AddCustomer";
@@ -12,14 +14,41 @@ import PrintCustomer from "./PrintCustomer";
 import ViewCustomer from "./ViewCustomer";
 
 class Customers extends Component {
+  state = {
+    statusOpen: true,
+    failText: ""
+  };
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { loading, error } = nextProps;
+
+    this.setState({
+      statusOpen: loading || error ? true : false
+    });
+  }
+
+  componentDidMount() {
+    const { loading, error } = this.props;
+
+    this.setState({
+      statusOpen: loading || error ? true : false
+    });
+  }
+
+  handleStatusHide = () => {
+    this.setState({
+      statusOpen: false
+    });
+  };
   render() {
+    const { statusOpen } = this.state;
     const {
       match: {
         params: { method, peaId }
-      }
+      },
+      loading,
+      error
     } = this.props;
-
-    // const { method, peaId } = this.props.params;
     return (
       <Container>
         {method === "add" ? (
@@ -69,13 +98,35 @@ class Customers extends Component {
             <ListCustomer />
           </Fragment>
         )}
+        <ModalStatus
+          show={statusOpen}
+          status={loading ? "loading" : error ? "error" : null}
+          failText={error}
+          onHide={this.handleStatusHide}
+        />
       </Container>
     );
   }
 }
 
 const NoPeaID = () => {
-  return <h3 className="text-center mt-5">กรุณาระบุหมายเลขผู้ใช้ไฟ</h3>;
+  return <h3 className="text-center mt-5">กรุณาระบุหมายเลขผู้ใช้ไฟฟ้า(CA)</h3>;
 };
 
-export default withRouter(Customers);
+const mapStateToProps = state => {
+  const {
+    customers: { loading, error }
+  } = state;
+  return {
+    loading,
+    error
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Customers)
+);

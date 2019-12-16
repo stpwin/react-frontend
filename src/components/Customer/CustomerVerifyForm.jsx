@@ -11,7 +11,7 @@ import { ModalCamera } from "../Modals";
 
 export class CustomerVerifyForm extends Component {
   state = {
-    dateAppear: new Date(),
+    appearDate: new Date(),
     privilegeDate: this.props.privilegeDate || new Date(),
     signatureBase64: null,
     // authorizeNameOpen: false,
@@ -31,13 +31,13 @@ export class CustomerVerifyForm extends Component {
     });
   };
 
-  handleDateChange = date => {
+  handleAppearDateChange = date => {
     // console.log(date);
     this.setState({
-      dateAppear: date
+      appearDate: date
     });
-    const { handleAppearDateChange } = this.props;
-    handleAppearDateChange && handleAppearDateChange(date);
+    const { onAppearDateChange } = this.props;
+    onAppearDateChange && onAppearDateChange(date);
   };
 
   handleShowCamera = () => {
@@ -61,8 +61,8 @@ export class CustomerVerifyForm extends Component {
     this.setState({
       privilegeDate: date
     });
-    const { handlePrivilegeDateChange } = this.props;
-    handlePrivilegeDateChange && handlePrivilegeDateChange(date);
+    const { onPrivilegeDateChange } = this.props;
+    onPrivilegeDateChange && onPrivilegeDateChange(date);
   };
 
   setSigpadRef = ref => {
@@ -72,7 +72,7 @@ export class CustomerVerifyForm extends Component {
   };
 
   render() {
-    const { dateAppear, showCamera, privilegeDate } = this.state;
+    const { appearDate, showCamera, privilegeDate } = this.state;
     // console.log("privilegeDate", typeof privilegeDate);
     // const { setSigpadRef } = this.props;
     return (
@@ -90,7 +90,7 @@ export class CustomerVerifyForm extends Component {
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handlePrivilegeDateChange}
-              // name='dateAppear'
+              // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>
@@ -104,11 +104,11 @@ export class CustomerVerifyForm extends Component {
               locale="th"
               todayButton="เลือกวันนี้"
               className="form-control"
-              selected={dateAppear}
+              selected={appearDate}
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
-              onChange={this.handleDateChange}
-              // name='dateAppear'
+              onChange={this.handleAppearDateChange}
+              // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>

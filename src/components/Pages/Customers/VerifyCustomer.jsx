@@ -1,86 +1,50 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
-import PropTypes from "prop-types"
+import PropTypes from "prop-types";
 
-import config from "../../../config";
-import {
-  authHeader,
-  handleFetchSuccessResponse,
-  correctPostcode,
-  getCustomerByPeaId,
-  b64toBlob
-} from "../../../helpers";
+import { correctPostcode } from "../../../helpers";
 
 import { Form } from "react-bootstrap";
 
-import { ModalStatus } from "../../Modals";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
 import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
 import FormButton from "../../Customer/FormButton";
 
 class VerifyCustomer extends Component {
   state = {
-    dateAppear: new Date(),
+    appearDate: new Date(),
     privilegeDate: new Date(),
-    initial: {},
-    statusModal: true,
-    statusModalState: "loading",
-    failtext: ""
-    // redirectTo: "/"
+    initial: {}
   };
 
-  UNSAFE_componentWillMount() {
-    this.setState({
-      statusModal: true,
-      statusModalState: "getting"
-    });
-    const { peaId } = this.props;
-    getCustomerByPeaId(peaId)
-      .then(customer => {
-        if (!customer) {
-          this.setState({
-            statusModal: true,
-            statusModalState: "nodata"
-          });
-          return;
-        }
-        const privilegeDate =
-          customer.verifies &&
-            customer.verifies.length > 0 &&
-            customer.verifies[customer.verifies.length - 1].privilegeDate
-            ? new Date(
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const {
+      customers: { customer, status }
+    } = nextProps;
+    if (customer) {
+      const privilegeDate =
+        customer.verifies &&
+        customer.verifies.length > 0 &&
+        customer.verifies[customer.verifies.length - 1].privilegeDate
+          ? new Date(
               customer.verifies[customer.verifies.length - 1].privilegeDate
             )
-            : new Date();
+          : new Date();
 
-        this.setState({
-          privilegeDate: privilegeDate,
-          initial: {
-            peaId: peaId,
-            title: customer.title,
-            firstName: customer.firstName,
-            lastName: customer.lastName,
-            houseNo: customer.address.houseNo,
-            mooNo: customer.address.mooNo,
-            districtNo: customer.address.districtNo,
-            postcode: correctPostcode(customer.address.districtNo),
-            authorize: customer.authorize,
-            soldierNo: customer.soldierNo,
-            war: customer.war
-          },
-          statusModal: false,
-          statusModalState: "getok"
-        });
-      })
-      .catch(err => {
-        console.error(err);
-        this.setState({
-          statusModal: true,
-          statusModalState: "getfail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
+      this.setState({
+        privilegeDate
       });
+    }
+    if (status === "verify_success") {
+      this.props.history.goBack();
+    }
+  }
+
+  UNSAFE_componentWillMount() {
+    const { peaId } = this.props;
+    this.props.getCustomer(peaId);
   }
 
   sigPad = {};
@@ -88,135 +52,92 @@ class VerifyCustomer extends Component {
     this.sigPad = ref;
   };
 
-  handleSuccess = () => {
-    // this.props.history.push(this.props.redirectTo);
-    this.props.history.goBack();
-  };
-
   handleCancel = () => {
-    // this.props.history.push(this.props.redirectTo);
     this.props.history.goBack();
   };
 
   handleAppearDateChange = date => {
     this.setState({
-      dateAppear: date
+      appearDate: date
     });
   };
 
   handlePrivilegeDateChange = date => {
-    console.log("handlePrivilegeDateChange:", date);
     this.setState({
       privilegeDate: date
     });
   };
 
-  handleStatusClose = () => {
-    this.setState({
-      statusModal: false
-    });
-  };
-
-  verifyData = event => {
+  handleVerifyCustomer = event => {
     event.preventDefault();
-    this.setState({
-      statusModal: true,
-      statusModalState: "saving"
-    });
-    // this.trimSigPad();
+
     const { peaId } = this.props;
-    const { dateAppear, privilegeDate } = this.state;
-    const signatureData = this.sigPad
-      .getTrimmedCanvas()
-      .toDataURL("image/png")
-      .replace("data:image/png;base64,", "");
+    const { appearDate, privilegeDate } = this.state;
+    const signature = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
 
-    const signatureBlob = b64toBlob(signatureData, "image/png");
-    const formData = new FormData();
-    formData.append("dateAppear", JSON.stringify(dateAppear));
-    formData.append("privilegeDate", JSON.stringify(privilegeDate));
-    formData.append("signature", signatureBlob, "signature.png");
-
-    const requestOptions = {
-      method: "PUT",
-      headers: authHeader(),
-      body: formData
-    };
-
-
-    fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
-      .then(handleFetchSuccessResponse)
-      .then(({ err, rep }) => {
-        if (err) {
-          this.setState({
-            statusModalState: "savefail",
-            failtext: err
-          });
-          return;
-        }
-
-        this.setState({
-          statusModalState: "saved"
-        });
-        setTimeout(() => {
-          this.handleSuccess();
-        }, config.statusShowTime);
-      })
-      .catch(err => {
-        console.log(err);
-
-        this.setState({
-          statusModalState: "savefail"
-        });
-      });
+    this.props.verifyCustomer(peaId, { appearDate, privilegeDate, signature });
   };
 
   render() {
-    const {
-      initial,
-      statusModal,
-      statusModalState,
-      failtext,
-      privilegeDate
-    } = this.state;
+    const { privilegeDate } = this.state;
+    const { peaId, customers } = this.props;
+    const { customer, loading } = customers;
+    let initial;
+    if (customer) {
+      initial = {
+        peaId: peaId,
+        title: customer.title,
+        firstName: customer.firstName,
+        lastName: customer.lastName,
+        houseNo: customer.address.houseNo,
+        mooNo: customer.address.mooNo,
+        districtNo: customer.address.districtNo,
+        postcode: correctPostcode(customer.address.districtNo),
+        authorize: customer.authorize,
+        soldierNo: customer.soldierNo,
+        war: customer.war
+      };
+    }
+
     return (
-      <React.Fragment>
-        <Form onSubmit={this.verifyData}>
-          {statusModalState !== "getting" ? (
-            <React.Fragment>
-              <CustomerDataForm initial={initial} readOnly={true} />
-              <hr />
-              <CustomerVerifyForm
-                setSigpadRef={this.setSigpadRef}
-                privilegeDate={privilegeDate}
-                handleAppearDateChange={this.handleAppearDateChange}
-                handlePrivilegeDateChange={this.handlePrivilegeDateChange}
-              />
-              <FormButton loading={statusModal} cancel={this.handleCancel} />
-            </React.Fragment>
-          ) : null}
-        </Form>
-        <ModalStatus
-          show={statusModal}
-          status={statusModalState}
-          failtext={failtext}
-          onHide={this.handleStatusClose}
-        />
-      </React.Fragment>
+      <Form onSubmit={this.handleVerifyCustomer}>
+        {customer ? (
+          <React.Fragment>
+            <CustomerDataForm initial={initial} readOnly={true} />
+            <hr />
+            <CustomerVerifyForm
+              setSigpadRef={this.setSigpadRef}
+              privilegeDate={privilegeDate}
+              handleAppearDateChange={this.handleAppearDateChange}
+              handlePrivilegeDateChange={this.handlePrivilegeDateChange}
+            />
+            <FormButton loading={loading} cancel={this.handleCancel} />
+          </React.Fragment>
+        ) : null}
+      </Form>
     );
   }
 }
 
-function mapStateToProps(state) {
-  const { authentication } = state;
-  const { user } = authentication;
+const mapStateToProps = state => {
+  const { customers } = state;
   return {
-    user
+    customers
   };
-}
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getCustomer: peaId => dispatch(customerActions.get(peaId)),
+    verifyCustomer: (peaId, verify) =>
+      dispatch(customerActions.verify(peaId, verify))
+  };
+};
 
 VerifyCustomer.propTypes = {
   peaId: PropTypes.string.isRequired
-}
+};
 
-export default withRouter(connect(mapStateToProps)(VerifyCustomer));
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(VerifyCustomer)
+);

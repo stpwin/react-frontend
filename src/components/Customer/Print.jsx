@@ -20,7 +20,7 @@ class CustomerPrintData extends Component {
       verifies
     } = customer;
     let privilegeDate;
-    let dateAppear;
+    let appearDate;
     if (verifies && verifies.length > 0) {
       const lastVerify = verifies[verifies.length - 1];
 
@@ -32,9 +32,9 @@ class CustomerPrintData extends Component {
           month: "long",
           day: "numeric"
         });
-      dateAppear =
-        lastVerify.dateAppear &&
-        new Date(lastVerify.dateAppear).toLocaleDateString("th-TH", {
+      appearDate =
+        lastVerify.appearDate &&
+        new Date(lastVerify.appearDate).toLocaleDateString("th-TH", {
           // weekday: "long",
           year: "numeric",
           month: "long",
@@ -53,7 +53,7 @@ class CustomerPrintData extends Component {
 
             <br />
             <br />
-            <h4 className="text-center">การขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก</h4>
+            <h4 className="text-center">ขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก</h4>
             <br />
             <p className="">
               หมายเลขผู้ใช้ไฟ:{"\u00A0\u00A0"}
@@ -97,7 +97,7 @@ class CustomerPrintData extends Component {
             </p>
             <p className="">
               วันที่แสดงตน:{"\u00A0\u00A0"}
-              {dateAppear ? <span>{dateAppear}</span> : <SpaceUnderline />}
+              {appearDate ? <span>{appearDate}</span> : <SpaceUnderline />}
             </p>
           </div>
 

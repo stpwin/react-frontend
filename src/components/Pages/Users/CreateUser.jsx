@@ -1,78 +1,49 @@
 import React, { Component, Fragment } from "react";
 
+import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 
-import config from "../../../config";
-import { handleFetchSuccessResponse, authHeader } from "../../../helpers";
+import { userActions } from "../../../actions";
 
 import { UserForm } from "../../User";
-import { ModalStatus } from "../../Modals";
+// import { ModalStatus } from "../../Modals";
 
 class CreateUser extends Component {
-  state = {
-    statusModal: false,
-    status: "",
-    failtext: ""
-  };
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const {
+      users: { data }
+    } = nextProps;
+    if (data && data.status === "success") {
+      // console.log("success:", data);
+      this.props.history.goBack();
+    }
+  }
 
-  handleStatusHide = () => {
-    this.setState({
-      statusModal: false
-    });
-  };
-
-  createUser = ({ username, password, description, role, displayName }) => {
-    this.setState({ statusModal: true, status: "saving" });
-
-    const reqConf = {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...authHeader() },
-      body: JSON.stringify({
-        username,
-        password,
-        description,
-        role,
-        displayName
-      })
-    };
-    fetch(`${config.apiUrl}/api/users`, reqConf)
-      .then(handleFetchSuccessResponse)
-      .then(({ err, result }) => {
-        if (err) {
-          this.setState({ status: "savefail", failtext: err });
-          return;
-        }
-
-        console.log(result);
-
-        this.setState({ status: "saved", failtext: "" });
-        setTimeout(() => {
-          this.props.history.goBack();
-        }, config.statusShowTime);
-      })
-      .catch(() => {
-        // console.log(err);
-        this.setState({
-          status: "savefail",
-          failtext: "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้"
-        });
-      });
+  handleCreateUser = user => {
+    this.props.createUser(user);
   };
 
   render() {
-    const { statusModal, status, failtext } = this.state;
     return (
       <Fragment>
-        <UserForm {...this.props} handleSubmit={this.createUser} />
-        <ModalStatus
-          show={statusModal}
-          status={status}
-          failtext={failtext}
-          onHide={this.handleStatusHide}
-        />
+        <UserForm {...this.props} handleSubmit={this.handleCreateUser} />
       </Fragment>
     );
   }
 }
+const mapStateToProps = state => {
+  const { users } = state;
+  return {
+    users
+  };
+};
 
-export default withRouter(CreateUser);
+const mapDispatchToProps = dispatch => {
+  return {
+    createUser: user => dispatch(userActions.create(user))
+  };
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(CreateUser)
+);

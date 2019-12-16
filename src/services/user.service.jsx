@@ -23,9 +23,35 @@ const logout = () => {
   localStorage.removeItem("user");
 };
 
+const create = ({ username, password, description, role, displayName }) => {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeader() },
+    body: JSON.stringify({
+      username,
+      password,
+      description,
+      role,
+      displayName
+    })
+  };
+  return fetch(`${config.apiUrl}/api/users`, requestOptions).then(
+    handleResponse
+  );
+};
+
+const get = uid => {
+  const requestOptions = {
+    method: "GET",
+    headers: authHeader()
+  };
+
+  return fetch(`${config.apiUrl}/api/users/uid/${uid}`, requestOptions).then(
+    handleResponse
+  );
+};
+
 const getAll = (page, limit) => {
-  // console.log("page:", page);
-  // console.log("limit:", limit);
   const requestOptions = {
     method: "GET",
     headers: authHeader()
@@ -38,9 +64,6 @@ const getAll = (page, limit) => {
 };
 
 const getFilter = (filter, page, limit) => {
-  // console.log("filter:", filter);
-  // console.log("page:", page);
-  // console.log("limit:", limit);
   const requestOptions = {
     method: "GET",
     headers: authHeader()
@@ -52,29 +75,74 @@ const getFilter = (filter, page, limit) => {
   ).then(handleResponse);
 };
 
+const update = (
+  uid,
+  { username, displayName, description, role, password }
+) => {
+  const requestOptions = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...authHeader()
+    },
+    body: JSON.stringify({
+      user: {
+        username,
+        displayName,
+        description,
+        role,
+        password
+      }
+    })
+  };
+
+  return fetch(`${config.apiUrl}/api/users/${uid}`, requestOptions).then(
+    handleResponse
+  );
+};
+
+const remove = uid => {
+  const requestOptions = {
+    method: "DELETE",
+    headers: authHeader(),
+    body: JSON.stringify({
+      uid
+    })
+  };
+
+  return fetch(`${config.apiUrl}/api/users`, requestOptions).then(
+    handleResponse
+  );
+};
+
 const handleResponse = response => {
   return response.text().then(text => {
-    const data = text && JSON.parse(text);
-
+    // console.log(text);
+    let jsonData = {};
+    try {
+      jsonData = text && JSON.parse(text);
+    } catch (err) {
+      console.warn(err);
+    }
     if (!response.ok) {
       if (response.status === 401) {
-        // auto logout if 401 response returned from api
         logout();
-        // history.push("/login");
-        // window.location.reload(true)
       }
-
-      const error = (data && data.message) || response.statusText;
+      const error = jsonData.message || response.statusText;
       return Promise.reject(error);
     }
-    // console.log("handleResponse", data);
-    return data;
+    return jsonData;
   });
 };
 
 export const userService = {
   login,
   logout,
+  create,
+  get,
   getAll,
-  getFilter
+  getFilter,
+  update,
+  remove
 };
