@@ -34,9 +34,9 @@ const create = ({
     })
   };
 
-  return fetch(`${config.apiUrl}/api/customers`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/customers`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const get = peaId => {
@@ -45,10 +45,9 @@ const get = peaId => {
     headers: authHeader()
   };
 
-  return fetch(
-    `${config.apiUrl}/api/customers/peaid/${peaId}`,
-    requestOptions
-  ).then(handleResponse);
+  return fetch(`${config.apiUrl}/api/customers/peaid/${peaId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const getAll = (page, limit, war = "-") => {
@@ -60,7 +59,9 @@ const getAll = (page, limit, war = "-") => {
   return fetch(
     `${config.apiUrl}/api/customers/all?war=${war}&page=${page}&limit=${limit}`,
     requestOptions
-  ).then(handleResponse);
+  )
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const getFilter = (filter, page, limit, war = "-") => {
@@ -72,7 +73,9 @@ const getFilter = (filter, page, limit, war = "-") => {
   return fetch(
     `${config.apiUrl}/api/customers/filter/${filter}?war=${war}&page=${page}&limit=${limit}`,
     requestOptions
-  ).then(handleResponse);
+  )
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const update = ({
@@ -80,12 +83,12 @@ const update = ({
   title,
   firstName,
   lastName,
-  houseNo,
-  mooNo,
-  districtNo,
   authorize,
   soldierNo,
-  war
+  war,
+  houseNo,
+  mooNo,
+  districtNo
 }) => {
   const requestOptions = {
     method: "PUT",
@@ -107,17 +110,16 @@ const update = ({
     })
   };
 
-  return fetch(`${config.apiUrl}/api/customers/${peaId}`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/customers/${peaId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
-const verify = (peaId, { appearDate, privilegeDate, signature }) => {
+const verify = (peaId, { appearDate, signature }) => {
   const signatureData = signature.replace("data:image/png;base64,", "");
   const signatureBlob = b64toBlob(signatureData, "image/png");
   const formData = new FormData();
   formData.append("appearDate", JSON.stringify(appearDate));
-  privilegeDate && formData.append("privilegeDate", JSON.stringify(privilegeDate));
   formData.append("signature", signatureBlob, "signature.png");
 
   const requestOptions = {
@@ -126,10 +128,9 @@ const verify = (peaId, { appearDate, privilegeDate, signature }) => {
     body: formData
   };
 
-  return fetch(
-    `${config.apiUrl}/api/customers/verify/${peaId}`,
-    requestOptions
-  ).then(handleResponse);
+  return fetch(`${config.apiUrl}/api/customers/verify/${peaId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const remove = peaId => {
@@ -137,9 +138,9 @@ const remove = peaId => {
     method: "DELETE",
     headers: authHeader()
   };
-  return fetch(`${config.apiUrl}/api/customers/${peaId}`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/customers/${peaId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const getSignature = (peaId, sigId) => {
@@ -147,9 +148,29 @@ const getSignature = (peaId, sigId) => {
     method: "GET",
     headers: authHeader()
   };
-  return fetch(`${config.apiUrl}/api/customers/signature/${peaId}/${sigId}`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(
+    `${config.apiUrl}/api/customers/signature/${peaId}/${sigId}`,
+    requestOptions
+  )
+    .then(response => {
+      if (response.status === 204) {
+        return null;
+      }
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          console.warn("Unauthorize.");
+        }
+
+        const error = response.statusText;
+        return Promise.reject(error);
+      }
+
+      return response.arrayBuffer().then(data => {
+        return { id: sigId, data };
+      });
+    })
+    .catch(handleFetchError);
 };
 
 const handleResponse = response => {
@@ -157,18 +178,29 @@ const handleResponse = response => {
     return null;
   }
   return response.text().then(text => {
-    const data = text && JSON.parse(text);
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        console.warn("Unauthorize.");
+    let error;
+    if (text) {
+      try {
+        const data = JSON.parse(text);
+        error = data.error;
+        return data;
+      } catch {
+        console.log("response is not json object");
       }
-
-      const error = (data && data.message) || response.statusText;
-      return Promise.reject(error);
     }
-    return data;
+    if (!response.ok) {
+      return Promise.reject(error || response.statusText);
+    }
+    return null;
   });
+};
+
+const handleFetchError = e => {
+  if (e instanceof TypeError) {
+    return Promise.reject("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้");
+  }
+
+  throw e;
 };
 
 export const customerService = {

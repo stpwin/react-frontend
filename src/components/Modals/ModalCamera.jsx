@@ -65,14 +65,14 @@ export class ModalCamera extends Component {
               <Col className="text-center">
                 {preview ? (
                   <div style={{ overflow: "auto" }}>
-                    <img alt="preview" src={dataUrl} width={600} height={200} />
+                    <img alt="preview" src={dataUrl} width={600} height={400} />
                   </div>
                 ) : (
                   <Webcam
                     ref={this.setWebcamRef}
                     showFocus={false}
                     width={600}
-                    height={200}
+                    height={400}
                     mirrored={mirrored}
                     style={{ overflow: "auto" }}
                   />
@@ -102,14 +102,14 @@ export class ModalCamera extends Component {
                   {preview ? (
                     <Fragment>
                       <Button
-                        variant="outline-success"
+                        variant="outline-secondary"
                         className="pea-color"
                         onClick={this.handleReTake}
                       >
                         ถ่ายใหม่
                       </Button>
                       <Button
-                        variant="outline-primary"
+                        variant="outline-secondary"
                         className="pea-color"
                         onClick={this.handleFinish}
                       >
@@ -118,7 +118,7 @@ export class ModalCamera extends Component {
                     </Fragment>
                   ) : (
                     <Button
-                      variant="outline-success"
+                      variant="outline-secondary"
                       className="pea-color"
                       onClick={this.handleCapture}
                     >

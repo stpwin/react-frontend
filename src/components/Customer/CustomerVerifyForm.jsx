@@ -12,10 +12,7 @@ import { ModalCamera } from "../Modals";
 export class CustomerVerifyForm extends Component {
   state = {
     appearDate: new Date(),
-    privilegeDate: new Date(),
-    noPrivilegeDate: true,
     signatureBase64: null,
-    // authorizeNameOpen: false,
     showCamera: false,
     capturedImage: null
   };
@@ -33,7 +30,6 @@ export class CustomerVerifyForm extends Component {
   };
 
   handleAppearDateChange = date => {
-    // console.log(date);
     this.setState({
       appearDate: date
     });
@@ -58,13 +54,13 @@ export class CustomerVerifyForm extends Component {
     });
   };
 
-  handlePrivilegeDateChange = date => {
-    this.setState({
-      privilegeDate: date
-    });
-    const { onPrivilegeDateChange } = this.props;
-    onPrivilegeDateChange && onPrivilegeDateChange(date);
-  };
+  // handlePrivilegeDateChange = date => {
+  //   this.setState({
+  //     privilegeDate: date
+  //   });
+  //   const { onPrivilegeDateChange } = this.props;
+  //   onPrivilegeDateChange && onPrivilegeDateChange(date);
+  // };
 
   setSigpadRef = ref => {
     this.sigPadRef = ref;
@@ -72,23 +68,31 @@ export class CustomerVerifyForm extends Component {
     setSigpadRef && setSigpadRef(ref);
   };
 
-  handleNoPrivilegeDateChange = e => {
-    this.setState({
-      noPrivilegeDate: e.target.checked
-    }, () => {
-      const { onPrivilegeDateChange } = this.props;
-      onPrivilegeDateChange && onPrivilegeDateChange(this.state.noPrivilegeDate ? null : this.state.privilegeDate);
-    })
-    // console.log(e)
-  }
+  // handleNoPrivilegeDateChange = e => {
+  //   this.setState(
+  //     {
+  //       noPrivilegeDate: e.target.checked
+  //     },
+  //     () => {
+  //       const { onPrivilegeDateChange } = this.props;
+  //       onPrivilegeDateChange &&
+  //         onPrivilegeDateChange(
+  //           this.state.noPrivilegeDate ? null : this.state.privilegeDate
+  //         );
+  //     }
+  //   );
+  // };
 
   render() {
-    const { appearDate, showCamera, privilegeDate, noPrivilegeDate } = this.state;
-    // console.log("privilegeDate", typeof privilegeDate);
-    // const { setSigpadRef } = this.props;
+    const {
+      appearDate,
+      showCamera
+      // privilegeDate,
+      // noPrivilegeDate
+    } = this.state;
     return (
       <Fragment>
-        <Form.Group as={Row}>
+        {/* <Form.Group as={Row}>
           <Form.Label as="legend" column sm={2}>
             วันที่ได้รับสิทธิ์
           </Form.Label>
@@ -119,7 +123,7 @@ export class CustomerVerifyForm extends Component {
               onChange={this.handleNoPrivilegeDateChange}
             />
           </Col>
-        </Form.Group>
+        </Form.Group> */}
 
         <Form.Group as={Row}>
           <Form.Label as="legend" column sm={2}>
@@ -135,14 +139,14 @@ export class CustomerVerifyForm extends Component {
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handleAppearDateChange}
-            // name='appearDate'
+              // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>
 
         <Form.Group as={Row}>
           <Form.Label column sm={2}>
-            ลายเซ็น
+            รูปถ่าย / ลายมือชื่อ
           </Form.Label>
           <Col className="vertical-divider">
             <Signature setRef={this.setSigpadRef}></Signature>

@@ -14,9 +14,7 @@ import FormButton from "../../Customer/FormButton";
 
 class VerifyCustomer extends Component {
   state = {
-    appearDate: new Date(),
-    privilegeDate: null,
-    initial: {}
+    appearDate: new Date()
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -49,26 +47,21 @@ class VerifyCustomer extends Component {
     });
   };
 
-  handlePrivilegeDateChange = date => {
-    console.log(date)
-    this.setState({
-      privilegeDate: date
-    });
-  };
-
   handleVerifyCustomer = event => {
     event.preventDefault();
-
     const { peaId } = this.props;
-    const { appearDate, privilegeDate } = this.state;
+    const { appearDate } = this.state;
     const signature = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
 
-    this.props.verifyCustomer(peaId, { appearDate, privilegeDate, signature });
+    this.props.verifyCustomer(peaId, { appearDate, signature });
   };
 
   render() {
-    const { peaId, customers } = this.props;
-    const { customer, loading } = customers;
+    const {
+      peaId,
+      customers: { customer, loading }
+    } = this.props;
+
     let initial;
     if (customer) {
       initial = {

@@ -20,20 +20,20 @@ class Signature extends Component {
       <React.Fragment>
         <SignatureCanvas
           ref={this.setSigpadRef}
-          penColor='black'
-          backgroundColor='white'
+          penColor="black"
+          backgroundColor="white"
           canvasProps={{
             width: 600,
-            height: 200,
+            height: 400,
             className: "sigCanvas"
           }}
         />
         <Row>
-          <Col className='text-right'>
+          <Col className="text-right">
             <ButtonToolbar>
               <Button
-                variant='outline-danger'
-                size='sm'
+                variant="outline-danger"
+                size="sm"
                 onClick={this.clearSigpad}
               >
                 ล้างลายเซ็น

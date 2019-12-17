@@ -1,17 +1,7 @@
 import React, { Component } from "react";
-import {
-  Form,
-  FormControl,
-  InputGroup,
-  Col,
-  Row,
-  Spinner
-} from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { FaCheck, FaExclamation, FaTimes } from "react-icons/fa";
+import { Form, FormControl, InputGroup, Col, Row } from "react-bootstrap";
 
-import { getCustomerByPeaId, correctPostcode } from "../../helpers";
-// import config from "../../config";
+import { correctPostcode } from "../../helpers";
 
 export class CustomerDataForm extends Component {
   state = {
@@ -25,70 +15,22 @@ export class CustomerDataForm extends Component {
     postcode: (this.props.initial && this.props.initial.postcode) || 52000,
     authorize: (this.props.initial && this.props.initial.authorize) || "ทหาร",
     soldierNo: (this.props.initial && this.props.initial.soldierNo) || "",
-    war: (this.props.initial && this.props.initial.war) || "",
-    peaIdOk: this.props.initial && this.props.initial.peaId ? true : false,
-    fetchPeaIdComplete: true,
-    existsPeaCustomer: false,
-    peaWarnText: ""
-  };
-
-  validatePeaId = peaId => {
-    if (peaId.length === 12) {
-      return true;
-    }
-    return false;
-  };
-  checkCustomerExists = peaId => {
-    this.setState({
-      fetchPeaIdComplete: false,
-      existsPeaCustomer: false,
-      peaWarnText: "กำลังตรวจสอบหมายเลขผู้ใช้ไฟฟ้า..."
-    });
-    const customer = getCustomerByPeaId(peaId);
-    // console.log(customer);
-    customer
-      .then(res => {
-        this.setState({
-          fetchPeaIdComplete: true,
-          existsPeaCustomer: res ? true : false,
-          peaWarnText: res ? "หมายเลขผู้ใช้ไฟฟ้านี้มีอยู่ในระบบแล้ว" : ""
-        });
-      })
-      .catch(() => {
-        this.setState({
-          peaWarnText: "เซิร์ฟเวอร์ขัดข้อง",
-          fetchPeaIdComplete: true,
-          existsPeaCustomer: true
-        });
-      });
+    war: (this.props.initial && this.props.initial.war) || ""
   };
 
   handleChange = event => {
-    // console.log(event.target.value);
     const elementName = event.target.name;
     const targetValue = event.target.value;
-    const { onPeaIdChange } = this.props;
+
     if (elementName === "districtNo") {
       this.setState({
         districtNo: targetValue,
         postcode: correctPostcode(targetValue)
       });
-    } else if (this.props.validatePeaId && elementName === "peaId") {
-      this.setState({
-        peaIdOk: true
-      });
-
+      return;
+    } else if (elementName === "peaId") {
+      const { onPeaIdChange } = this.props;
       onPeaIdChange && onPeaIdChange(targetValue);
-      if (this.validatePeaId(targetValue)) {
-        this.checkCustomerExists(targetValue);
-      } else {
-        this.setState({
-          peaIdOk: false,
-          existsPeaCustomer: false,
-          fetchPeaIdComplete: true,
-          peaWarnText: "หมายเลขผู้ใช้ไฟฟ้าไม่ถูกต้อง"
-        });
-      }
     }
 
     this.setState({
@@ -108,20 +50,11 @@ export class CustomerDataForm extends Component {
       postcode,
       authorize,
       soldierNo,
-      war,
-      peaIdOk,
-      fetchPeaIdComplete,
-      existsPeaCustomer,
-      peaWarnText
+      war
     } = this.state;
-    // console.log(this.props);
-    const {
-      readOnly,
-      showPlaceholder,
-      validatePeaId,
-      peaIdReadOnly
-    } = this.props;
-    // console.log(this.props);
+
+    const { readOnly, showPlaceholder, peaIdReadOnly } = this.props;
+
     return (
       <React.Fragment>
         <Form.Group as={Row}>
@@ -130,9 +63,6 @@ export class CustomerDataForm extends Component {
           </Form.Label>
           <Col sm={5}>
             <InputGroup className="mb-0">
-              {/* <InputGroup.Prepend>
-                <InputGroup.Text id='basic-addon3'>02</InputGroup.Text>
-              </InputGroup.Prepend> */}
               <FormControl
                 aria-describedby="basic-addon3"
                 maxLength={12}
@@ -142,51 +72,7 @@ export class CustomerDataForm extends Component {
                 disabled={readOnly || peaIdReadOnly}
                 onChange={this.handleChange}
               />
-              {validatePeaId ? (
-                <InputGroup.Append>
-                  <InputGroup.Text id="basic-addon3">
-                    {fetchPeaIdComplete ? (
-                      existsPeaCustomer ? ( //Exists
-                        <div style={{ color: "orange" }}>
-                          <FaExclamation />
-                        </div>
-                      ) : peaIdOk ? ( //OK
-                        <div style={{ color: "green" }}>
-                          <FaCheck />
-                        </div>
-                      ) : (
-                        //Invalid
-                        <div style={{ color: "red" }}>
-                          <FaTimes />
-                        </div>
-                      )
-                    ) : (
-                      <Spinner
-                        animation="border"
-                        variant="primary"
-                        size="sm"
-                        role="status"
-                      >
-                        <span className="sr-only">กำลังโหลด...</span>
-                      </Spinner>
-                    )}
-                  </InputGroup.Text>
-                </InputGroup.Append>
-              ) : null}
             </InputGroup>
-            <Form.Text className="text-muted">
-              {peaWarnText}
-              {existsPeaCustomer ? (
-                <span>
-                  {" "}
-                  ต้องการ{" "}
-                  <Link to={`/customers/verify/${peaId}`}>
-                    ยืนยันการใช้สิทธิ์
-                  </Link>{" "}
-                  แทนหรือไม่
-                </span>
-              ) : null}
-            </Form.Text>
           </Col>
         </Form.Group>
 

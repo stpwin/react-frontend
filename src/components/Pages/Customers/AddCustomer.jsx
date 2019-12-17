@@ -17,8 +17,7 @@ class AddCustomer extends Component {
     peaWarnText: "",
 
     confirmModal: false,
-    appearDate: new Date(),
-    privilegeDate: new Date()
+    appearDate: new Date()
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -85,9 +84,9 @@ class AddCustomer extends Component {
 
   handleVerifyCustomer = () => {
     const { peaId } = this.state;
-    const { appearDate, privilegeDate } = this.state;
+    const { appearDate } = this.state;
     const signature = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
-    this.props.verifyCustomer(peaId, { appearDate, privilegeDate, signature });
+    this.props.verifyCustomer(peaId, { appearDate, signature });
   };
 
   handleAppearDateChange = date => {
@@ -96,11 +95,11 @@ class AddCustomer extends Component {
     });
   };
 
-  handlePrivilegeDateChange = date => {
-    this.setState({
-      privilegeDate: date
-    });
-  };
+  // handlePrivilegeDateChange = date => {
+  //   this.setState({
+  //     privilegeDate: date
+  //   });
+  // };
 
   handlePeaIdChange = peaId => {
     this.setState({
@@ -117,14 +116,12 @@ class AddCustomer extends Component {
           <CustomerDataForm
             initial={{ peaId }}
             showPlaceholder={true}
-            validatePeaId={true}
             onPeaIdChange={this.handlePeaIdChange}
           />
           <hr />
           <CustomerVerifyForm
             setSigpadRef={this.setSigpadRef}
             onAppearDateChange={this.handleAppearDateChange}
-            onPrivilegeDateChange={this.handlePrivilegeDateChange}
           />
           <FormButton loading={statusModal} cancel={this.handleCancel} />
         </Form>

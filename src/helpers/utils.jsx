@@ -17,3 +17,12 @@ export const b64toBlob = (b64Data, contentType = "", sliceSize = 512) => {
   const blob = new Blob(byteArrays, { type: contentType });
   return blob;
 };
+
+export const arrayBufferToBase64 = buffer => {
+  let binary = "";
+  const bytes = [].slice.call(new Uint8Array(buffer));
+
+  bytes.forEach(b => (binary += String.fromCharCode(b)));
+
+  return window.btoa(binary);
+};

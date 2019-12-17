@@ -18,7 +18,6 @@ export const customers = (state = {}, action) => {
         loading: true
       };
     case customerConstants.GET_SUCCESS:
-      // console.log(action.data);
       return { customer: action.data };
     case customerConstants.GET_FAILURE:
       return {
@@ -30,7 +29,7 @@ export const customers = (state = {}, action) => {
         loading: true
       };
     case customerConstants.GET_ALL_SUCCESS:
-      return { data: action.data };
+      return { customers: action.data };
     case customerConstants.GET_ALL_FAILURE:
       return {
         error: action.error
@@ -41,7 +40,7 @@ export const customers = (state = {}, action) => {
         loading: true
       };
     case customerConstants.GET_FILTER_SUCCESS:
-      return { data: action.data };
+      return { customers: action.data };
     case customerConstants.GET_FILTER_FAILURE:
       return {
         error: action.error
@@ -85,7 +84,7 @@ export const customers = (state = {}, action) => {
         loading: true
       };
     case customerConstants.GET_SIGNATURE_SUCCESS:
-      return action.data;
+      return { signature: action.data };
     case customerConstants.GET_SIGNATURE_FAILURE:
       return {
         error: action.error

@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { customerActions } from "../../../actions";
-import { addressToString } from "../../../helpers";
+import { translateCustomer } from "../../../helpers";
 
 import moment from "moment";
 import "moment/locale/th";
@@ -30,7 +30,9 @@ class ListCustomer extends Component {
 
     confirmDelete: false,
     confirmDeleteText: "",
-    confirmDeletePeaId: ""
+    confirmDeletePeaId: "",
+
+    translated: []
   };
 
   filters = [
@@ -258,15 +260,31 @@ class ListCustomer extends Component {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { data } = nextProps;
-    if (data && data.metadata) {
-      const page = (data.metadata && parseInt(data.metadata.page)) || 1;
-      const pages = (data.metadata && parseInt(data.metadata.pages)) || 1;
+    const { customers } = nextProps;
+    const { limit } = this.state;
+    if (customers) {
+      if (customers.metadata) {
+        const page =
+          (customers.metadata && parseInt(customers.metadata.page)) || 1;
+        const pages =
+          (customers.metadata && parseInt(customers.metadata.pages)) || 1;
 
-      this.setState({
-        page,
-        pages
-      });
+        const start = page > 1 ? (page - 1) * limit : 0;
+        const translated =
+          customers.customers &&
+          customers.customers.map((customer, index) => {
+            return {
+              index: index + start + 1,
+              ...translateCustomer(customer)
+            };
+          });
+
+        this.setState({
+          page,
+          pages,
+          translated
+        });
+      }
     }
   }
 
@@ -278,47 +296,16 @@ class ListCustomer extends Component {
       limit,
       filterChecked,
       confirmDelete,
-      confirmDeleteText
+      confirmDeleteText,
+      translated
     } = this.state;
-    const { data } = this.props;
-
-    const startNumber = page > 1 ? (page - 1) * limit : 0;
-    const customers =
-      data &&
-      data.customers &&
-      data.customers.map((key, index) => {
-        // console.log(key);
-        const lastAppearDate =
-          key.verifies &&
-          key.verifies.length > 0 &&
-          moment(key.verifies[key.verifies.length - 1].appearDate).format("ll");
-        const privilegeDate =
-          key.verifies &&
-          key.verifies.length > 0 &&
-          moment(key.verifies[key.verifies.length - 1].privilegeDate).format(
-            "ll"
-          );
-
-        return {
-          index: startNumber + index + 1,
-          name: `${key.title} ${key.firstName} ${key.lastName}`,
-          peaId: key.peaId,
-          address: addressToString(key.address),
-          authorize: key.authorize,
-          soldierNo: key.soldierNo,
-          privilegeDate: privilegeDate,
-          appearDate: lastAppearDate,
-          war: key.war
-        };
-      });
 
     return (
       <Fragment>
-        {/* <ScrollPositionManager /> */}
         <DataTable
           filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)"
           columns={this.columns}
-          data={customers}
+          data={translated}
           pages={pages}
           page={page}
           onNextPage={this.onNextPage}
@@ -350,12 +337,10 @@ class ListCustomer extends Component {
 
 const mapStateToProps = state => {
   const {
-    customers: { data, loading, error }
+    customers: { customers }
   } = state;
   return {
-    data,
-    loading,
-    error
+    customers
   };
 };
 
