@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 
 import "./style.css";
 import { addressToString, getWarType } from "../../helpers";
-import { withRouter } from "react-router-dom";
+import { withRouter, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { customerActions } from "../../actions";
 
@@ -231,9 +231,7 @@ const CustomerView = ({ customer, handlePrint }) => {
           <ListGroupItem>Vestibulum at eros</ListGroupItem> */}
       </ListGroup>
       <Card.Body>
-        <Card.Link href="" onClick={() => handlePrint(customer.peaId)}>
-          พิมพ์
-        </Card.Link>
+        <Link onClick={() => handlePrint(customer.peaId)}>พิมพ์</Link>
       </Card.Body>
       <Card.Footer>
         <small className="text-muted">

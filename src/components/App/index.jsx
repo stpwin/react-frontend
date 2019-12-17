@@ -24,17 +24,17 @@ function App() {
     <Router history={history}>
       <Navigation />
       <Switch>
-        <Route path='/login' component={LoginPage}></Route>
+        <Route path="/login" component={LoginPage}></Route>
 
-        <PrivateRoute exact path='/' component={Home} />
+        <PrivateRoute exact path="/" component={Home} />
 
-        <PrivateRoute path='/users/:method?/:uid?' component={Users} />
+        <PrivateRoute path="/users/:method?/:uid?" component={Users} />
 
         <PrivateRoute
-          path='/customers/:method?/:peaId?'
+          path="/customers/:method?/:peaId?"
           component={Customers}
         />
-        <Route path='*'>
+        <Route path="*">
           <NotFound />
         </Route>
       </Switch>
