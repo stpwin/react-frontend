@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from "react";
 
 import "./style.css";
+
 import { addressToString, getWarType } from "../../helpers";
 import { withRouter, Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -24,7 +25,7 @@ import { FaInfoCircle, FaExclamationTriangle } from "react-icons/fa";
 
 export class SmartSearch extends Component {
   state = {
-    peaId: "02000597580",
+    peaId: "0200",
     peaIdOk: false
   };
 

@@ -13,8 +13,12 @@
   margin-bottom: 1em;
 }
 
-.jumbotron {
+/* .jumbotron {
   background-color: #703e91;
+} */
+
+.jumbotron {
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .ca-text {

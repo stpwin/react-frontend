@@ -36,9 +36,11 @@ class PrintCustomer extends Component {
       customers: { customer, signature }
     } = nextProps;
 
-    this.setState({
-      signature
-    });
+    if (signature) {
+      this.setState({
+        signature
+      });
+    }
 
     if (customer) {
       let verify;
@@ -58,6 +60,7 @@ class PrintCustomer extends Component {
       }
       const translated = translateCustomer(customer);
       this.setState({
+        signature,
         verifies: customer.verifies || [],
         translated,
         verifyId: verify && verify._id,
@@ -89,6 +92,7 @@ class PrintCustomer extends Component {
     const { peaId } = this.props;
     this.setState(
       {
+        signature: null,
         verifyId: e.target.value,
         appearDate: e.target[e.target.selectedIndex].text
       },
@@ -108,6 +112,8 @@ class PrintCustomer extends Component {
       appearDate,
       signature
     } = this.state;
+
+    console.log("Render");
 
     return (
       <Fragment>

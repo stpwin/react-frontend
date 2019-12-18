@@ -3,11 +3,14 @@ import thunkMiddleware from "redux-thunk";
 import { createLogger } from "redux-logger";
 import rootReducer from "../reducers";
 
-const loggerMiddleware = createLogger({
-  collapsed: (getState, action, logEntry) => !logEntry.error
-});
+const middlewares = [thunkMiddleware];
 
-export const store = createStore(
-  rootReducer,
-  applyMiddleware(thunkMiddleware, loggerMiddleware)
-);
+if (process.env.NODE_ENV === `development`) {
+  const loggerMiddleware = createLogger({
+    collapsed: (getState, action, logEntry) => !logEntry.error
+  });
+
+  middlewares.push(loggerMiddleware);
+}
+
+export const store = createStore(rootReducer, applyMiddleware(...middlewares));

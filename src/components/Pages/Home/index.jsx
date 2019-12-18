@@ -5,7 +5,11 @@ import SmartSearch from "../../SmartSearch";
 
 export class Home extends Component {
   render() {
-    return <SmartSearch />;
+    return (
+      <div className="home">
+        <SmartSearch />
+      </div>
+    );
   }
 }
 

@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css?family=Kanit|Mitr|Pridi|Sarabun&display=swap");
 
+body,
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   /* font-family: 'Mitr', sans-serif; */

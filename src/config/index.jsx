@@ -1,4 +1,4 @@
 export default {
-  apiUrl: "http://localhost:3000",
+  apiUrl: "http://172.17.17.3:3000",
   statusShowTime: 500
 };
