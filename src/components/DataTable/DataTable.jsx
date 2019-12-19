@@ -12,7 +12,8 @@ import {
   ButtonToolbar,
   OverlayTrigger,
   Tooltip,
-  DropdownButton
+  DropdownButton,
+  Spinner
 } from "react-bootstrap";
 
 import "./table.css";
@@ -64,8 +65,8 @@ export class DataTable extends Component {
       tools,
       idKey,
       customValueKey,
-      topButtons
-      // searchText
+      topButtons,
+      filterLoading
     } = this.props;
     return (
       <div className="data-table">
@@ -74,17 +75,17 @@ export class DataTable extends Component {
             <div className="top-button">
               {topButtons && topButtons.length > 0
                 ? topButtons.map((item, index) => {
-                  return (
-                    <Button
-                      key={`button-${item.key}`}
-                      variant="outline"
-                      className="pea-color"
-                      onClick={() => item.onClick()}
-                    >
-                      {item.text}
-                    </Button>
-                  );
-                })
+                    return (
+                      <Button
+                        key={`button-${item.key}`}
+                        variant="outline"
+                        className="pea-color"
+                        onClick={() => item.onClick()}
+                      >
+                        {item.text}
+                      </Button>
+                    );
+                  })
                 : null}
             </div>
           </Col>
@@ -143,12 +144,26 @@ export class DataTable extends Component {
               />
               {filterText.length > 0 ? (
                 <InputGroup.Append>
-                  <Button
-                    variant="outline-secondary"
-                    onClick={this.clearFilterText}
-                  >
-                    <FaTimes />
-                  </Button>
+                  {filterLoading ? (
+                    <Button variant="outline-secondary" disabled>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        variant="dark"
+                      />
+                      {/* <span className="sr-only">Loading...</span> */}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline-secondary"
+                      onClick={this.clearFilterText}
+                    >
+                      <FaTimes />
+                    </Button>
+                  )}
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
@@ -211,7 +226,7 @@ export class DataTable extends Component {
                             key={`td-${colIndex}${dataIndex}`}
                             className={`align-middle ${
                               col.valign === "true" ? "text-center" : null
-                              }`}
+                            }`}
                           >
                             {col.canSearch ? (
                               <Highlight
@@ -224,8 +239,8 @@ export class DataTable extends Component {
                                 {item[col.dataField]}
                               </Highlight>
                             ) : (
-                                item[col.dataField]
-                              )}
+                              item[col.dataField]
+                            )}
                           </td>
                         ); //////////////////List data
                       })}
@@ -247,15 +262,15 @@ export class DataTable extends Component {
                 );
               })
             ) : (
-                <tr>
-                  <td
-                    className="text-center align-middle"
-                    colSpan={columns && columns.length + (tools ? 1 : 0)}
-                  >
-                    ไม่มีข้อมูล
+              <tr>
+                <td
+                  className="text-center align-middle"
+                  colSpan={columns && columns.length + (tools ? 1 : 0)}
+                >
+                  ไม่มีข้อมูล
                 </td>
-                </tr>
-              )}
+              </tr>
+            )}
           </tbody>
         </Table>
         <Row>

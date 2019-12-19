@@ -41,7 +41,7 @@ class Navigation extends Component {
                 ) : null}
               </Nav>
 
-              <Navbar.Text className="text-light">
+              <Navbar.Text className="text-warning">
                 ผู้ใช้งาน: {user.displayName} ({user.role})
               </Navbar.Text>
 
@@ -56,15 +56,17 @@ class Navigation extends Component {
           </Fragment>
         ) : null}
       </Navbar>
-
     );
   }
 }
 
 function mapStateToProps(state) {
-  const { authentication: { user, loggedIn } } = state;
+  const {
+    authentication: { user, loggedIn }
+  } = state;
   return {
-    user, loggedIn
+    user,
+    loggedIn
   };
 }
 

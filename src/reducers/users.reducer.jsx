@@ -36,7 +36,7 @@ export const users = (state = {}, action) => {
       };
     case userConstants.GET_FILTER_REQUEST:
       return {
-        loading: true
+        filterLoading: true
       };
     case userConstants.GET_FILTER_SUCCESS:
       return { data: action.data };

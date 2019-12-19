@@ -37,7 +37,7 @@ export const customers = (state = {}, action) => {
 
     case customerConstants.GET_FILTER_REQUEST:
       return {
-        loading: true
+        filterLoading: true
       };
     case customerConstants.GET_FILTER_SUCCESS:
       return { customers: action.data };

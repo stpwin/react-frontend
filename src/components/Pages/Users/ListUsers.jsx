@@ -23,30 +23,6 @@ const columns = [
   { text: "รายละเอียด", dataField: "description", valign: "true" }
 ];
 
-const tools = [
-  {
-    overlaytext: "แก้ไข",
-    icon: <FaEdit />,
-    onclick: userId => this.handleEdit(userId),
-    key: "edit"
-  },
-  {
-    overlaytext: "ลบ",
-    icon: <FaTrash />,
-    onclick: (userId, customValue) => this.handleRemove(userId, customValue),
-    key: "delete",
-    customValue: true
-  }
-];
-
-const topButtons = [
-  {
-    text: "สร้างผู้ใช้งาน",
-    onClick: () => this.handleCreateUser(),
-    key: "createUser"
-  }
-];
-
 class ListUsers extends Component {
   constructor(props) {
     super(props);
@@ -65,6 +41,30 @@ class ListUsers extends Component {
 
     this.fetchNew();
   }
+
+  tools = [
+    {
+      overlaytext: "แก้ไข",
+      icon: <FaEdit />,
+      onclick: userId => this.handleEdit(userId),
+      key: "edit"
+    },
+    {
+      overlaytext: "ลบ",
+      icon: <FaTrash />,
+      onclick: (userId, customValue) => this.handleRemove(userId, customValue),
+      key: "delete",
+      customValue: true
+    }
+  ];
+
+  topButtons = [
+    {
+      text: "สร้างผู้ใช้งาน",
+      onClick: () => this.handleCreateUser(),
+      key: "createUser"
+    }
+  ];
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
@@ -190,7 +190,8 @@ class ListUsers extends Component {
     } = this.state;
 
     const {
-      users: { data }
+      users: { data },
+      filterLoading
     } = this.props;
 
     const start = page > 1 ? (page - 1) * limit : 0;
@@ -215,13 +216,14 @@ class ListUsers extends Component {
           customValueKey="displayName"
           idKey="uid"
           columns={columns}
-          tools={tools}
-          topButtons={topButtons}
+          tools={this.tools}
+          topButtons={this.topButtons}
           data={users}
           page={page}
           pages={pages}
           limit={limit}
           perPages={perPages}
+          filterLoading={filterLoading}
           onNextPage={this.handleNextPage}
           onPrevPage={this.handlePrevPage}
           onPageChange={this.handlePageChange}
@@ -241,9 +243,13 @@ class ListUsers extends Component {
 }
 
 const mapStateToProps = state => {
-  const { users } = state;
+  const {
+    users,
+    users: { filterLoading }
+  } = state;
   return {
-    users
+    users,
+    filterLoading
   };
 };
 
