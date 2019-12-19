@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { translateCustomer } from "../../../helpers";
+import { translateCustomer, toLocalDate } from "../../../helpers";
 
 import ReactToPrint from "react-to-print";
 
@@ -17,17 +17,20 @@ import {
 import CustomerPrintData from "../../Customer/Print";
 
 class PrintCustomer extends Component {
-  state = {
-    translated: {},
-    verifies: [],
-    verifyId: "",
-    signature: null,
-    appearDate: null
-  };
-  UNSAFE_componentWillMount() {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      translated: {},
+      verifies: [],
+      verifyId: "",
+      signature: null,
+      appearDate: null
+    };
+    this.printRef = {};
+    this.toPrintRef = {};
     const { peaId } = this.props;
     this.props.getCustomer(peaId);
-    // document.title = `พิมพ์ ขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก ${peaId}`;
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -43,34 +46,17 @@ class PrintCustomer extends Component {
     }
 
     if (customer) {
-      let verify;
-      let appearDate;
-      if (customer.verifies && customer.verifies.length > 0) {
-        verify = customer.verifies[0];
-
-        this.props.getSignature(peaId, verify._id);
-
-        appearDate =
-          verify.appearDate &&
-          new Date(verify.appearDate).toLocaleDateString("th-TH", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-          });
-      }
       const translated = translateCustomer(customer);
+      this.props.getSignature(peaId, translated.lastVerifyId);
       this.setState({
         signature,
         verifies: customer.verifies || [],
         translated,
-        verifyId: verify && verify._id,
-        appearDate: appearDate
+        verifyId: translated.lastVerifyId,
+        appearDate: translated.appearDate
       });
     }
   }
-
-  printRef = {};
-  toPrintRef = {};
 
   setPrintRef = ref => {
     this.printRef = ref;
@@ -82,10 +68,6 @@ class PrintCustomer extends Component {
 
   handlePrint = () => {
     this.printRef.handlePrint();
-  };
-
-  handleBack = () => {
-    this.props.history.goBack();
   };
 
   handleAppearDateChange = e => {
@@ -100,7 +82,6 @@ class PrintCustomer extends Component {
         this.props.getSignature(peaId, this.state.verifyId);
       }
     );
-
   };
 
   render() {
@@ -125,16 +106,9 @@ class PrintCustomer extends Component {
                 onChange={this.handleAppearDateChange}
               >
                 {verifies.map((data, index) => {
-                  const _appearDate = new Date(
-                    data.appearDate
-                  ).toLocaleDateString("th-TH", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric"
-                  });
                   return (
                     <option key={`appearDate-${index}`} value={data._id}>
-                      {_appearDate}
+                      {toLocalDate(data.appearDate)}
                     </option>
                   );
                 })}
@@ -151,7 +125,7 @@ class PrintCustomer extends Component {
               <Button
                 variant="outline-secondary"
                 className="pea-color"
-                onClick={this.handleBack}
+                onClick={() => this.props.history.goBack()}
               >
                 กลับ
               </Button>
@@ -175,10 +149,10 @@ class PrintCustomer extends Component {
             />
           </Fragment>
         ) : (
-            <div className="text-center mt-5">
-              <Spinner animation="border"></Spinner>
-            </div>
-          )}
+          <div className="text-center mt-5">
+            <Spinner animation="border"></Spinner>
+          </div>
+        )}
       </Fragment>
     );
   }

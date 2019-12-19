@@ -15,16 +15,27 @@ import {
   ListGroup
 } from "react-bootstrap";
 
-class ViewCustomer extends Component {
-  state = {
-    customer: null,
-    translated: null,
-    isLoading: true,
-    signatures: null,
-    verifies: null
-  };
+const basicDataRow = [
+  { field: "peaId", title: "หมายเลขผู้ใช้ไฟ(CA)", key: "peaId" },
+  { field: "name", title: "ชื่อ-สกุล", key: "name" },
+  { field: "address", title: "ที่อยู่", key: "address" },
+  { field: "authorize", title: "กรณีเป็น", key: "authorize" },
+  { field: "soldierNo", title: "หมายเลขทหาร", key: "soldierNo" },
+  { field: "war", title: "ลดสิทธิ์สงคราม", key: "war" }
+];
 
-  UNSAFE_componentWillMount() {
+class ViewCustomer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      customer: null,
+      translated: null,
+      isLoading: true,
+      signatures: null,
+      verifies: null
+    };
+
     const { peaId } = this.props;
     this.props.getCustomer(peaId);
   }
@@ -51,15 +62,6 @@ class ViewCustomer extends Component {
       });
     }
   }
-
-  basicDataRow = [
-    { field: "peaId", title: "หมายเลขผู้ใช้ไฟ(CA)", key: "peaId" },
-    { field: "name", title: "ชื่อ-สกุล", key: "name" },
-    { field: "address", title: "ที่อยู่", key: "address" },
-    { field: "authorize", title: "กรณีเป็น", key: "authorize" },
-    { field: "soldierNo", title: "หมายเลขทหาร", key: "soldierNo" },
-    { field: "war", title: "ลดสิทธิ์สงคราม", key: "war" }
-  ];
 
   render() {
     const { peaId } = this.props;
@@ -119,7 +121,7 @@ class ViewCustomer extends Component {
               <Col>
                 <ListGroup variant="flush">
                   {translated &&
-                    this.basicDataRow.map(item => {
+                    basicDataRow.map(item => {
                       return (
                         <ListGroup.Item key={item.key}>
                           <span>{item.title}</span>

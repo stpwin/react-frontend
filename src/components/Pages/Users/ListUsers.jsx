@@ -3,66 +3,66 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { userActions } from "../../../actions";
 
-import moment from "moment";
-import "moment/locale/th";
+import { toLocalDate } from "../../../helpers";
 
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { DataTable } from "../../DataTable";
 import { ModalConfirm } from "../../Modals";
 
+const columns = [
+  { text: "ลำดับ", dataField: "index", valign: "true" },
+  { text: "ชื่อ", dataField: "displayName", valign: "true", canSearch: true },
+  {
+    text: "Username",
+    dataField: "username",
+    valign: "true",
+    canSearch: true
+  },
+  { text: "ระดับ", dataField: "role", valign: "true" },
+  { text: "สร้างเมื่อง", dataField: "createdAt", valign: "true" },
+  { text: "รายละเอียด", dataField: "description", valign: "true" }
+];
+
+const tools = [
+  {
+    overlaytext: "แก้ไข",
+    icon: <FaEdit />,
+    onclick: userId => this.handleEdit(userId),
+    key: "edit"
+  },
+  {
+    overlaytext: "ลบ",
+    icon: <FaTrash />,
+    onclick: (userId, customValue) => this.handleRemove(userId, customValue),
+    key: "delete",
+    customValue: true
+  }
+];
+
+const topButtons = [
+  {
+    text: "สร้างผู้ใช้งาน",
+    onClick: () => this.handleCreateUser(),
+    key: "createUser"
+  }
+];
+
 class ListUsers extends Component {
-  state = {
-    page: 1,
-    pages: 1,
-    limit: 10,
-    perPages: [10, 20, 50, 100],
+  constructor(props) {
+    super(props);
 
-    modalConfirmShow: false,
-    selectedUid: "",
-    confirmtext: "",
-    filterText: ""
-  };
+    this.state = {
+      page: 1,
+      pages: 1,
+      limit: 10,
+      perPages: [10, 20, 50, 100],
 
-  columns = [
-    { text: "ลำดับ", dataField: "index", valign: "true" },
-    { text: "ชื่อ", dataField: "displayName", valign: "true", canSearch: true },
-    {
-      text: "Username",
-      dataField: "username",
-      valign: "true",
-      canSearch: true
-    },
-    { text: "ระดับ", dataField: "role", valign: "true" },
-    { text: "สร้างเมื่อง", dataField: "createdAt", valign: "true" },
-    { text: "รายละเอียด", dataField: "description", valign: "true" }
-  ];
+      modalConfirmShow: false,
+      selectedUid: "",
+      confirmtext: "",
+      filterText: ""
+    };
 
-  tools = [
-    {
-      overlaytext: "แก้ไข",
-      icon: <FaEdit />,
-      onclick: userId => this.handleEdit(userId),
-      key: "edit"
-    },
-    {
-      overlaytext: "ลบ",
-      icon: <FaTrash />,
-      onclick: (userId, customValue) => this.handleRemove(userId, customValue),
-      key: "delete",
-      customValue: true
-    }
-  ];
-
-  topButtons = [
-    {
-      text: "สร้างผู้ใช้งาน",
-      onClick: () => this.handleCreateUser(),
-      key: "createUser"
-    }
-  ];
-
-  UNSAFE_componentWillMount() {
-    moment.locale("th");
     this.fetchNew();
   }
 
@@ -103,14 +103,13 @@ class ListUsers extends Component {
     });
   };
 
+  handleCreateUser = () => {
+    this.props.history.push("/users/create");
+  };
+
   handleEdit = uid => {
     if (!uid) return;
     this.props.history.push(`/users/edit/${uid}`);
-  };
-
-  handleChangePassword = uid => {
-    if (!uid) return;
-    this.props.history.push(`/users/change-password/${uid}`);
   };
 
   handleConfirmClick = () => {
@@ -126,10 +125,6 @@ class ListUsers extends Component {
     this.setState({
       modalConfirmShow: false
     });
-  };
-
-  handleCreateUser = () => {
-    this.props.history.push("/users/create");
   };
 
   handleFilterChange = text => {
@@ -198,40 +193,40 @@ class ListUsers extends Component {
       users: { data }
     } = this.props;
 
-    const startNumber = page > 1 ? (page - 1) * limit : 0;
+    const start = page > 1 ? (page - 1) * limit : 0;
     const users =
       data &&
       data.users &&
       data.users.map((userItem, index) => {
         return {
           uid: userItem._id,
-          index: startNumber + index + 1,
+          index: start + index + 1,
           displayName: userItem.displayName,
           username: userItem.username,
           role: userItem.role,
           description: userItem.description,
-          createdAt: moment(userItem.createdAt).format("lll")
+          createdAt: toLocalDate(userItem.createdAt)
         };
       });
     return (
       <Fragment>
         <DataTable
-          columns={this.columns}
+          filterPlaceholder={"ค้นหาชื่อ หรือ Username"}
+          customValueKey="displayName"
+          idKey="uid"
+          columns={columns}
+          tools={tools}
+          topButtons={topButtons}
           data={users}
-          pages={pages}
           page={page}
+          pages={pages}
+          limit={limit}
+          perPages={perPages}
           onNextPage={this.handleNextPage}
           onPrevPage={this.handlePrevPage}
           onPageChange={this.handlePageChange}
           onPerPageChange={this.handlePerPageChange}
           filterTextChange={this.handleFilterChange}
-          limit={limit}
-          perPages={perPages}
-          filterPlaceholder={"ค้นหาชื่อ หรือ Username"}
-          tools={this.tools}
-          idKey="uid"
-          customValueKey="displayName"
-          topButtons={this.topButtons}
         />
         <ModalConfirm
           show={modalConfirmShow}

@@ -10,16 +10,17 @@ import Signature from "./Signature";
 import { ModalCamera } from "../Modals";
 
 export class CustomerVerifyForm extends Component {
-  state = {
-    appearDate: new Date(),
-    signatureBase64: null,
-    showCamera: false,
-    capturedImage: null
-  };
+  constructor(props) {
+    super(props);
 
-  sigPadRef = {};
+    this.state = {
+      appearDate: new Date(),
+      signatureBase64: null,
+      showCamera: false,
+      capturedImage: null
+    };
 
-  UNSAFE_componentWillMount() {
+    this.sigPadRef = {};
     registerLocale("th", th);
   }
 
@@ -139,7 +140,7 @@ export class CustomerVerifyForm extends Component {
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handleAppearDateChange}
-            // name='appearDate'
+              // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>

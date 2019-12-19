@@ -26,3 +26,11 @@ export const arrayBufferToBase64 = buffer => {
 
   return window.btoa(binary);
 };
+
+export const toLocalDate = _date => {
+  return new Date(_date).toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+};

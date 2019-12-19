@@ -4,9 +4,6 @@ import { withRouter } from "react-router-dom";
 import { customerActions } from "../../../actions";
 import { translateCustomer } from "../../../helpers";
 
-import moment from "moment";
-import "moment/locale/th";
-
 import {
   FaTrash,
   FaCheck,
@@ -17,91 +14,127 @@ import {
 import { ModalConfirm } from "../../Modals";
 import { DataTable } from "../../DataTable";
 
+const filters = [
+  { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
+  { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
+];
+
+const columns = [
+  { text: "ลำดับ", dataField: "index", valign: "true" },
+  { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
+  {
+    text: "หมายเลขผู้ใช้ไฟฟ้า",
+    dataField: "peaId",
+    valign: "true",
+    canSearch: true
+  },
+  { text: "ที่อยู่", dataField: "address" },
+  { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
+  { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
+  // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
+  { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
+  { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
+];
+
+const tools = [
+  {
+    overlaytext: "พิมพ์",
+    icon: <FaPrint />,
+    key: "print",
+    onclick: peaId => this.onPrintClick(peaId)
+  },
+  {
+    overlaytext: "ยืนยันสิทธิ์",
+    icon: <FaCheck />,
+    key: "verify",
+    onclick: peaId => this.onVerifyClick(peaId)
+  },
+  {
+    overlaytext: "แก้ไข",
+    icon: <FaEdit />,
+    onclick: peaId => this.onEditClick(peaId),
+    key: "edit"
+  },
+  {
+    overlaytext: "แสดงข้อมูล",
+    icon: <FaExternalLinkAlt />,
+    onclick: peaId => this.onViewClick(peaId),
+    key: "view"
+  },
+  {
+    overlaytext: "ลบ",
+    icon: <FaTrash />,
+    onclick: (peaId, customValue) => this.onDeleteClick(peaId, customValue),
+    key: "delete",
+    customValue: true
+  }
+];
+
+const topButtons = [
+  {
+    text: "เพิ่มลูกค้า",
+    onClick: () => this.handleAddCustomer(),
+    key: "createCustomer"
+  }
+];
+
 class ListCustomer extends Component {
-  state = {
-    page: 1,
-    pages: 0,
-    limit: 10,
-    wars: "",
-    perPages: [10, 20, 50, 100],
+  constructor(props) {
+    super(props);
 
-    filterText: "",
-    filterChecked: [true, true],
+    this.state = {
+      page: 1,
+      pages: 0,
+      limit: 10,
+      perPages: [10, 20, 50, 100],
 
-    confirmDelete: false,
-    confirmDeleteText: "",
-    confirmDeletePeaId: "",
+      wars: "",
+      filterText: "",
+      filterChecked: [true, true],
 
-    translated: []
-  };
+      confirmDelete: false,
+      confirmDeleteText: "",
+      confirmDeletePeaId: "",
 
-  filters = [
-    { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
-    { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
-  ];
+      translated: []
+    };
 
-  columns = [
-    { text: "ลำดับ", dataField: "index", valign: "true" },
-    { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
-    {
-      text: "หมายเลขผู้ใช้ไฟฟ้า",
-      dataField: "peaId",
-      valign: "true",
-      canSearch: true
-    },
-    { text: "ที่อยู่", dataField: "address" },
-    { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
-    { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
-    // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
-    { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
-    { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
-  ];
-
-  tools = [
-    {
-      overlaytext: "พิมพ์",
-      icon: <FaPrint />,
-      key: "print",
-      onclick: peaId => this.onPrintClick(peaId)
-    },
-    {
-      overlaytext: "ยืนยันสิทธิ์",
-      icon: <FaCheck />,
-      key: "verify",
-      onclick: peaId => this.onVerifyClick(peaId)
-    },
-    {
-      overlaytext: "แก้ไข",
-      icon: <FaEdit />,
-      onclick: peaId => this.onEditClick(peaId),
-      key: "edit"
-    },
-    {
-      overlaytext: "แสดงข้อมูล",
-      icon: <FaExternalLinkAlt />,
-      onclick: peaId => this.onViewClick(peaId),
-      key: "view"
-    },
-    {
-      overlaytext: "ลบ",
-      icon: <FaTrash />,
-      onclick: (peaId, customValue) => this.onDeleteClick(peaId, customValue),
-      key: "delete",
-      customValue: true
-    }
-  ];
-
-  topButtons = [
-    {
-      text: "เพิ่มลูกค้า",
-      onClick: () => this.handleAddCustomer(),
-      key: "createCustomer"
-    }
-  ];
-
-  UNSAFE_componentWillMount() {
-    moment.locale("th");
     this.fetchNew();
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    const { customers } = nextProps;
+    const { limit } = this.state;
+    if (customers) {
+      if (customers.metadata) {
+        const page =
+          (customers.metadata && parseInt(customers.metadata.page)) || 1;
+        const pages =
+          (customers.metadata && parseInt(customers.metadata.pages)) || 1;
+        const start = page > 1 ? (page - 1) * limit : 0;
+
+        const translated =
+          customers.customers &&
+          customers.customers.map((customer, index) => {
+            return {
+              index: index + start + 1,
+              ...translateCustomer(customer)
+            };
+          });
+
+        this.setState({
+          page,
+          pages,
+          translated
+        });
+      }
+    } else {
+      this.setState({
+        page: 1,
+        pages: 1,
+        translated: []
+      });
+    }
   }
 
   getWarFilter = () => {
@@ -109,11 +142,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? this.filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
@@ -125,7 +158,7 @@ class ListCustomer extends Component {
     }
   };
 
-  onPerPageChange = value => {
+  handlePerPageChange = value => {
     this.setState(
       {
         page: 1,
@@ -137,7 +170,7 @@ class ListCustomer extends Component {
     );
   };
 
-  onPrevPage = () => {
+  handlePrevPage = () => {
     this.setState(
       {
         page: this.state.page > 1 ? this.state.page - 1 : 1
@@ -148,7 +181,7 @@ class ListCustomer extends Component {
     );
   };
 
-  onNextPage = () => {
+  handleNextPage = () => {
     this.setState(
       {
         page:
@@ -162,7 +195,7 @@ class ListCustomer extends Component {
     );
   };
 
-  onPageChange = event => {
+  handlePageChange = event => {
     if (!event.target.text) return;
 
     const page = parseInt(event.target.text);
@@ -179,7 +212,7 @@ class ListCustomer extends Component {
     }
   };
 
-  onFilterCheckedChange = event => {
+  handleFilterCheckedChange = event => {
     const index = event.target.name.replace("filter-", "");
     let newChecked = this.state.filterChecked;
     newChecked[index] = event.target.checked;
@@ -196,7 +229,7 @@ class ListCustomer extends Component {
     );
   };
 
-  onFilterTextChange = text => {
+  handleFilterTextChange = text => {
     this.setState(
       {
         filterText: text,
@@ -249,61 +282,16 @@ class ListCustomer extends Component {
     this.fetchNew();
   };
 
-  // handleStatusClose = () => {
-  //   this.setState({
-  //     statusModal: false
-  //   });
-  // };
-
   handleAddCustomer = () => {
     this.props.history.push("/customers/add");
   };
-
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const { customers } = nextProps;
-    const { limit } = this.state;
-    if (customers) {
-      if (customers.metadata) {
-        const page =
-          (customers.metadata && parseInt(customers.metadata.page)) || 1;
-        const pages =
-          (customers.metadata && parseInt(customers.metadata.pages)) || 1;
-        const start = page > 1 ? (page - 1) * limit : 0;
-
-
-
-        const translated =
-          customers.customers &&
-          customers.customers.map((customer, index) => {
-            const appearDate = customer.verifies && customer.verifies.length > 0 &&
-              customer.verifies[0].appearDate &&
-              new Date(customer.verifies[0].appearDate).toLocaleDateString("th-TH", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-              });
-            return {
-              index: index + start + 1,
-              appearDate,
-              ...translateCustomer(customer)
-            };
-          });
-
-        this.setState({
-          page,
-          pages,
-          translated
-        });
-      }
-    }
-  }
 
   render() {
     const {
       pages,
       page,
-      perPages,
       limit,
+      perPages,
       filterChecked,
       confirmDelete,
       confirmDeleteText,
@@ -314,24 +302,24 @@ class ListCustomer extends Component {
       <Fragment>
         <DataTable
           filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)"
-          columns={this.columns}
-          data={translated}
-          pages={pages}
-          page={page}
-          onNextPage={this.onNextPage}
-          onPrevPage={this.onPrevPage}
-          onPageChange={this.onPageChange}
-          onPerPageChange={this.onPerPageChange}
-          limit={limit}
-          perPages={perPages}
-          filters={this.filters}
-          filterChecked={filterChecked}
-          onFilterCheckedChange={this.onFilterCheckedChange}
-          filterTextChange={this.onFilterTextChange}
-          tools={this.tools}
           idKey="peaId"
           customValueKey="name"
-          topButtons={this.topButtons}
+          columns={columns}
+          filters={filters}
+          tools={tools}
+          topButtons={topButtons}
+          data={translated}
+          page={page}
+          pages={pages}
+          limit={limit}
+          perPages={perPages}
+          onNextPage={this.handleNextPage}
+          onPrevPage={this.handlePrevPage}
+          onPageChange={this.handlePageChange}
+          onPerPageChange={this.handlePerPageChange}
+          filterChecked={filterChecked}
+          onFilterCheckedChange={this.handleFilterCheckedChange}
+          filterTextChange={this.handleFilterTextChange}
         />
         <ModalConfirm
           show={confirmDelete}

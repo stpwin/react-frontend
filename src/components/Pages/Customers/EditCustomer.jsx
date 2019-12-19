@@ -11,11 +11,13 @@ import CustomerDataForm from "../../Customer/CustomerDataForm";
 import FormButton from "../../Customer/FormButton";
 
 export class EditCustomer extends Component {
-  state = {
-    initial: {}
-  };
+  constructor(props) {
+    super(props);
 
-  UNSAFE_componentWillMount() {
+    this.state = {
+      initial: {}
+    };
+
     const { peaId } = this.props;
     this.props.getCustomer(peaId);
   }
@@ -28,10 +30,6 @@ export class EditCustomer extends Component {
       this.props.history.goBack();
     }
   }
-
-  handleSuccess = () => {
-    this.props.history.goBack();
-  };
 
   handleCancel = () => {
     this.props.history.goBack();

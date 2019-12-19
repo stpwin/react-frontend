@@ -1,28 +1,23 @@
-import { getWarType, addressToString } from "../helpers";
+import { addressToString, toLocalDate } from "../helpers";
+
+const warsType = {
+  ภายในประเทศ: "G1",
+  เวียดนาม: "G1",
+  เกาหลี: "G1",
+  เอเชียบูรพา: "G2",
+  อินโดจีน: "G2",
+  ฝรั่งเศส: "G2"
+};
+
+export const getWarType = war => {
+  return warsType[war];
+};
 
 export const translateCustomer = customer => {
   if (!customer) return;
 
-  // let appearDate;
   const privilegeDate =
-    customer.privilegeDate &&
-    new Date(customer.privilegeDate).toLocaleDateString("th-TH", {
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
-
-  // if (customer.verifies && customer.verifies.length > 0) {
-  //   const lastVerify = customer.verifies[0];
-
-  //   appearDate =
-  //     lastVerify.appearDate &&
-  //     new Date(lastVerify.appearDate).toLocaleDateString("th-TH", {
-  //       year: "numeric",
-  //       month: "long",
-  //       day: "numeric"
-  //     });
-  // }
+    customer.privilegeDate && toLocalDate(customer.privilegeDate);
 
   return {
     name: `${customer.title}${customer.firstName}\u00A0\u00A0${customer.lastName}`,
@@ -31,7 +26,20 @@ export const translateCustomer = customer => {
     authorize: customer.authorize,
     soldierNo: customer.soldierNo,
     privilegeDate: privilegeDate,
-    war: `${customer.war} ${getWarType(customer.war)}`
-    // appearDate: appearDate
+    war: `${customer.war} ${getWarType(customer.war)}`,
+    ...getLastVerify(customer)
   };
+};
+
+const getLastVerify = ({ verifies }) => {
+  if (verifies && verifies.length > 0) {
+    const lastVerify = verifies[0];
+    const appearDate =
+      lastVerify.appearDate && toLocalDate(lastVerify.appearDate);
+    const lastVerifyId = lastVerify._id;
+    return {
+      appearDate,
+      lastVerifyId
+    };
+  }
 };

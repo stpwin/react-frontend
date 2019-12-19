@@ -13,9 +13,16 @@ import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
 import FormButton from "../../Customer/FormButton";
 
 class VerifyCustomer extends Component {
-  state = {
-    appearDate: new Date()
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      appearDate: new Date()
+    };
+    this.sigPad = {};
+    const { peaId } = this.props;
+    this.props.getCustomer(peaId);
+  }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
@@ -27,12 +34,6 @@ class VerifyCustomer extends Component {
     }
   }
 
-  UNSAFE_componentWillMount() {
-    const { peaId } = this.props;
-    this.props.getCustomer(peaId);
-  }
-
-  sigPad = {};
   setSigpadRef = ref => {
     this.sigPad = ref;
   };

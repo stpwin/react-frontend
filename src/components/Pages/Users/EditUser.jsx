@@ -7,7 +7,8 @@ import { withRouter } from "react-router-dom";
 import { UserForm } from "../../User";
 
 class EditUser extends Component {
-  UNSAFE_componentWillMount() {
+  constructor(props) {
+    super(props);
     const {
       match: {
         params: { uid }
@@ -20,7 +21,7 @@ class EditUser extends Component {
     const {
       users: { data }
     } = nextProps;
-    if (data && data.status === "success") {
+    if (data && data.status === "edit_success") {
       this.props.history.goBack();
     }
   }
