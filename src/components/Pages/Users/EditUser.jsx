@@ -20,7 +20,6 @@ class EditUser extends Component {
     const {
       users: { data }
     } = nextProps;
-    console.log(data);
     if (data && data.status === "success") {
       this.props.history.goBack();
     }

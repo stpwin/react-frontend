@@ -7,8 +7,10 @@ import CameraPhoto, {
 } from "jslib-html5-camera-photo";
 
 export class Webcam extends Component {
-  cameraPhoto = null;
-  videoRef = React.createRef();
+  constructor(props) {
+    super(props);
+    this.videoRef = React.createRef();
+  }
 
   componentDidMount() {
     this.cameraPhoto = new CameraPhoto(this.videoRef.current);
@@ -19,10 +21,8 @@ export class Webcam extends Component {
     this.cameraPhoto
       .startCamera(idealFacingMode, idealResolution)
       .then(() => {
-        // console.log("camera is started");
       })
       .catch(err => {
-        console.error(err);
       });
   };
 
@@ -30,15 +30,12 @@ export class Webcam extends Component {
     this.cameraPhoto
       .startCameraMaxResolution(idealFacingMode)
       .then(() => {
-        // console.log("camera is started");
       })
       .catch(err => {
-        console.log(err);
       });
   };
 
   takePhoto = () => {
-    // console.log("take photo");
     const config = {
       sizeFactor: 1,
       imageType: IMAGE_TYPES.PNG,
@@ -58,10 +55,8 @@ export class Webcam extends Component {
     this.cameraPhoto
       .stopCamera()
       .then(() => {
-        // console.log("camera stopped.");
       })
       .catch(err => {
-        console.log(err);
       });
   };
 

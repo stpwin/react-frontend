@@ -1,5 +1,4 @@
 export const handleFetchError = rep => {
-  // console.log(rep.status);
   if (!rep.ok) {
     return rep.text().then(err => {
       return Promise.resolve({ err, rep: null });
@@ -8,7 +7,6 @@ export const handleFetchError = rep => {
 
   if (rep.status === 200) {
     return rep.json().then(res => {
-      // console.log(res);
       return Promise.resolve({ err: null, rep: res });
     });
   }
@@ -17,7 +15,6 @@ export const handleFetchError = rep => {
 };
 
 export const handleFetchSuccessResponse = rep => {
-  // console.log(rep.status);
   if (!rep.ok) {
     return rep.text().then(err => {
       return Promise.resolve({ err, rep: null });

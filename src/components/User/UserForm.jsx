@@ -37,8 +37,8 @@ export class UserForm extends Component {
 
     this.setState({
       canSubmit: !(usernameInvalid ||
-      displayNameInvalid ||
-      skipEmptyPasswordValidation
+        displayNameInvalid ||
+        skipEmptyPasswordValidation
         ? false
         : passwordInvalid)
     });
@@ -55,8 +55,8 @@ export class UserForm extends Component {
             value.length === 0
               ? "ไม่สามารถเว้นว่าง"
               : value.length < 3
-              ? "อย่างน้อย 3 ตัวอักษร"
-              : ""
+                ? "อย่างน้อย 3 ตัวอักษร"
+                : ""
         },
         this.canSubmitCheck
       );
@@ -68,8 +68,8 @@ export class UserForm extends Component {
             value.length === 0
               ? "ไม่สามารถเว้นว่าง"
               : value.length < 3
-              ? "อย่างน้อย 3 ตัวอักษร"
-              : ""
+                ? "อย่างน้อย 3 ตัวอักษร"
+                : ""
         },
         this.canSubmitCheck
       );
@@ -93,10 +93,10 @@ export class UserForm extends Component {
             value.length === 0
               ? "ไม่สามารถเว้นว่าง"
               : value.length < 6
-              ? "รหัสผ่านอย่างน้อย 6 ตัวอักษร"
-              : password !== confirmPassword
-              ? "รหัสผ่านไม่ตรงกัน"
-              : ""
+                ? "รหัสผ่านอย่างน้อย 6 ตัวอักษร"
+                : password !== confirmPassword
+                  ? "รหัสผ่านไม่ตรงกัน"
+                  : ""
         },
         this.canSubmitCheck
       );
@@ -119,7 +119,6 @@ export class UserForm extends Component {
   };
 
   handleRoleChange = e => {
-    // console.log(e);
     this.setState(
       {
         role: e
@@ -130,7 +129,6 @@ export class UserForm extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    // console.log("on submit");
 
     const { canSubmit } = this.state;
     const { handleSubmit } = this.props;
@@ -140,7 +138,6 @@ export class UserForm extends Component {
 
   handleReset = e => {
     this.props.history.goBack();
-    console.log("on reset");
   };
 
   render() {

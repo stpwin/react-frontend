@@ -52,7 +52,7 @@ class ListCustomer extends Component {
     { text: "ที่อยู่", dataField: "address" },
     { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
     { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
-    { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
+    // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
     { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
     { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
   ];
@@ -109,11 +109,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? this.filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? this.filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {
@@ -268,13 +268,23 @@ class ListCustomer extends Component {
           (customers.metadata && parseInt(customers.metadata.page)) || 1;
         const pages =
           (customers.metadata && parseInt(customers.metadata.pages)) || 1;
-
         const start = page > 1 ? (page - 1) * limit : 0;
+
+
+
         const translated =
           customers.customers &&
           customers.customers.map((customer, index) => {
+            const appearDate = customer.verifies && customer.verifies.length > 0 &&
+              customer.verifies[0].appearDate &&
+              new Date(customer.verifies[0].appearDate).toLocaleDateString("th-TH", {
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+              });
             return {
               index: index + start + 1,
+              appearDate,
               ...translateCustomer(customer)
             };
           });

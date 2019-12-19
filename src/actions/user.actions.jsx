@@ -1,7 +1,7 @@
 import { userConstants } from "../constants";
 import { userService } from "../services";
 import { alertActions } from "./";
-import { history } from "../helpers";
+import { history } from "../store";
 
 const login = (username, password) => {
   return dispatch => {
@@ -118,7 +118,6 @@ const getFilter = (filter, page, pages) => {
 };
 
 const update = (uid, user) => {
-  // console.log(uid);
   return dispatch => {
     dispatch(request());
     userService.update(uid, user).then(

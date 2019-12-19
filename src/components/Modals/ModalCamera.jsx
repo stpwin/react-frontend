@@ -40,7 +40,6 @@ export class ModalCamera extends Component {
   };
 
   handleMirroredChange = e => {
-    // console.log(e.target.checked);
     this.setState({
       mirrored: e.target.checked
     });
@@ -68,15 +67,15 @@ export class ModalCamera extends Component {
                     <img alt="preview" src={dataUrl} width={600} height={400} />
                   </div>
                 ) : (
-                  <Webcam
-                    ref={this.setWebcamRef}
-                    showFocus={false}
-                    width={600}
-                    height={400}
-                    mirrored={mirrored}
-                    style={{ overflow: "auto" }}
-                  />
-                )}
+                    <Webcam
+                      ref={this.setWebcamRef}
+                      showFocus={false}
+                      width={600}
+                      height={400}
+                      mirrored={mirrored}
+                      style={{ overflow: "auto" }}
+                    />
+                  )}
               </Col>
             </Row>
           </Container>
@@ -117,14 +116,14 @@ export class ModalCamera extends Component {
                       </Button>
                     </Fragment>
                   ) : (
-                    <Button
-                      variant="outline-secondary"
-                      className="pea-color"
-                      onClick={this.handleCapture}
-                    >
-                      ถ่ายภาพ
+                      <Button
+                        variant="outline-secondary"
+                        className="pea-color"
+                        onClick={this.handleCapture}
+                      >
+                        ถ่ายภาพ
                     </Button>
-                  )}
+                    )}
 
                   <Button
                     variant="outline-secondary"

@@ -115,7 +115,6 @@ class ListUsers extends Component {
 
   handleConfirmClick = () => {
     const { selectedUid } = this.state;
-    console.log("Confirmed UID:", selectedUid);
     this.handleConfirmClose();
     if (!selectedUid) return;
 

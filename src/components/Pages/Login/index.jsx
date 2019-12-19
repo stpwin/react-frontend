@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 // import { Link } from 'react-router-dom';
 import { connect } from "react-redux";
-import { userActions } from "../../../actions";
+import { userActions, alertActions } from "../../../actions";
 
 import {
   Container,
@@ -16,7 +16,6 @@ class LoginPage extends React.Component {
   constructor(props) {
     super(props);
 
-    // reset login status
     this.props.logout();
 
     this.state = {
@@ -38,12 +37,13 @@ class LoginPage extends React.Component {
     const { username, password } = this.state;
 
     if (username && password) {
+      this.props.clearAlert();
       this.props.login(username, password);
     }
   };
 
   render() {
-    const { loggingIn } = this.props;
+    const { loggingIn, alert } = this.props;
     const { username, password, submitted } = this.state;
     return (
       <Container>
@@ -51,11 +51,11 @@ class LoginPage extends React.Component {
           <h2>เข้าสู่ระบบ</h2>
           <Form onSubmit={this.handleSubmit}>
             <FormGroup>
-              <Form.Label htmlFor="username">ชื่อผู้ใช้งาน</Form.Label>
+              <Form.Label htmlFor="username">ผู้ใช้งาน</Form.Label>
               <Form.Control
                 name="username"
                 value={username}
-                placeholder="ชื่อผู้ใช้งาน"
+                placeholder="ผู้ใช้งาน"
                 onChange={this.handleChange}
                 isInvalid={submitted && !username}
               />
@@ -72,6 +72,7 @@ class LoginPage extends React.Component {
               />
             </FormGroup>
             <FormGroup>
+              {alert && alert.message ? <div><p className={`alert ${alert.type}`}>{alert.message}</p></div> : null}
               <Button
                 type="submit"
                 variant="outline"
@@ -90,8 +91,8 @@ class LoginPage extends React.Component {
                     <span>กำลังเข้าสู่ระบบ...</span>
                   </Fragment>
                 ) : (
-                  "เข้าสู่ระบบ"
-                )}
+                    "เข้าสู่ระบบ"
+                  )}
               </Button>
             </FormGroup>
           </Form>
@@ -102,9 +103,11 @@ class LoginPage extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const { loggingIn } = state.authentication;
+  const { alert, authentication } = state
+  const { loggingIn } = authentication;
   return {
-    loggingIn
+    loggingIn,
+    alert
   };
 };
 
@@ -112,7 +115,8 @@ const mapDispatchToProps = dispatch => {
   return {
     login: (username, password) =>
       dispatch(userActions.login(username, password)),
-    logout: () => dispatch(userActions.logout())
+    logout: () => dispatch(userActions.logout()),
+    clearAlert: () => dispatch(alertActions.clear())
   };
 };
 

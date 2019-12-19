@@ -185,7 +185,6 @@ const handleResponse = response => {
         error = data.error;
         return data;
       } catch {
-        console.log("response is not json object");
       }
     }
     if (!response.ok) {

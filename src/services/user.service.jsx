@@ -118,7 +118,6 @@ const remove = uid => {
 
 const handleResponse = response => {
   return response.text().then(text => {
-    // console.log(text);
     let jsonData = {};
     try {
       jsonData = text && JSON.parse(text);

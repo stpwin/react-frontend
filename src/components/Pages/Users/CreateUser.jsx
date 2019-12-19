@@ -13,8 +13,7 @@ class CreateUser extends Component {
     const {
       users: { data }
     } = nextProps;
-    if (data && data.status === "success") {
-      // console.log("success:", data);
+    if (data && data.status === "create_success") {
       this.props.history.goBack();
     }
   }

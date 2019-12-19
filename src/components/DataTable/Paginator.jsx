@@ -21,22 +21,18 @@ export class Paginator extends Component {
 
       if (x === page) {
         middle.push(x - 2);
-        // console.log("a", x - 2);
       }
 
       for (let i = 3; i <= x; i++) {
         if (i <= 5 && page < 5) {
-          // console.log("b", i);
           middle.push(i);
         }
 
         if (page === pages && i === pages - 4) {
-          // console.log("c", i);
           middle.push(i);
         }
 
         if (page > x && (page - 3 === i || page - 2 === i)) {
-          // console.log("d", i);
           middle.push(i);
         }
         if (page > 4 && (page === i || page - 1 === i || page + 1 === i)) {
@@ -55,8 +51,8 @@ export class Paginator extends Component {
             <Pagination.Item active={page === 2}>{2}</Pagination.Item>
           ) : null
         ) : (
-          <Pagination.Ellipsis disabled />
-        )}
+            <Pagination.Ellipsis disabled />
+          )}
 
         {middle.map(pageNo => {
           return (
@@ -72,8 +68,8 @@ export class Paginator extends Component {
               {pages - 1}
             </Pagination.Item>
           ) : (
-            <Pagination.Ellipsis disabled />
-          )
+              <Pagination.Ellipsis disabled />
+            )
         ) : null}
 
         {pages > 2 ? (

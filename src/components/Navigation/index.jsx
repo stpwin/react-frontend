@@ -7,7 +7,7 @@ import { Nav, Navbar } from "react-bootstrap";
 
 class Navigation extends Component {
   render() {
-    const { user } = this.props;
+    const { user, loggedIn } = this.props;
     return (
       <Navbar expand="md">
         <Navbar.Brand
@@ -18,12 +18,11 @@ class Navigation extends Component {
         >
           PEA WVPMS
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            {user ? (
-              <React.Fragment>
-                {/* <Nav.Link href='/'>หน้าแรก</Nav.Link> */}
+        {loggedIn ? (
+          <Fragment>
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="mr-auto">
                 <Nav.Link
                   className="text-white"
                   href=""
@@ -40,35 +39,32 @@ class Navigation extends Component {
                     จัดการผู้ใช้งาน
                   </Nav.Link>
                 ) : null}
-              </React.Fragment>
-            ) : null}
-          </Nav>
-          {user ? (
-            <Fragment>
+              </Nav>
+
               <Navbar.Text className="text-light">
                 ผู้ใช้งาน: {user.displayName} ({user.role})
               </Navbar.Text>
-            </Fragment>
-          ) : null}
 
-          <Nav.Link
-            className="text-white"
-            href=""
-            onClick={() => this.props.history.push("/login")}
-          >
-            {user ? "ออกจากระบบ" : ""}
-          </Nav.Link>
-        </Navbar.Collapse>
+              <Nav.Link
+                className="text-white"
+                href=""
+                onClick={() => this.props.history.push("/login")}
+              >
+                ออกจากระบบ
+              </Nav.Link>
+            </Navbar.Collapse>
+          </Fragment>
+        ) : null}
       </Navbar>
+
     );
   }
 }
 
 function mapStateToProps(state) {
-  const { authentication } = state;
-  const { user } = authentication;
+  const { authentication: { user, loggedIn } } = state;
   return {
-    user
+    user, loggedIn
   };
 }
 

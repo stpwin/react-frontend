@@ -139,7 +139,7 @@ export class CustomerVerifyForm extends Component {
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handleAppearDateChange}
-              // name='appearDate'
+            // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>
@@ -162,16 +162,16 @@ export class CustomerVerifyForm extends Component {
                 รับลิ้งก์ QR Code
               </Button> */}
               <Button
-                variant="outline"
+                variant="outline-secondary"
                 className="pea-color"
                 size="sm"
                 onClick={this.handleShowCamera}
               >
                 กล้อง
               </Button>
-              <Button variant="outline" className="pea-color" size="sm">
+              {/* <Button variant="outline" className="pea-color" size="sm">
                 อัพโหลด
-              </Button>
+              </Button> */}
             </ButtonToolbar>
           </Col>
         </Form.Group>

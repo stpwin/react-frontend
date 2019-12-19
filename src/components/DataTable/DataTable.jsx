@@ -74,17 +74,17 @@ export class DataTable extends Component {
             <div className="top-button">
               {topButtons && topButtons.length > 0
                 ? topButtons.map((item, index) => {
-                    return (
-                      <Button
-                        key={`button-${item.key}`}
-                        variant="outline"
-                        className="pea-color"
-                        onClick={() => item.onClick()}
-                      >
-                        {item.text}
-                      </Button>
-                    );
-                  })
+                  return (
+                    <Button
+                      key={`button-${item.key}`}
+                      variant="outline"
+                      className="pea-color"
+                      onClick={() => item.onClick()}
+                    >
+                      {item.text}
+                    </Button>
+                  );
+                })
                 : null}
             </div>
           </Col>
@@ -202,17 +202,16 @@ export class DataTable extends Component {
           <tbody>
             {data && data.length > 0 ? (
               data.map((item, dataIndex) => {
-                // console.log("peaId", item.peaId);
                 return (
                   <tr key={`tr-${dataIndex}`}>
-                    {columns && //////////////List Data
+                    {columns &&
                       columns.map((col, colIndex) => {
                         return (
                           <td
                             key={`td-${colIndex}${dataIndex}`}
                             className={`align-middle ${
                               col.valign === "true" ? "text-center" : null
-                            }`}
+                              }`}
                           >
                             {col.canSearch ? (
                               <Highlight
@@ -225,8 +224,8 @@ export class DataTable extends Component {
                                 {item[col.dataField]}
                               </Highlight>
                             ) : (
-                              item[col.dataField]
-                            )}
+                                item[col.dataField]
+                              )}
                           </td>
                         ); //////////////////List data
                       })}
@@ -248,15 +247,15 @@ export class DataTable extends Component {
                 );
               })
             ) : (
-              <tr>
-                <td
-                  className="text-center align-middle"
-                  colSpan={columns && columns.length + (tools ? 1 : 0)}
-                >
-                  ไม่มีข้อมูล
+                <tr>
+                  <td
+                    className="text-center align-middle"
+                    colSpan={columns && columns.length + (tools ? 1 : 0)}
+                  >
+                    ไม่มีข้อมูล
                 </td>
-              </tr>
-            )}
+                </tr>
+              )}
           </tbody>
         </Table>
         <Row>

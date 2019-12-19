@@ -17,7 +17,6 @@ export function correctPostcode(districtNo) {
 }
 
 export function getDistrictName(districtNo) {
-  //   console.log(districtNo);
   switch (districtNo) {
     case "520101":
       return "เวียงเหนือ";
@@ -65,12 +64,12 @@ export function getDistrictName(districtNo) {
 export function getAddressStringByDistrictNo(districtNo, short = true) {
   return `${short ? "ต." : "ตำบล"}${getDistrictName(districtNo)} ${
     short ? "อ." : "อำเภอ"
-  }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${correctPostcode(districtNo)}`;
+    }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${correctPostcode(districtNo)}`;
 }
 
 export function addressToString(addr, short = true) {
   if (!addr) return;
   return `เลขที่ ${addr.houseNo} ${short ? "ม." : "หมู่ "}${
     addr.mooNo
-  } ${getAddressStringByDistrictNo(addr.districtNo, short)}`;
+    } ${getAddressStringByDistrictNo(addr.districtNo, short)}`;
 }

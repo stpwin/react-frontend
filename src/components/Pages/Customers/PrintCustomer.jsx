@@ -101,7 +101,6 @@ class PrintCustomer extends Component {
       }
     );
 
-    console.log(e.target[e.target.selectedIndex].text);
   };
 
   render() {
@@ -112,8 +111,6 @@ class PrintCustomer extends Component {
       appearDate,
       signature
     } = this.state;
-
-    console.log("Render");
 
     return (
       <Fragment>
@@ -178,10 +175,10 @@ class PrintCustomer extends Component {
             />
           </Fragment>
         ) : (
-          <div className="text-center mt-5">
-            <Spinner animation="border"></Spinner>
-          </div>
-        )}
+            <div className="text-center mt-5">
+              <Spinner animation="border"></Spinner>
+            </div>
+          )}
       </Fragment>
     );
   }

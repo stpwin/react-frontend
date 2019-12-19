@@ -9,7 +9,7 @@ export default class FormButton extends Component {
         <Col>
           <Button
             type="submit"
-            variant="outline"
+            variant="outline-secondary"
             disabled={loading}
             className="pea-color btn-block"
           >
@@ -25,13 +25,13 @@ export default class FormButton extends Component {
                 {"  กำลังดำเนินการ..."}
               </React.Fragment>
             ) : (
-              "บันทึก"
-            )}
+                "บันทึก"
+              )}
           </Button>
         </Col>
         <Col>
           <Button
-            variant="outline"
+            variant="outline-secondary"
             disabled={loading}
             className="pea-color btn-block"
             onClick={cancel}
@@ -39,6 +39,7 @@ export default class FormButton extends Component {
             ยกเลิก
           </Button>
         </Col>
+        <div className="my-5"></div>
       </Form.Group>
     );
   }

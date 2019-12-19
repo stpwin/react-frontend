@@ -1,4 +1,4 @@
 export default {
-  apiUrl: "http://172.17.17.3:3000",
+  apiUrl: process.env.REACT_APP_API_URL,
   statusShowTime: 500
 };
