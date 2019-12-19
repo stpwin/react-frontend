@@ -127,6 +127,13 @@ mark {
   margin-left: 0.5em;
 }
 
+/* @media only screen and (max-width: 340px) {
+  .btn-toolbar > * + * {
+    margin-left: 0 !important;
+    margin-top: 0.3em;
+  }
+} */
+
 .spinner-border {
   vertical-align: middle;
 }
@@ -193,4 +200,47 @@ mark {
 
 .react-datepicker-wrapper {
   display: block;
+}
+
+.navbar-light .navbar-brand {
+  color: white;
+}
+
+.navbar-light .navbar-brand:focus,
+.navbar-light .navbar-brand:hover {
+  color: white;
+}
+
+.navbar-light .navbar-brand .active {
+  color: white;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: white;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+  color: white;
+}
+
+.navbar-light .navbar-nav .active > .nav-link,
+.navbar-light .navbar-nav .nav-link.active,
+.navbar-light .navbar-nav .nav-link.show,
+.navbar-light .navbar-nav .show > .nav-link {
+  color: white;
+}
+
+.nav-link {
+  display: block;
+  padding: 0.5rem 1rem;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  background-color: transparent;
+}
+
+a:hover {
+  color: white;
 }

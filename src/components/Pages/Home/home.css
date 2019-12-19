@@ -14,3 +14,44 @@
     /* margin: 100px; */
   }
 }
+
+.parallax {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.parallax__background,
+.parallax__overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+.parallax__background {
+  background: url("background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  z-index: 1;
+  height: 100%;
+}
+
+.parallax__overlay {
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+.parallax__content {
+  position: relative;
+  z-index: 3;
+
+  /* Finally, style and place the content */
+  /* color: white; */
+  /* min-height: 100vh; */
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+}

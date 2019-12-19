@@ -43,7 +43,7 @@
     min-width: 210mm !important;
     /* min-height: 257mm !important; */
     width: 210mm;
-    /* height: 297mm; */
+    padding: 0;
   }
 
   .page {

@@ -34,3 +34,13 @@ export const toLocalDate = _date => {
     day: "numeric"
   });
 };
+
+export const toLocalDateTime = _date => {
+  return new Date(_date).toLocaleDateString("th-TH", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric"
+  });
+};

@@ -63,8 +63,8 @@ class Customers extends Component {
               <ViewCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : method === "edit" ? (
           peaId ? (
             <Fragment>
@@ -72,8 +72,8 @@ class Customers extends Component {
               <EditCustomer peaId={peaId} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : method === "verify" ? (
           peaId ? (
             <Fragment>
@@ -81,8 +81,8 @@ class Customers extends Component {
               <VerifyCustomer peaId={peaId} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : method === "print" ? (
           peaId ? (
             <Fragment>
@@ -90,14 +90,14 @@ class Customers extends Component {
               <PrintCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
-        ) : (
-          <Fragment>
-            <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
-            <ListCustomer />
-          </Fragment>
-        )}
+              <NoPeaID />
+            )
+        ) :
+                  <Fragment>
+                    <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
+                    <ListCustomer />
+                  </Fragment>
+        }
         <ModalStatus
           show={statusOpen}
           status={loading ? "loading" : error ? "error" : null}

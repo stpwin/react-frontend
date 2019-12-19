@@ -18,16 +18,22 @@ class Signature extends Component {
   render() {
     return (
       <React.Fragment>
-        <SignatureCanvas
-          ref={this.setSigpadRef}
-          penColor="black"
-          backgroundColor="white"
-          canvasProps={{
-            width: 600,
-            height: 400,
-            className: "sigCanvas"
-          }}
-        />
+        <Row>
+          <Col>
+            <div style={{ overflow: "auto" }} className="mb-2">
+              <SignatureCanvas
+                ref={this.setSigpadRef}
+                penColor="black"
+                backgroundColor="white"
+                canvasProps={{
+                  width: 600,
+                  height: 400,
+                  className: "sigCanvas"
+                }}
+              />
+            </div>
+          </Col>
+        </Row>
         <Row>
           <Col className="text-right">
             <ButtonToolbar>

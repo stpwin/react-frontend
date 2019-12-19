@@ -4,54 +4,65 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 
 import { Nav, Navbar } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap"
 
 class Navigation extends Component {
   render() {
     const { user, loggedIn } = this.props;
     return (
-      <Navbar expand="md">
-        <Navbar.Brand
-          className="text-white"
-          style={{ cursor: "pointer" }}
-          href=""
-          onClick={() => this.props.history.push("/")}
-        >
-          PEA WVPMS
+      <Navbar expand="md" fixed="top">
+
+        <LinkContainer to="/">
+          <Navbar.Brand
+            style={{ cursor: "pointer" }}
+          >
+            PEA WVPMS
         </Navbar.Brand>
+        </LinkContainer>
+
         {loggedIn ? (
           <Fragment>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="mr-auto">
-                <Nav.Link
-                  className="text-white"
-                  href=""
-                  onClick={() => this.props.history.push("/customers")}
-                >
-                  จัดการข้อมูลลูกค้า
-                </Nav.Link>
+                <Nav.Item>
+                  <LinkContainer to="/customers">
+                    <Nav.Link
+                    >
+                      จัดการข้อมูลลูกค้า
+                </Nav.Link >
+                  </LinkContainer>
+
+                </Nav.Item>
+
                 {user.role === "administrator" ? (
-                  <Nav.Link
-                    className="text-white"
-                    href=""
-                    onClick={() => this.props.history.push("/users")}
-                  >
-                    จัดการผู้ใช้งาน
-                  </Nav.Link>
+                  <Nav.Item>
+                    <LinkContainer to="/users">
+                      <Nav.Link
+                      >
+                        จัดการผู้ใช้งาน
+                  </Nav.Link >
+                    </LinkContainer>
+
+                  </Nav.Item>
                 ) : null}
               </Nav>
 
-              <Navbar.Text className="text-warning">
-                ผู้ใช้งาน: {user.displayName} ({user.role})
+              <Nav.Item>
+                <Navbar.Text className="text-warning">
+                  ผู้ใช้งาน: {user.displayName} ({user.role})
               </Navbar.Text>
-
-              <Nav.Link
-                className="text-white"
-                href=""
-                onClick={() => this.props.history.push("/login")}
-              >
-                ออกจากระบบ
+              </Nav.Item>
+              <Nav.Item>
+                <LinkContainer to="/login">
+                  <Nav.Link
+                  >
+                    ออกจากระบบ
               </Nav.Link>
+                </LinkContainer>
+              </Nav.Item>
+
+
             </Navbar.Collapse>
           </Fragment>
         ) : null}

@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { translateCustomer, toLocalDate } from "../../../helpers";
+import { translateCustomer, toLocalDate, toLocalDateTime } from "../../../helpers";
 
 import ReactToPrint from "react-to-print";
 
@@ -25,7 +25,8 @@ class PrintCustomer extends Component {
       verifies: [],
       verifyId: "",
       signature: null,
-      appearDate: null
+      appearDate: null,
+      printDate: toLocalDateTime(new Date())
     };
     this.printRef = {};
     this.toPrintRef = {};
@@ -67,6 +68,9 @@ class PrintCustomer extends Component {
   };
 
   handlePrint = () => {
+    this.setState({
+      printDate: toLocalDateTime(new Date())
+    })
     this.printRef.handlePrint();
   };
 
@@ -90,14 +94,15 @@ class PrintCustomer extends Component {
       verifies,
       verifyId,
       appearDate,
-      signature
+      signature,
+      printDate
     } = this.state;
 
     return (
       <Fragment>
-        <Row>
-          <Col />
-          <Col className="text-center">
+        <Row className="justify-content-md-center">
+
+          <Col md="auto">
             <Form.Group>
               <Form.Label>เลือกวันที่แสดงตน</Form.Label>
               <Form.Control
@@ -114,6 +119,12 @@ class PrintCustomer extends Component {
                 })}
               </Form.Control>
             </Form.Group>
+
+          </Col>
+
+        </Row>
+        <Row className="justify-content-md-center">
+          <Col md="auto">
             <ButtonToolbar>
               <Button
                 variant="outline-secondary"
@@ -131,28 +142,31 @@ class PrintCustomer extends Component {
               </Button>
             </ButtonToolbar>
           </Col>
-          <Col />
         </Row>
         {translated ? (
           <Fragment>
             <ReactToPrint
               ref={this.setPrintRef}
-              trigger={() => <p></p>}
+              trigger={() => <span></span>}
               content={() => this.toPrintRef}
             />
-            <CustomerPrintData
-              ref={this.setToPrintRef}
-              peaId={this.props.peaId}
-              customer={translated}
-              appearDate={appearDate}
-              signature={signature}
-            />
+            <div style={{ overflow: "auto" }}>
+              <CustomerPrintData
+                ref={this.setToPrintRef}
+                peaId={this.props.peaId}
+                customer={translated}
+                appearDate={appearDate}
+                signature={signature}
+                printDate={printDate}
+              />
+            </div>
+
           </Fragment>
         ) : (
-          <div className="text-center mt-5">
-            <Spinner animation="border"></Spinner>
-          </div>
-        )}
+            <div className="text-center mt-5">
+              <Spinner animation="border"></Spinner>
+            </div>
+          )}
       </Fragment>
     );
   }
