@@ -72,7 +72,11 @@ class LoginPage extends React.Component {
               />
             </FormGroup>
             <FormGroup>
-              {alert && alert.message ? <div><p className={`alert ${alert.type}`}>{alert.message}</p></div> : null}
+              {alert && alert.message ? (
+                <div>
+                  <p className={`alert ${alert.type}`}>{`${alert.message}`}</p>
+                </div>
+              ) : null}
               <Button
                 type="submit"
                 variant="outline"
@@ -91,8 +95,8 @@ class LoginPage extends React.Component {
                     <span>กำลังเข้าสู่ระบบ...</span>
                   </Fragment>
                 ) : (
-                    "เข้าสู่ระบบ"
-                  )}
+                  "เข้าสู่ระบบ"
+                )}
               </Button>
             </FormGroup>
           </Form>
@@ -103,7 +107,7 @@ class LoginPage extends React.Component {
 }
 
 const mapStateToProps = state => {
-  const { alert, authentication } = state
+  const { alert, authentication } = state;
   const { loggingIn } = authentication;
   return {
     loggingIn,

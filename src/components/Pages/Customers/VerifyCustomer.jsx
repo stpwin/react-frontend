@@ -52,8 +52,12 @@ class VerifyCustomer extends Component {
     event.preventDefault();
     const { peaId } = this.props;
     const { appearDate } = this.state;
-    const signature = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
-
+    console.log("sigPad.isEmpty()", this.sigPad.isEmpty());
+    const signature =
+      (!this.sigPad.isEmpty() &&
+        this.sigPad.getTrimmedCanvas().toDataURL("image/png")) ||
+      null;
+    console.log("signature", signature);
     this.props.verifyCustomer(peaId, { appearDate, signature });
   };
 

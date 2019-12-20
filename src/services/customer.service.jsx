@@ -116,11 +116,15 @@ const update = ({
 };
 
 const verify = (peaId, { appearDate, signature }) => {
-  const signatureData = signature.replace("data:image/png;base64,", "");
-  const signatureBlob = b64toBlob(signatureData, "image/png");
   const formData = new FormData();
+
+  if (signature) {
+    const signatureData = signature.replace("data:image/png;base64,", "");
+    const signatureBlob = b64toBlob(signatureData, "image/png");
+    formData.append("signature", signatureBlob, "signature.png");
+  }
+
   formData.append("appearDate", JSON.stringify(appearDate));
-  formData.append("signature", signatureBlob, "signature.png");
 
   const requestOptions = {
     method: "PUT",
@@ -184,8 +188,7 @@ const handleResponse = response => {
         const data = JSON.parse(text);
         error = data.error;
         return data;
-      } catch {
-      }
+      } catch {}
     }
     if (!response.ok) {
       return Promise.reject(error || response.statusText);
@@ -198,7 +201,7 @@ const handleFetchError = e => {
   if (e instanceof TypeError) {
     return Promise.reject("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้");
   }
-
+  console.error(e);
   throw e;
 };
 
