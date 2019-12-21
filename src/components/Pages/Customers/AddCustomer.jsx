@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
-
+import { getPostcodeFromDistrictNo } from "../../../helpers";
 import { Form } from "react-bootstrap";
 
 import { ModalConfirm } from "../../Modals";
@@ -12,13 +12,28 @@ import FormButton from "../../Customer/FormButton";
 
 class AddCustomer extends Component {
   state = {
-    peaId: this.props.peaId,
+
     peaIdOk: true,
     peaWarnText: "",
-
     confirmModal: false,
-    appearDate: new Date()
+    customer: {
+      peaId: this.props.peaId,
+      appearDate: null,
+      title: "",
+      firstName: "",
+      lastName: "",
+      authorize: "ทหาร",
+      soldierNo: "",
+      war: "",
+      houseNo: "",
+      mooNo: "",
+      districtNo: "",
+      postcode: "52000"
+    }
+
   };
+
+  sigPad = null;
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
@@ -28,19 +43,13 @@ class AddCustomer extends Component {
     if (status === "create_success") {
       this.handleVerifyCustomer();
     } else if (status === "verify_success") {
-      this.props.history.goBack();
+      this.handleSuccess()
     }
   }
 
-  sigPad = {};
+  setSigpadRef = ref => this.sigPad = ref
 
-  setSigpadRef = ref => {
-    this.sigPad = ref;
-  };
-
-  handleSuccess = () => {
-    this.props.history.goBack();
-  };
+  handleSuccess = () => this.props.history.goBack()
 
   handleCancel = () => {
     this.setState({
@@ -56,36 +65,15 @@ class AddCustomer extends Component {
 
   handleCreateCustomer = event => {
     event.preventDefault();
-
-    const title = event.target.title.value;
-    const firstName = event.target.firstName.value;
-    const lastName = event.target.lastName.value;
-    const peaId = event.target.peaId.value;
-    const authorize = event.target.authorize.value;
-    const soldierNo = event.target.soldierNo.value;
-    const war = event.target.war.value;
-    const houseNo = event.target.houseNo.value;
-    const mooNo = event.target.mooNo.value;
-    const districtNo = event.target.districtNo.value;
-
-    this.props.createCustomer({
-      title,
-      firstName,
-      lastName,
-      peaId,
-      authorize,
-      soldierNo,
-      war,
-      houseNo,
-      mooNo,
-      districtNo
-    });
+    this.props.createCustomer(this.state.customer);
   };
 
   handleVerifyCustomer = () => {
-    const { peaId } = this.state;
-    const { appearDate } = this.state;
-    const signature = this.sigPad.getTrimmedCanvas().toDataURL("image/png");
+    const { customer: { peaId }, appearDate } = this.state;
+    const signature =
+      (!this.sigPad.isEmpty() &&
+        this.sigPad.getTrimmedCanvas().toDataURL("image/png")) ||
+      null;
     this.props.verifyCustomer(peaId, { appearDate, signature });
   };
 
@@ -95,28 +83,34 @@ class AddCustomer extends Component {
     });
   };
 
-  // handlePrivilegeDateChange = date => {
-  //   this.setState({
-  //     privilegeDate: date
-  //   });
-  // };
-
-  handlePeaIdChange = peaId => {
-    this.setState({
-      peaId
-    });
-  };
+  handleDataChange = e => {
+    const { name, value } = e.target
+    if (name === "districtNo") {
+      this.setState({
+        customer: {
+          ...this.state.customer, districtNo: value,
+          postcode: getPostcodeFromDistrictNo(value)
+        }
+      })
+    } else {
+      this.setState({
+        customer: {
+          ...this.state.customer,
+          [name]: value
+        }
+      });
+    }
+  }
 
   render() {
-    const { statusModal, confirmModal } = this.state;
-    const { peaId } = this.props;
+    const { statusModal, confirmModal, customer } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.handleCreateCustomer}>
           <CustomerDataForm
-            initial={{ peaId }}
+            customer={customer}
             showPlaceholder={true}
-            onPeaIdChange={this.handlePeaIdChange}
+            onChange={this.handleDataChange}
           />
           <hr />
           <CustomerVerifyForm

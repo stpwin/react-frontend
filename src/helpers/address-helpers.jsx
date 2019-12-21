@@ -1,4 +1,4 @@
-export function correctPostcode(districtNo) {
+export function getPostcodeFromDistrictNo(districtNo) {
   if (
     districtNo === "520102" ||
     districtNo === "520104" ||
@@ -64,7 +64,7 @@ export function getDistrictName(districtNo) {
 export function getAddressStringByDistrictNo(districtNo, short = true) {
   return `${short ? "ต." : "ตำบล"}${getDistrictName(districtNo)} ${
     short ? "อ." : "อำเภอ"
-  }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${correctPostcode(districtNo)}`;
+    }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${getPostcodeFromDistrictNo(districtNo)}`;
 }
 
 export function addressToString(addr, short = true) {

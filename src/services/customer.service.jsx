@@ -1,5 +1,6 @@
 import config from "../config";
 import { authHeader, b64toBlob } from "../helpers";
+import { Promise } from "q";
 
 const create = ({
   peaId,
@@ -124,11 +125,11 @@ const verify = (peaId, { appearDate, signature }) => {
     formData.append("signature", signatureBlob, "signature.png");
   }
 
-  formData.append("appearDate", JSON.stringify(appearDate));
-
+  // formData.append("appearDate", JSON.stringify(appearDate));
+  // console.log("appearDate", JSON.stringify(appearDate))
   const requestOptions = {
     method: "PUT",
-    headers: authHeader(),
+    headers: { ...authHeader(), 'appearDate': JSON.stringify(appearDate) },
     body: formData
   };
 
@@ -148,6 +149,9 @@ const remove = peaId => {
 };
 
 const getSignature = (peaId, sigId) => {
+  if (!peaId || !sigId) {
+    return Promise.resolve(null)
+  }
   const requestOptions = {
     method: "GET",
     headers: authHeader()
@@ -178,22 +182,25 @@ const getSignature = (peaId, sigId) => {
 };
 
 const handleResponse = response => {
+
   if (response.status === 204) {
-    return null;
+    return {};
   }
+
   return response.text().then(text => {
     let error;
+    let data;
     if (text) {
       try {
-        const data = JSON.parse(text);
+        data = JSON.parse(text);
         error = data.error;
-        return data;
-      } catch {}
+      } catch { }
     }
     if (!response.ok) {
-      return Promise.reject(error || response.statusText);
+      // console.log(error)
+      return Promise.reject(error ? `${response.statusText} ${JSON.stringify(error, null, 4)}` : ` ${response.statusText}`);
     }
-    return null;
+    return data;
   });
 };
 
@@ -201,7 +208,7 @@ const handleFetchError = e => {
   if (e instanceof TypeError) {
     return Promise.reject("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้");
   }
-  console.error(e);
+  console.error("handleFetchError", e);
   throw e;
 };
 

@@ -151,7 +151,11 @@ const remove = peaId => {
 };
 
 const getSignature = (peaId, sigId) => {
+
   return dispatch => {
+    if (!peaId || !sigId) {
+      return dispatch(success(null))
+    }
     dispatch(request());
 
     customerService.getSignature(peaId, sigId).then(

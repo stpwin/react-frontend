@@ -33,13 +33,13 @@ export const translateCustomer = customer => {
 
 const getLastVerify = ({ verifies }) => {
   if (verifies && verifies.length > 0) {
+    verifies.sort((a, b) => {
+      return new Date(b.appearDate) - new Date(a.appearDate);
+    });
     const lastVerify = verifies[0];
-    const appearDate =
-      lastVerify.appearDate && toLocalDate(lastVerify.appearDate);
-    const lastVerifyId = lastVerify._id;
     return {
-      appearDate,
-      lastVerifyId
+      appearDate: lastVerify.appearDate && toLocalDate(lastVerify.appearDate),
+      lastVerifyId: lastVerify._id
     };
   }
 };

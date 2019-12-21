@@ -12,7 +12,8 @@ import {
   Card,
   Accordion,
   Image,
-  ListGroup
+  ListGroup,
+  Badge
 } from "react-bootstrap";
 
 const basicDataRow = [
@@ -29,19 +30,18 @@ class ViewCustomer extends Component {
     super(props);
 
     this.state = {
-      customer: null,
-      translated: null,
+      customer: {},
+      translated: {},
       isLoading: true,
-      signatures: null,
-      verifies: null
+      signatures: {},
+      verifies: {}
     };
 
-    const { peaId } = this.props;
-    this.props.getCustomer(peaId);
+    this.props.getCustomer(this.props.peaId);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { peaId } = this.props;
+    // const { peaId } = this.props;
     const {
       customers: { customer, signature }
     } = nextProps;
@@ -49,7 +49,7 @@ class ViewCustomer extends Component {
     if (customer) {
       this.setState({ customer, translated: translateCustomer(customer) });
       customer.verifies.forEach(item => {
-        this.props.getSignature(peaId, item._id);
+        this.props.getSignature(customer.peaId, item._id);
       });
     }
 
@@ -99,7 +99,7 @@ class ViewCustomer extends Component {
                   this.props.history.push(`/customers/edit/${peaId}`);
                 }}
               >
-                แก้ไข
+                แก้ไขข้อมูล
               </Button>
               <Button
                 key="button-back"
@@ -123,11 +123,12 @@ class ViewCustomer extends Component {
                   {translated &&
                     basicDataRow.map(item => {
                       return (
-                        <ListGroup.Item key={item.key}>
-                          <span>{item.title}</span>
+                        <ListGroup.Item key={item.key} >
+                          <Badge variant="light" >{item.title}</Badge>
+                          {/* <span>{item.title}</span> */}
                           <span className="ml-1">{`${
                             translated[item.field]
-                          }`}</span>
+                            }`}</span>
                         </ListGroup.Item>
                       );
                     })}
@@ -140,25 +141,25 @@ class ViewCustomer extends Component {
             <Row>
               <Col>
                 {customer &&
-                customer.verifies &&
-                customer.verifies.length > 0 ? (
-                  <Accordion>
-                    {customer.verifies.map((data, index) => {
-                      return (
-                        <VerifyData
-                          key={`card-${index}`}
-                          index={index}
-                          signatureUrl={signatures && signatures[data._id]}
-                          {...data}
-                        />
-                      );
-                    })}
-                  </Accordion>
-                ) : (
-                  <div className="text-center">
-                    <span className="text-secondary">ไม่มีข้อมูลการยืนยัน</span>
-                  </div>
-                )}
+                  customer.verifies &&
+                  customer.verifies.length > 0 ? (
+                    <Accordion>
+                      {customer.verifies.map((data, index) => {
+                        return (
+                          <VerifyData
+                            key={`card-${index}`}
+                            index={index}
+                            signatureUrl={signatures && signatures[data._id]}
+                            {...data}
+                          />
+                        );
+                      })}
+                    </Accordion>
+                  ) : (
+                    <div className="text-center">
+                      <span className="text-secondary">ไม่มีข้อมูลการยืนยัน</span>
+                    </div>
+                  )}
               </Col>
             </Row>
           </Col>
@@ -195,8 +196,8 @@ const VerifyData = ({ appearDate, signatureUrl, index }) => {
                 src={`data:image/png;base64,${signatureUrl}`}
               />
             ) : (
-              <span className="text-secondary">ไม่พบไฟล์ภาพ</span>
-            )}
+                <span className="text-secondary">ไม่พบไฟล์ภาพ</span>
+              )}
           </div>
         </Card.Body>
       </Accordion.Collapse>

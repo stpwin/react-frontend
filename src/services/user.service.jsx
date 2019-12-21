@@ -117,23 +117,27 @@ const remove = uid => {
 };
 
 const handleResponse = response => {
+
+  if (response.status === 204) {
+    return null;
+  }
+
   return response.text().then(text => {
-    let jsonData = {};
-    try {
-      jsonData = text && JSON.parse(text);
-    } catch (err) {
-      console.warn(err);
+    let error;
+    let data;
+    if (text) {
+      try {
+        data = JSON.parse(text);
+        error = data.error;
+      } catch { }
     }
     if (!response.ok) {
-      if (response.status === 401) {
-        logout();
-      }
-      const error = jsonData.message || response.statusText;
-      return Promise.reject(error);
+      return Promise.reject((error && error.message) || response.statusText);
     }
-    return jsonData;
+    return data;
   });
 };
+
 
 export const userService = {
   login,

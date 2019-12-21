@@ -24,18 +24,17 @@ class PrintCustomer extends Component {
       translated: {},
       verifies: [],
       verifyId: "",
-      signature: null,
+      signature: "",
       appearDate: null,
       printDate: toLocalDateTime(new Date())
     };
-    this.printRef = {};
-    this.toPrintRef = {};
-    const { peaId } = this.props;
-    this.props.getCustomer(peaId);
+    this.printRef = null;
+    this.toPrintRef = null;
+    this.props.getCustomer(this.props.peaId);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { peaId } = this.props;
+
     const {
       customers: { customer, signature }
     } = nextProps;
@@ -48,7 +47,7 @@ class PrintCustomer extends Component {
 
     if (customer) {
       const translated = translateCustomer(customer);
-      this.props.getSignature(peaId, translated.lastVerifyId);
+      this.props.getSignature(customer.peaId, translated.lastVerifyId);
       this.setState({
         signature,
         verifies: customer.verifies || [],

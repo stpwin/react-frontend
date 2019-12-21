@@ -1,9 +1,9 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
 
-import { correctPostcode } from "../../../helpers";
+import { getPostcodeFromDistrictNo } from "../../../helpers";
 
 import { Form } from "react-bootstrap";
 
@@ -15,19 +15,36 @@ export class EditCustomer extends Component {
     super(props);
 
     this.state = {
-      initial: {}
+      customer: {}
     };
 
-    const { peaId } = this.props;
-    this.props.getCustomer(peaId);
+    this.props.getCustomer(this.props.peaId);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
-      customers: { status }
+      customers: { status, customer }
     } = nextProps;
     if (status === "update_success") {
       this.props.history.goBack();
+      return
+    }
+    if (customer) {
+      this.setState({
+        customer: {
+          peaId: customer.peaId,
+          title: customer.title,
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          houseNo: customer.address.houseNo,
+          mooNo: customer.address.mooNo,
+          districtNo: customer.address.districtNo,
+          postcode: getPostcodeFromDistrictNo(customer.address.districtNo),
+          authorize: customer.authorize,
+          soldierNo: customer.soldierNo,
+          war: customer.war
+        }
+      })
     }
   }
 
@@ -35,61 +52,44 @@ export class EditCustomer extends Component {
     this.props.history.goBack();
   };
 
+  handleDataChange = e => {
+    const { name, value } = e.target
+    if (name === "districtNo") {
+      this.setState({
+        customer: {
+          ...this.state.customer, districtNo: value,
+          postcode: getPostcodeFromDistrictNo(value)
+        }
+      })
+    } else {
+      this.setState({
+        customer: {
+          ...this.state.customer,
+          [name]: value
+        }
+      });
+    }
+  }
+
   handleUpdateCustomer = event => {
     event.preventDefault();
-    const { peaId } = this.props;
-
-    const customer = {
-      peaId,
-      title: event.target.title.value,
-      firstName: event.target.firstName.value,
-      lastName: event.target.lastName.value,
-      authorize: event.target.authorize.value,
-      soldierNo: event.target.soldierNo.value,
-      war: event.target.war.value,
-
-      houseNo: event.target.houseNo.value,
-      mooNo: event.target.mooNo.value,
-      districtNo: event.target.districtNo.value
-    };
-    this.props.updateCustomer(customer);
+    this.props.updateCustomer(this.state.customer);
   };
 
   render() {
-    // const { initial } = this.state;
-    const {
-      customers: { loading, customer }
-    } = this.props;
-    let initial;
-    if (customer) {
-      initial = {
-        peaId: customer.peaId,
-        title: customer.title,
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        houseNo: customer.address.houseNo,
-        mooNo: customer.address.mooNo,
-        districtNo: customer.address.districtNo,
-        postcode: correctPostcode(customer.address.districtNo),
-        authorize: customer.authorize,
-        soldierNo: customer.soldierNo,
-        war: customer.war
-      };
-    }
+    const { customer } = this.state
+    const { customers: { loading } } = this.props;
 
     return (
-      <Fragment>
-        {!loading ? (
-          <Form onSubmit={this.handleUpdateCustomer}>
-            <CustomerDataForm
-              peaIdReadOnly={true}
-              initial={initial}
-              showPlaceholder={true}
-            />
-            <FormButton loading={loading} cancel={this.handleCancel} />
-          </Form>
-        ) : null}
-      </Fragment>
+      <Form onSubmit={this.handleUpdateCustomer}>
+        <CustomerDataForm
+          peaIdReadOnly={true}
+          customer={customer}
+          showPlaceholder={true}
+          onChange={this.handleDataChange}
+        />
+        <FormButton loading={loading} cancel={this.handleCancel} />
+      </Form>
     );
   }
 }
