@@ -12,7 +12,7 @@ import FormButton from "../../Customer/FormButton";
 
 class AddCustomer extends Component {
   state = {
-
+    appearDate: new Date(),
     peaIdOk: true,
     peaWarnText: "",
     confirmModal: false,

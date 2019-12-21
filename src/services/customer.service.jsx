@@ -41,6 +41,9 @@ const create = ({
 };
 
 const get = peaId => {
+  if (!peaId) {
+    return Promise.reject("peaId required")
+  }
   const requestOptions = {
     method: "GET",
     headers: authHeader()
@@ -91,6 +94,9 @@ const update = ({
   mooNo,
   districtNo
 }) => {
+  if (!peaId) {
+    return Promise.reject("peaId required")
+  }
   const requestOptions = {
     method: "PUT",
     headers: { "Content-Type": "application/json", ...authHeader() },
@@ -117,6 +123,10 @@ const update = ({
 };
 
 const verify = (peaId, { appearDate, signature }) => {
+  if (!peaId || !appearDate) {
+    return Promise.reject("2 arguments required")
+  }
+
   const formData = new FormData();
 
   if (signature) {
@@ -139,6 +149,9 @@ const verify = (peaId, { appearDate, signature }) => {
 };
 
 const remove = peaId => {
+  if (!peaId) {
+    return Promise.reject("peaId required")
+  }
   const requestOptions = {
     method: "DELETE",
     headers: authHeader()
@@ -184,7 +197,7 @@ const getSignature = (peaId, sigId) => {
 const handleResponse = response => {
 
   if (response.status === 204) {
-    return {};
+    return null;
   }
 
   return response.text().then(text => {

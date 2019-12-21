@@ -196,7 +196,7 @@ const CustomerView = ({ customer: customerData }) => {
           {customer.appearDate ? (
             <span>ยืนยันสิทธิ์ครั้งล่าสุดเมื่อ {customer.appearDate}</span>
           ) : (
-              <span>"ไม่เคยยืนยันสิทธิ์"</span>
+              <span>ไม่เคยยืนยันสิทธิ์</span>
             )}
         </small>
       </Card.Footer>

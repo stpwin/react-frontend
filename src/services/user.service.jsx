@@ -132,7 +132,8 @@ const handleResponse = response => {
       } catch { }
     }
     if (!response.ok) {
-      return Promise.reject((error && error.message) || response.statusText);
+      // console.log(error)
+      return Promise.reject(error ? `${response.statusText} ${JSON.stringify(error, null, 4)}` : ` ${response.statusText}`);
     }
     return data;
   });
