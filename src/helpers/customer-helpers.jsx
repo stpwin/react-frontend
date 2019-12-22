@@ -18,15 +18,16 @@ export const translateCustomer = customer => {
 
   const privilegeDate =
     customer.privilegeDate && toLocalDate(customer.privilegeDate);
-
+  const warType = getWarType(customer.war)
   return {
+    seq: `${warType}-${customer.seq}`,
     name: `${customer.title}${customer.firstName}\u00A0\u00A0${customer.lastName}`,
     peaId: customer.peaId,
     address: addressToString(customer.address),
     authorize: customer.authorize,
     soldierNo: customer.soldierNo,
     privilegeDate: privilegeDate,
-    war: `${customer.war} ${getWarType(customer.war)}`,
+    war: `${customer.war} ${warType}`,
     ...getLastVerify(customer)
   };
 };

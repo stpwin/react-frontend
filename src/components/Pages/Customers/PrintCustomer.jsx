@@ -17,24 +17,23 @@ import {
 import CustomerPrintData from "../../Customer/Print";
 
 class PrintCustomer extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    translated: {},
+    verifies: [],
+    verifyId: "",
+    signature: "",
+    appearDate: null,
+    printDate: toLocalDateTime(new Date())
+  };
 
-    this.state = {
-      translated: {},
-      verifies: [],
-      verifyId: "",
-      signature: "",
-      appearDate: null,
-      printDate: toLocalDateTime(new Date())
-    };
-    this.printRef = null;
-    this.toPrintRef = null;
+  printRef = null;
+  toPrintRef = null;
+
+  UNSAFE_componentWillMount() {
     this.props.getCustomer(this.props.peaId);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-
     const {
       customers: { customer, signature }
     } = nextProps;

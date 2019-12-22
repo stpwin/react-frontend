@@ -13,15 +13,13 @@ import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
 import FormButton from "../../Customer/FormButton";
 
 class VerifyCustomer extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    appearDate: new Date(),
+    customer: {}
+  };
+  sigPad = null;
 
-    this.state = {
-      appearDate: new Date(),
-      customer: {}
-    };
-
-    this.sigPad = null;
+  UNSAFE_componentWillMount() {
     this.props.getCustomer(this.props.peaId);
   }
 
@@ -34,6 +32,7 @@ class VerifyCustomer extends Component {
       this.props.history.goBack();
       return
     }
+    // && Object.entries(customer).length !== 0 && customer.constructor === Object
     if (customer) {
       this.setState({
         customer: {
@@ -41,10 +40,10 @@ class VerifyCustomer extends Component {
           title: customer.title,
           firstName: customer.firstName,
           lastName: customer.lastName,
-          houseNo: customer.address.houseNo,
-          mooNo: customer.address.mooNo,
-          districtNo: customer.address.districtNo,
-          postcode: getPostcodeFromDistrictNo(customer.address.districtNo),
+          houseNo: customer.address && customer.address.houseNo,
+          mooNo: customer.address && customer.address.mooNo,
+          districtNo: customer.address && customer.address.districtNo,
+          postcode: customer.address && getPostcodeFromDistrictNo(customer.address.districtNo),
           authorize: customer.authorize,
           soldierNo: customer.soldierNo,
           war: customer.war

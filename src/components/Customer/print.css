@@ -24,8 +24,8 @@
 }
 
 .subpage {
-  padding: 1cm;
-  padding-top: 0.5cm;
+  padding: 0cm 1cm 0cm 1cm;
+  padding-top: 0cm;
   height: 257mm;
   font-family: "Sarabun", sans-serif;
   /* border: 1px #ebebeb solid; */
@@ -64,7 +64,7 @@
 }
 
 .content {
-  min-height: 85%;
+  min-height: 80%;
 }
 
 /* .footer {

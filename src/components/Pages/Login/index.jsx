@@ -12,17 +12,15 @@ import {
   Spinner
 } from "react-bootstrap";
 
-class LoginPage extends React.Component {
-  constructor(props) {
-    super(props);
+class Login extends React.Component {
+  state = {
+    username: "",
+    password: "",
+    submitted: false
+  };
 
+  UNSAFE_componentWillMount() {
     this.props.logout();
-
-    this.state = {
-      username: "",
-      password: "",
-      submitted: false
-    };
   }
 
   handleChange = e => {
@@ -95,8 +93,8 @@ class LoginPage extends React.Component {
                     <span>กำลังเข้าสู่ระบบ...</span>
                   </Fragment>
                 ) : (
-                  "เข้าสู่ระบบ"
-                )}
+                    "เข้าสู่ระบบ"
+                  )}
               </Button>
             </FormGroup>
           </Form>
@@ -124,8 +122,5 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-const connectedLoginPage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(LoginPage);
-export { connectedLoginPage as LoginPage };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

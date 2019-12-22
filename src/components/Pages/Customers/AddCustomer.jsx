@@ -24,10 +24,10 @@ class AddCustomer extends Component {
       lastName: "",
       authorize: "ทหาร",
       soldierNo: "",
-      war: "",
+      war: "ภายในประเทศ",
       houseNo: "",
       mooNo: "",
-      districtNo: "",
+      districtNo: "520101",
       postcode: "52000"
     }
 

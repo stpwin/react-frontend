@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 
 import { connect } from "react-redux";
 import { userActions } from "../../../actions";
@@ -7,8 +7,13 @@ import { withRouter } from "react-router-dom";
 import { UserForm } from "../../User";
 
 class EditUser extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    user: {},
+    validate: {},
+    canSubmit: false
+  }
+
+  UNSAFE_componentWillMount() {
     const {
       match: {
         params: { uid }
@@ -21,36 +26,69 @@ class EditUser extends Component {
     const {
       users: { data }
     } = nextProps;
-    if (data && data.status === "edit_success") {
-      this.props.history.goBack();
+    if (data) {
+      if (data.status === "user_update_success") {
+        return this.props.history.push("/users");
+      }
+      this.setState({
+        user: data
+      }, this.validate)
     }
   }
 
-  handleUpdateUser = user => {
-    const {
-      match: {
-        params: { uid }
-      }
-    } = this.props;
-    this.props.updateUser(uid, user);
-  };
+  handleChange = e => {
+    const name = e.target.name
+    const value = e.target.value
+    this.setState({
+      user: { ...this.state.user, [name]: value }
+    }, this.validate)
+  }
+
+  handleRoleChange = role => {
+    this.setState({
+      user: { ...this.state.user, role }
+    })
+  }
+
+  handleSubmit = e => {
+    e.preventDefault()
+    const { match: { params: { uid } } } = this.props;
+    const { canSubmit } = this.state
+    canSubmit && this.props.updateUser(uid, this.state.user);
+  }
+
+  handleReset = () => {
+    return this.props.history.push("/users");
+  }
+
+  validate = () => {
+    const { user: { username, displayName, password, confirmPassword }, validate } = this.state;
+
+    const usernameErrorText = !username || username.length < 3 ? "อย่างน้อย 3 ตัวอักษร" : ""
+    const displayNameErrorText = !displayName || displayName.length < 3 ? "อย่างน้อย 3 ตัวอักษร" : ""
+    const passwordMismatch = password && password.length >= 6 && password !== confirmPassword
+    const passwordErrorText = password && password.length < 6 ? "รหัสผ่านอย่างน้อย 6 ตัวอักษร" : passwordMismatch ? "รหัสผ่านไม่ตรงกัน" : ""
+
+    this.setState({
+      validate: { ...validate, usernameErrorText, displayNameErrorText, passwordErrorText, passwordMismatch },
+      canSubmit: !usernameErrorText && !displayNameErrorText && !passwordErrorText
+    })
+  }
 
   render() {
-    const {
-      users: { data: user }
-    } = this.props;
+    const { canSubmit, user, validate } = this.state
 
     return (
-      <Fragment>
-        {user ? (
-          <UserForm
-            {...this.props}
-            user={user}
-            skipEmptyPasswordValidation={true}
-            handleSubmit={this.handleUpdateUser}
-          />
-        ) : null}
-      </Fragment>
+      <UserForm
+        user={user}
+        validate={validate}
+        canSubmit={canSubmit}
+        // skipEmptyPasswordValidation={true}
+        onSubmit={this.handleSubmit}
+        onReset={this.handleReset}
+        onChange={this.handleChange}
+        onRoleChange={this.handleRoleChange}
+      />
     );
   }
 }

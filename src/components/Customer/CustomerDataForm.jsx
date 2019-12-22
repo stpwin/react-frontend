@@ -2,20 +2,7 @@ import React from "react";
 import { Form, FormControl, InputGroup, Col, Row } from "react-bootstrap";
 
 export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onChange,
-  customer: { peaId,
-    title,
-    firstName,
-    lastName,
-    houseNo,
-    mooNo,
-    districtNo,
-    postcode,
-    authorize,
-    soldierNo,
-    war
-  } }) => {
-
-
+  customer: { peaId, title, firstName, lastName, houseNo, mooNo, districtNo, postcode, authorize, soldierNo, war } }) => {
   return (
     <React.Fragment>
       <Form.Group as={Row}>

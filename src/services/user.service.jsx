@@ -105,13 +105,10 @@ const update = (
 const remove = uid => {
   const requestOptions = {
     method: "DELETE",
-    headers: authHeader(),
-    body: JSON.stringify({
-      uid
-    })
+    headers: authHeader()
   };
 
-  return fetch(`${config.apiUrl}/api/users`, requestOptions).then(
+  return fetch(`${config.apiUrl}/api/users/uid/${uid}`, requestOptions).then(
     handleResponse
   );
 };
@@ -124,7 +121,7 @@ const handleResponse = response => {
 
   return response.text().then(text => {
     let error;
-    let data;
+    let data = {};
     if (text) {
       try {
         data = JSON.parse(text);

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React from "react";
 
 import {
   Table,
@@ -19,116 +19,94 @@ import {
 import "./table.css";
 
 import { FaSearch, FaTimes, FaSlidersH, FaListUl } from "react-icons/fa";
-
 import Highlight from "react-highlighter";
-
 import Paginator from "./Paginator";
 
-export class DataTable extends Component {
-  state = {
-    filterText: ""
-  };
-
-  handleFilterTextChange = event => {
-    this.setState({
-      filterText: event.target.value
-    });
-    const { filterTextChange } = this.props;
-    if (filterTextChange) filterTextChange(event.target.value);
-  };
-
-  clearFilterText = () => {
-    this.setState({
-      filterText: ""
-    });
-    const { filterTextChange } = this.props;
-    if (filterTextChange) filterTextChange("");
-  };
-
-  render() {
-    const { filterText } = this.state;
-    const {
-      filterPlaceholder,
-      columns,
-      data,
-      page,
-      pages,
-      onNextPage,
-      onPrevPage,
-      onPageChange,
-      onPerPageChange,
-      limit,
-      perPages,
-      filters,
-      filterChecked,
-      onFilterCheckedChange,
-      tools,
-      idKey,
-      customValueKey,
-      topButtons,
-      filterLoading
-    } = this.props;
-    return (
-      <div className="data-table">
-        <Row>
-          <Col>
-            <div className="top-button">
-              {topButtons && topButtons.length > 0
-                ? topButtons.map((item, index) => {
-                    return (
-                      <Button
-                        key={`button-${item.key}`}
-                        variant="outline"
-                        className="pea-color"
-                        onClick={() => item.onClick()}
-                      >
-                        {item.text}
-                      </Button>
-                    );
-                  })
-                : null}
-            </div>
-          </Col>
-          <Col />
-          <Col className="text-right align-self-center">
-            {limit ? (
-              <Fragment>
-                <div className="perPageDropdown">
-                  <span>แสดง</span>
-                  <Dropdown
-                    id="dropdown-item-button"
-                    onSelect={onPerPageChange}
+export const DataTable = ({
+  columns,
+  data,
+  page,
+  pages,
+  filterText,
+  filterPlaceholder,
+  limit,
+  perPages,
+  filters,
+  filterChecked,
+  tools,
+  idKey,
+  customValueKey,
+  topButtons,
+  filterLoading,
+  onFilterTextChange,
+  onClearFilterText,
+  onFilterCheckedChange,
+  onNextPage,
+  onPrevPage,
+  onPageChange,
+  onPerPageChange,
+}) => {
+  return (
+    <div className="data-table">
+      <Row>
+        <Col>
+          <div className="top-button">
+            {topButtons && topButtons.length > 0
+              ? topButtons.map((item, index) => {
+                return (
+                  <Button
+                    key={`button-${item.key}`}
+                    variant="outline"
+                    className="pea-color"
+                    onClick={() => item.onClick()}
                   >
-                    <Dropdown.Toggle
-                      variant="outline-secondary"
-                      id="dropdown-basic"
-                    >
-                      {limit}
-                    </Dropdown.Toggle>
+                    {item.text}
+                  </Button>
+                );
+              })
+              : null}
+          </div>
 
-                    <Dropdown.Menu>
-                      {perPages &&
-                        perPages.map((key, index) => {
-                          return (
-                            <Dropdown.Item
-                              key={`perPage-${index}`}
-                              eventKey={key}
-                            >
-                              {key}
-                            </Dropdown.Item>
-                          );
-                        })}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                  <span>รายการ</span>
-                </div>
-              </Fragment>
-            ) : null}
-          </Col>
-        </Row>
+        </Col>
 
-        <Row className="filterRow">
-          <Col className="align-self-center">
+        <Col className="text-right align-self-center">
+          {limit ? (
+            <div className="perPageDropdown">
+              <span>แสดง</span>
+              <Dropdown
+                id="dropdown-item-button"
+                onSelect={onPerPageChange}
+              >
+                <Dropdown.Toggle
+                  variant="outline-secondary"
+                  id="dropdown-basic"
+                >
+                  {limit}
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  {perPages &&
+                    perPages.map((key, index) => {
+                      return (
+                        <Dropdown.Item
+                          key={`perPage-${index}`}
+                          eventKey={key}
+                        >
+                          {key}
+                        </Dropdown.Item>
+                      );
+                    })}
+                </Dropdown.Menu>
+              </Dropdown>
+              <span>รายการ</span>
+            </div>
+          ) : null}
+        </Col>
+      </Row>
+
+      <Row>
+        <Col className="align-self-center" xs lg="5">
+          <div className="top-button">
             <InputGroup>
               <InputGroup.Prepend>
                 <InputGroup.Text id="inputGroup-sizing-sm">
@@ -139,10 +117,10 @@ export class DataTable extends Component {
                 aria-label="Small"
                 aria-describedby="inputGroup-sizing-sm"
                 placeholder={filterPlaceholder}
-                onChange={this.handleFilterTextChange}
-                value={filterText}
+                onChange={onFilterTextChange}
+                value={filterText || ""}
               />
-              {filterText.length > 0 ? (
+              {filterText && filterText.length > 0 ? (
                 <InputGroup.Append>
                   {filterLoading ? (
                     <Button variant="outline-secondary" disabled>
@@ -157,20 +135,23 @@ export class DataTable extends Component {
                       {/* <span className="sr-only">Loading...</span> */}
                     </Button>
                   ) : (
-                    <Button
-                      variant="outline-secondary"
-                      onClick={this.clearFilterText}
-                    >
-                      <FaTimes />
-                    </Button>
-                  )}
+                      <Button
+                        variant="outline-secondary"
+                        onClick={onClearFilterText}
+                      >
+                        <FaTimes />
+                      </Button>
+                    )}
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
-          </Col>
-          <Col className="align-self-center">
-            {filters &&
-              filters.map((filter, index) => {
+          </div>
+        </Col>
+
+        {filters ?
+          <Col className="align-self-center" md="auto">
+            <div className="top-button">
+              {filters.map((filter, index) => {
                 return (
                   <Form.Check
                     custom
@@ -184,10 +165,10 @@ export class DataTable extends Component {
                   />
                 );
               })}
-            {/* <Form.Check custom inline label='G1' id='inline-1' />
-            <Form.Check custom inline label='G2' id='inline-2' /> */}
-          </Col>
-          <Col className="text-right align-self-center">
+            </div>
+          </Col> : null}
+        <Col className="align-self-center " sm md="auto" lg="5" style={{ marginInlineStart: "auto" }}>
+          <Form.Group>
             <Paginator
               page={page}
               pages={pages}
@@ -195,100 +176,108 @@ export class DataTable extends Component {
               pageChangePrev={onPrevPage}
               pageChangeNext={onNextPage}
             />
-          </Col>
-        </Row>
+          </Form.Group>
+        </Col>
+      </Row>
 
-        <Table responsive bordered hover size="sm">
-          <thead className="text-center thread-pea">
-            <tr>
-              {columns &&
-                columns.map((col, index) => {
-                  return (
-                    <th key={`th-${index}`} className="align-middle">
-                      {col.text}
-                    </th>
-                  );
-                })}
-              <th key={`th-toolsbar`} className="align-middle">
-                <FaSlidersH />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {data && data.length > 0 ? (
-              data.map((item, dataIndex) => {
-                return (
-                  <tr key={`tr-${dataIndex}`}>
-                    {columns &&
-                      columns.map((col, colIndex) => {
-                        return (
-                          <td
-                            key={`td-${colIndex}${dataIndex}`}
-                            className={`align-middle ${
-                              col.valign === "true" ? "text-center" : null
-                            }`}
-                          >
-                            {col.canSearch ? (
-                              <Highlight
-                                matchStyle={{
-                                  color: "white",
-                                  backgroundColor: "#563d7c"
-                                }}
-                                search={filterText}
+      <Row>
+        <Col>
+          <div style={{ overflow: "auto" }}>
+            <Table responsive bordered hover size="sm" style={{ width: "1078px" }}>
+              <thead className="text-center thread-pea">
+                <tr>
+                  {columns &&
+                    columns.map((col, index) => {
+                      return (
+                        <th key={`th-${index}`} className="align-middle" style={col.style}>
+                          {col.text}
+                        </th>
+                      );
+                    })}
+                  <th key={`th-toolsbar`} className="align-middle">
+                    <FaSlidersH />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {data && data.length > 0 ? (
+                  data.map((item, dataIndex) => {
+                    return (
+                      <tr key={`tr-${dataIndex}`}>
+                        {columns &&
+                          columns.map((col, colIndex) => {
+                            return (
+                              <td
+                                key={`td-${colIndex}${dataIndex}`}
+                                className={`align-middle ${
+                                  col.valign === "true" ? "text-center" : ""
+                                  }`}
                               >
-                                {item[col.dataField]}
-                              </Highlight>
-                            ) : (
-                              item[col.dataField]
-                            )}
+                                {col.canSearch ? (
+                                  <Highlight
+                                    matchStyle={{
+                                      color: "white",
+                                      backgroundColor: "#563d7c"
+                                    }}
+                                    search={filterText || ""}
+                                  >
+                                    {item[col.dataField]}
+                                  </Highlight>
+                                ) : (
+                                    item[col.dataField]
+                                  )}
+                              </td>
+                            ); //////////////////List data
+                          })}
+                        {tools && tools.length > 0 ? (
+                          <td
+                            key={`td-toolsbar`}
+                            className="align-middle text-center td-tools-button"
+                          >
+                            <ActionButtons
+                              // key={`action-buttons-${item.key}-${dataIndex}`}
+                              tools={tools}
+                              item={item}
+                              idKey={idKey}
+                              customValueKey={customValueKey}
+                            />
                           </td>
-                        ); //////////////////List data
-                      })}
-                    {tools && tools.length > 0 ? (
+                        ) : null}
+                      </tr>
+                    );
+                  })
+                ) : (
+                    <tr>
                       <td
-                        key={`td-toolsbar`}
-                        className="align-middle text-center td-tools-button"
+                        className="text-center align-middle"
+                        colSpan={columns && columns.length + (tools ? 1 : 0)}
                       >
-                        <ActionButtons
-                          // key={`action-buttons-${item.key}-${dataIndex}`}
-                          tools={tools}
-                          item={item}
-                          idKey={idKey}
-                          customValueKey={customValueKey}
-                        />
-                      </td>
-                    ) : null}
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td
-                  className="text-center align-middle"
-                  colSpan={columns && columns.length + (tools ? 1 : 0)}
-                >
-                  ไม่มีข้อมูล
+                        ไม่มีข้อมูล
                 </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
-        <Row>
-          <Col />
-          <Col />
-          <Col>
-            <Paginator
-              page={page}
-              pages={pages}
-              pageChange={onPageChange}
-              pageChangePrev={onPrevPage}
-              pageChangeNext={onNextPage}
-            />
-          </Col>
-        </Row>
-      </div>
-    );
-  }
+                    </tr>
+                  )}
+              </tbody>
+            </Table>
+          </div>
+        </Col>
+      </Row>
+
+
+      <Row>
+        <Col />
+        <Col />
+        <Col>
+          <Paginator
+            page={page}
+            pages={pages}
+            pageChange={onPageChange}
+            pageChangePrev={onPrevPage}
+            pageChangeNext={onNextPage}
+          />
+        </Col>
+      </Row>
+    </div >
+  );
 }
 
 const ActionButtons = ({ tools, item, idKey, customValueKey }) => {

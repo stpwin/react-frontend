@@ -55,27 +55,18 @@ export class SmartSearch extends Component {
     this.props.history.push(`/customers/verify/${this.state.peaId}`);
   };
 
-  // handlePrint = () => {
-  //   console.log(this.state.peaId)
-  //   this.props.history.push(`/customers/print/${this.state.peaId}`);
-  // };
-
   render() {
     const { peaId, peaIdOk } = this.state;
-
     const { customer, loading, error } = this.props;
 
     return (
-
       <Jumbotron className="text-center" >
-
         <h2 className="text-white">
           ระบบจัดการการขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก
-              </h2>
+        </h2>
         <h4 className="text-white">
           PEA War Veterans Privilege Management System
-              </h4>
-
+        </h4>
 
         <Row className="justify-content-md-center">
           <Col >
@@ -164,7 +155,6 @@ export class SmartSearch extends Component {
           </Row>
         </Collapse>
       </Jumbotron>
-
     );
   }
 }

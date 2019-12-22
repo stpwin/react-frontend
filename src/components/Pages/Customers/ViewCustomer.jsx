@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { arrayBufferToBase64, translateCustomer } from "../../../helpers";
+import { arrayBufferToBase64, translateCustomer, toLocalDate } from "../../../helpers";
 
 import {
   Row,
@@ -12,8 +12,7 @@ import {
   Card,
   Accordion,
   Image,
-  ListGroup,
-  Badge
+  ListGroup
 } from "react-bootstrap";
 
 const basicDataRow = [
@@ -26,22 +25,19 @@ const basicDataRow = [
 ];
 
 class ViewCustomer extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    customer: {},
+    translated: {},
+    isLoading: true,
+    signatures: {},
+    verifies: {}
+  };
 
-    this.state = {
-      customer: {},
-      translated: {},
-      isLoading: true,
-      signatures: {},
-      verifies: {}
-    };
-
+  UNSAFE_componentWillMount() {
     this.props.getCustomer(this.props.peaId);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    // const { peaId } = this.props;
     const {
       customers: { customer, signature }
     } = nextProps;
@@ -124,9 +120,8 @@ class ViewCustomer extends Component {
                     basicDataRow.map(item => {
                       return (
                         <ListGroup.Item key={item.key} >
-                          <Badge variant="light" >{item.title}</Badge>
-                          {/* <span>{item.title}</span> */}
-                          <span className="ml-1">{`${
+                          <span className="text-dark">{item.title}</span>
+                          <span className="ml-2">{`${
                             translated[item.field]
                             }`}</span>
                         </ListGroup.Item>
@@ -164,7 +159,7 @@ class ViewCustomer extends Component {
             </Row>
           </Col>
         </Row>
-      </Fragment>
+      </Fragment >
     );
   }
 }
@@ -177,11 +172,7 @@ const VerifyData = ({ appearDate, signatureUrl, index }) => {
           <div>
             <span className="mr-1">วันที่แสดงตน:</span>
             <span>
-              {new Date(appearDate).toLocaleDateString("th-TH", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-              })}
+              {toLocalDate(appearDate)}
             </span>
           </div>
         </Accordion.Toggle>

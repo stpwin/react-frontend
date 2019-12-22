@@ -122,7 +122,7 @@ class CustomerPrintData extends Component {
 
 const SpaceUnderline = ({ n }) => {
   return (
-    <span style={{ textDecoration: "underline", whiteSpace: "pre" }}>
+    <span style={{ textDecoration: "underline", whiteSpace: "pre", color: "grey" }}>
       {"\u00A0".repeat(n || 40)}
     </span>
   );

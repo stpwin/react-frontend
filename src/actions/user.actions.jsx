@@ -45,13 +45,13 @@ const create = user => {
     );
   };
   function request() {
-    return { type: userConstants.GET_REQUEST };
+    return { type: userConstants.CREATE_REQUEST };
   }
   function success(data) {
-    return { type: userConstants.GET_SUCCESS, data };
+    return { type: userConstants.CREATE_SUCCESS, data };
   }
   function failure(error) {
-    return { type: userConstants.GET_FAILURE, error };
+    return { type: userConstants.CREATE_FAILURE, error };
   }
 };
 

@@ -11,13 +11,11 @@ import CustomerDataForm from "../../Customer/CustomerDataForm";
 import FormButton from "../../Customer/FormButton";
 
 export class EditCustomer extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    customer: {}
+  };
 
-    this.state = {
-      customer: {}
-    };
-
+  UNSAFE_componentWillMount() {
     this.props.getCustomer(this.props.peaId);
   }
 

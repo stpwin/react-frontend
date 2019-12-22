@@ -13,19 +13,12 @@ export class Home extends Component {
           <div className="parallax__background"></div>
           <div className="parallax__overlay"></div>
         </div>
-
         <Container fluid>
           <div className="parallax__content">
             <SmartSearch />
           </div>
         </Container>
       </Fragment>
-
-
-
-      // <div className="home">
-      //   <SmartSearch />
-      // </div>
     );
   }
 }

@@ -20,7 +20,7 @@ export class CustomerVerifyForm extends Component {
       capturedImage: null
     };
 
-    this.sigPadRef = {};
+    this.sigPadRef = null;
     registerLocale("th", th);
   }
 
@@ -55,77 +55,25 @@ export class CustomerVerifyForm extends Component {
     });
   };
 
-  // handlePrivilegeDateChange = date => {
-  //   this.setState({
-  //     privilegeDate: date
-  //   });
-  //   const { onPrivilegeDateChange } = this.props;
-  //   onPrivilegeDateChange && onPrivilegeDateChange(date);
-  // };
-
   setSigpadRef = ref => {
     this.sigPadRef = ref;
     const { setSigpadRef } = this.props;
     setSigpadRef && setSigpadRef(ref);
   };
 
-  // handleNoPrivilegeDateChange = e => {
-  //   this.setState(
-  //     {
-  //       noPrivilegeDate: e.target.checked
-  //     },
-  //     () => {
-  //       const { onPrivilegeDateChange } = this.props;
-  //       onPrivilegeDateChange &&
-  //         onPrivilegeDateChange(
-  //           this.state.noPrivilegeDate ? null : this.state.privilegeDate
-  //         );
-  //     }
-  //   );
-  // };
+  handleClearSigpad = () => {
+    this.sigPadRef.clear()
+  }
+
 
   render() {
     const {
       appearDate,
       showCamera
-      // privilegeDate,
-      // noPrivilegeDate
+
     } = this.state;
     return (
       <Fragment>
-        {/* <Form.Group as={Row}>
-          <Form.Label as="legend" column sm={2}>
-            วันที่ได้รับสิทธิ์
-          </Form.Label>
-          <Col sm={3}>
-            <DatePicker
-              inline={!noPrivilegeDate}
-              locale="th"
-              todayButton="เลือกวันนี้"
-              className="form-control"
-              selected={noPrivilegeDate ? null : privilegeDate}
-              dateFormatCalendar="LLLL yyyy"
-              dateFormat="d MMMM y"
-              onChange={this.handlePrivilegeDateChange}
-              disabled={noPrivilegeDate}
-              placeholderText="ไม่ระบุ"
-            />
-          </Col>
-          <Col className="align-self-center">
-            <Form.Check
-              id="noPrivilegeDate"
-              inline
-              custom
-              type="checkbox"
-              label="ไม่ระบุ"
-              name="noPrivilegeDate"
-              // value="noPrivilegeDate"
-              checked={noPrivilegeDate}
-              onChange={this.handleNoPrivilegeDateChange}
-            />
-          </Col>
-        </Form.Group> */}
-
         <Form.Group as={Row}>
           <Form.Label as="legend" column sm={2}>
             วันที่มาแสดงตน
@@ -140,7 +88,6 @@ export class CustomerVerifyForm extends Component {
               dateFormatCalendar="LLLL yyyy"
               dateFormat="d MMMM y"
               onChange={this.handleAppearDateChange}
-              // name='appearDate'
             ></DatePicker>
           </Col>
         </Form.Group>
@@ -150,18 +97,10 @@ export class CustomerVerifyForm extends Component {
             รูปถ่าย / ลายมือชื่อ
           </Form.Label>
           <Col className="vertical-divider">
-            <Signature setRef={this.setSigpadRef}></Signature>
+            <Signature setSigpadRef={this.setSigpadRef} onClearSigpad={this.handleClearSigpad}></Signature>
           </Col>
           <Col className="text-center align-self-center">
             <ButtonToolbar>
-              {/* <Button
-                variant="outline"
-                className="pea-color"
-                size="sm"
-                onClick={this.getQRLink}
-              >
-                รับลิ้งก์ QR Code
-              </Button> */}
               <Button
                 variant="outline-secondary"
                 className="pea-color"
@@ -170,9 +109,6 @@ export class CustomerVerifyForm extends Component {
               >
                 กล้อง
               </Button>
-              {/* <Button variant="outline" className="pea-color" size="sm">
-                อัพโหลด
-              </Button> */}
             </ButtonToolbar>
           </Col>
         </Form.Group>

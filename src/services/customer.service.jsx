@@ -202,7 +202,7 @@ const handleResponse = response => {
 
   return response.text().then(text => {
     let error;
-    let data;
+    let data = {};
     if (text) {
       try {
         data = JSON.parse(text);

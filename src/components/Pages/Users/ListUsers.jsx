@@ -10,7 +10,7 @@ import { DataTable } from "../../DataTable";
 import { ModalConfirm } from "../../Modals";
 
 const columns = [
-  { text: "ลำดับ", dataField: "index", valign: "true" },
+  { text: "#", dataField: "index", valign: "true", style: { width: "4%" } },
   { text: "ชื่อ", dataField: "displayName", valign: "true", canSearch: true },
   {
     text: "Username",
@@ -24,24 +24,17 @@ const columns = [
 ];
 
 class ListUsers extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    page: 1,
+    pages: 1,
+    limit: 10,
+    perPages: [10, 20, 50, 100],
 
-    this.state = {
-      page: 1,
-      pages: 1,
-      limit: 10,
-      perPages: [10, 20, 50, 100],
-
-      modalConfirmShow: false,
-      selectedUid: "",
-      confirmtext: "",
-      filterText: ""
-    };
-
-    this.fetchNew();
-  }
-
+    modalConfirmShow: false,
+    selectedUid: "",
+    confirmtext: "",
+    filterText: ""
+  };
   tools = [
     {
       overlaytext: "แก้ไข",
@@ -60,27 +53,41 @@ class ListUsers extends Component {
 
   topButtons = [
     {
-      text: "สร้างผู้ใช้งาน",
+      text: "เพิ่มผู้ใช้",
       onClick: () => this.handleCreateUser(),
       key: "createUser"
     }
   ];
 
+  UNSAFE_componentWillMount() {
+    this.fetchNew();
+  }
+
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
-      users: { data }
+      users: { data, loading }
     } = nextProps;
-
-    if (data && data.metadata) {
-      let { page, pages } = data.metadata;
-      page = parseInt(page);
-      return this.setState({
-        page: page,
-        pages: pages
-      });
+    if (loading) {
+      return
+    }
+    if (data) {
+      if (data.metadata) {
+        let { page, pages } = data.metadata;
+        page = parseInt(page);
+        return this.setState({
+          page: page,
+          pages: pages
+        });
+      }
+      // data.status === "user_create_success" || data.status === "user_update_success" ||
+      if (data.status === "user_delete_success") {
+        this.fetchNew();
+      }
     }
 
     this.setState({
+      page: 1,
+      pages: 1,
       users: []
     });
   }
@@ -118,7 +125,7 @@ class ListUsers extends Component {
     if (!selectedUid) return;
 
     this.props.removeUser(selectedUid);
-    this.fetchNew();
+
   };
 
   handleConfirmClose = () => {
@@ -127,16 +134,27 @@ class ListUsers extends Component {
     });
   };
 
-  handleFilterChange = text => {
+  handleFilterTextChange = e => {
     this.setState(
       {
-        filterText: text,
+        filterText: e.target.value,
         page: 1,
-        pages: 1
+        // pages: 1
       },
       this.fetchNew
     );
   };
+
+  handleClearFilterText = () => {
+    this.setState(
+      {
+        filterText: "",
+        page: 1,
+        // pages: 1
+      },
+      this.fetchNew
+    );
+  }
 
   handlePerPageChange = limit => {
     this.setState(
@@ -185,6 +203,7 @@ class ListUsers extends Component {
       pages,
       limit,
       perPages,
+      filterText,
       modalConfirmShow,
       confirmtext
     } = this.state;
@@ -224,11 +243,13 @@ class ListUsers extends Component {
           limit={limit}
           perPages={perPages}
           filterLoading={filterLoading}
+          filterText={filterText}
           onNextPage={this.handleNextPage}
           onPrevPage={this.handlePrevPage}
           onPageChange={this.handlePageChange}
           onPerPageChange={this.handlePerPageChange}
-          filterTextChange={this.handleFilterChange}
+          onFilterTextChange={this.handleFilterTextChange}
+          onClearFilterText={this.handleClearFilterText}
         />
         <ModalConfirm
           show={modalConfirmShow}

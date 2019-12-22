@@ -52,7 +52,7 @@ class Users extends Component {
           </Fragment>
         ) : params.method === "create" ? (
           <Fragment>
-            <h1 className="header-text text-center">สร้างผู้ใช้งาน</h1>
+            <h1 className="header-text text-center">เพิ่มผู้ใช้งาน</h1>
             <CreateUser />
           </Fragment>
         ) : params.method === "edit" ? (
@@ -61,8 +61,8 @@ class Users extends Component {
             <EditUser />
           </Fragment>
         ) : (
-          <NotFound />
-        )}
+                <NotFound />
+              )}
         <ModalStatus
           show={statusOpen}
           status={loading ? "loading" : error ? "error" : ""}

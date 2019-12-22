@@ -20,8 +20,9 @@ const filters = [
 ];
 
 const columns = [
-  { text: "ลำดับ", dataField: "index", valign: "true" },
-  { text: "ชื่อ-สกุล", dataField: "name", canSearch: true },
+  { text: "#", dataField: "index", valign: "true", style: { width: "4%" } },
+  { text: "ลำดับ", dataField: "seq", valign: "true", style: { width: "4%" } },
+  { text: "ชื่อ-สกุล", dataField: "name", canSearch: true, style: { width: "16%" } },
   {
     text: "หมายเลขผู้ใช้ไฟฟ้า",
     dataField: "peaId",
@@ -29,36 +30,30 @@ const columns = [
     canSearch: true
   },
   { text: "ที่อยู่", dataField: "address" },
-  { text: "ลดสิทธิ์สงคราม", dataField: "war", valign: "true" },
-  { text: "บัตรประจำตัวเลขที่", dataField: "soldierNo", valign: "true" },
+  { text: "สงคราม", dataField: "war", valign: "true" },
+  { text: "เลขทหาร", dataField: "soldierNo", valign: "true", style: { width: "8%" } },
   // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
   { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
   { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
 ];
 
 class ListCustomer extends Component {
-  constructor(props) {
-    super(props);
+  state = {
+    page: 1,
+    pages: 0,
+    limit: 10,
+    perPages: [10, 20, 50, 100],
 
-    this.state = {
-      page: 1,
-      pages: 0,
-      limit: 10,
-      perPages: [10, 20, 50, 100],
+    wars: "",
+    filterText: "",
+    filterChecked: [true, true],
 
-      wars: "",
-      filterText: "",
-      filterChecked: [true, true],
+    confirmDelete: false,
+    confirmDeleteText: "",
+    confirmDeletePeaId: "",
 
-      confirmDelete: false,
-      confirmDeleteText: "",
-      confirmDeletePeaId: "",
-
-      translated: []
-    };
-
-    this.fetchNew();
-  }
+    translated: []
+  };
 
   tools = [
     {
@@ -94,17 +89,24 @@ class ListCustomer extends Component {
     }
   ];
 
-  topButtons = [
-    {
-      text: "เพิ่มลูกค้า",
-      onClick: () => this.handleAddCustomer(),
-      key: "createCustomer"
-    }
-  ];
+  topButtons = [{
+    text: "เพิ่มลูกค้า",
+    onClick: () => this.handleAddCustomer(),
+    key: "createCustomer"
+  }];
+
+  UNSAFE_componentWillMount() {
+    this.fetchNew();
+  }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { customers } = nextProps;
+    const { customers, filterLoading, loading } = nextProps;
     const { limit } = this.state;
+
+    if (filterLoading || loading) {
+      return
+    }
+
     if (customers) {
       if (customers.metadata) {
         const page =
@@ -122,19 +124,19 @@ class ListCustomer extends Component {
             };
           });
 
-        this.setState({
+        return this.setState({
           page,
           pages,
           translated
         });
       }
-    } else {
-      this.setState({
-        page: 1,
-        pages: 1,
-        translated: []
-      });
     }
+    this.setState({
+      page: 1,
+      pages: 1,
+      translated: []
+    });
+
   }
 
   getWarFilter = () => {
@@ -142,43 +144,33 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {
     const { filterText, page, limit, wars } = this.state;
     if (filterText) {
-      this.props.getFilterCustomer(filterText, page, limit, wars);
-    } else {
-      this.props.getAllCustomer(page, limit, wars);
+      return this.props.getFilterCustomer(filterText, page, limit, wars);
     }
+    this.props.getAllCustomer(page, limit, wars);
   };
 
   handlePerPageChange = value => {
-    this.setState(
-      {
-        page: 1,
-        limit: parseInt(value)
-      },
-      () => {
-        this.fetchNew();
-      }
-    );
+    this.setState({
+      page: 1,
+      limit: parseInt(value)
+    }, this.fetchNew);
   };
 
   handlePrevPage = () => {
     this.setState(
       {
         page: this.state.page > 1 ? this.state.page - 1 : 1
-      },
-      () => {
-        this.fetchNew();
-      }
-    );
+      }, this.fetchNew);
   };
 
   handleNextPage = () => {
@@ -188,11 +180,7 @@ class ListCustomer extends Component {
           this.state.page < this.state.pages
             ? this.state.page + 1
             : this.state.page
-      },
-      () => {
-        this.fetchNew();
-      }
-    );
+      }, this.fetchNew);
   };
 
   handlePageChange = event => {
@@ -201,14 +189,9 @@ class ListCustomer extends Component {
     const page = parseInt(event.target.text);
 
     if (page) {
-      this.setState(
-        {
-          page: page
-        },
-        () => {
-          this.fetchNew();
-        }
-      );
+      this.setState({
+        page: page
+      }, this.fetchNew);
     }
   };
 
@@ -217,30 +200,31 @@ class ListCustomer extends Component {
     let newChecked = this.state.filterChecked;
     newChecked[index] = event.target.checked;
 
-    this.setState(
-      {
-        filterChecked: newChecked,
-        page: 1,
-        wars: this.getWarFilter()
-      },
-      () => {
-        this.fetchNew();
-      }
-    );
+    this.setState({
+      filterChecked: newChecked,
+      page: 1,
+      wars: this.getWarFilter()
+    }, this.fetchNew);
   };
 
-  handleFilterTextChange = text => {
+  handleFilterTextChange = e => {
+    this.setState({
+      filterText: e.target.value,
+      page: 1,
+      // pages: 1
+    }, this.fetchNew)
+  };
+
+  handleClearFilterText = () => {
     this.setState(
       {
-        filterText: text,
+        filterText: "",
         page: 1,
-        pages: 1
+        // pages: 1
       },
-      () => {
-        this.fetchNew();
-      }
+      this.fetchNew
     );
-  };
+  }
 
   onViewClick = peaId => {
     this.props.history.push(`/customers/view/${peaId}`);
@@ -293,6 +277,7 @@ class ListCustomer extends Component {
       limit,
       perPages,
       filterChecked,
+      filterText,
       confirmDelete,
       confirmDeleteText,
       translated
@@ -317,12 +302,14 @@ class ListCustomer extends Component {
           perPages={perPages}
           filterChecked={filterChecked}
           filterLoading={filterLoading}
+          filterText={filterText}
           onNextPage={this.handleNextPage}
           onPrevPage={this.handlePrevPage}
           onPageChange={this.handlePageChange}
           onPerPageChange={this.handlePerPageChange}
           onFilterCheckedChange={this.handleFilterCheckedChange}
-          filterTextChange={this.handleFilterTextChange}
+          onFilterTextChange={this.handleFilterTextChange}
+          onClearFilterText={this.handleClearFilterText}
         />
         <ModalConfirm
           show={confirmDelete}
@@ -338,11 +325,12 @@ class ListCustomer extends Component {
 
 const mapStateToProps = state => {
   const {
-    customers: { customers, filterLoading }
+    customers: { customers, filterLoading, loading }
   } = state;
   return {
     customers,
-    filterLoading
+    filterLoading,
+    loading
   };
 };
 
