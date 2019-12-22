@@ -1,5 +1,5 @@
 import config from "../config";
-import { authHeader } from "../helpers";
+import { authHeader, handleResponse, handleFetchError } from "../helpers";
 
 const login = (username, password) => {
   const requestOptions = {
@@ -13,9 +13,9 @@ const login = (username, password) => {
     .then(user => {
       // store user details and jwt token in local storage to keep user logged in between page refreshes
       localStorage.setItem("user", JSON.stringify(user));
-
       return user;
-    });
+    })
+    .catch(handleFetchError);
 };
 
 const logout = () => {
@@ -35,9 +35,9 @@ const create = ({ username, password, description, role, displayName }) => {
       displayName
     })
   };
-  return fetch(`${config.apiUrl}/api/users`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/users`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const get = uid => {
@@ -46,9 +46,9 @@ const get = uid => {
     headers: authHeader()
   };
 
-  return fetch(`${config.apiUrl}/api/users/uid/${uid}`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/users/uid/${uid}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const getAll = (page, limit) => {
@@ -60,7 +60,8 @@ const getAll = (page, limit) => {
   return fetch(
     `${config.apiUrl}/api/users/all?page=${page}&limit=${limit}`,
     requestOptions
-  ).then(handleResponse);
+  ).then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const getFilter = (filter, page, limit) => {
@@ -72,7 +73,8 @@ const getFilter = (filter, page, limit) => {
   return fetch(
     `${config.apiUrl}/api/users/filter/${filter}?page=${page}&limit=${limit}`,
     requestOptions
-  ).then(handleResponse);
+  ).then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const update = (
@@ -97,9 +99,9 @@ const update = (
     })
   };
 
-  return fetch(`${config.apiUrl}/api/users/${uid}`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/users/${uid}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
 
 const remove = uid => {
@@ -108,34 +110,10 @@ const remove = uid => {
     headers: authHeader()
   };
 
-  return fetch(`${config.apiUrl}/api/users/uid/${uid}`, requestOptions).then(
-    handleResponse
-  );
+  return fetch(`${config.apiUrl}/api/users/uid/${uid}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
 };
-
-const handleResponse = response => {
-
-  if (response.status === 204) {
-    return null;
-  }
-
-  return response.text().then(text => {
-    let error;
-    let data = {};
-    if (text) {
-      try {
-        data = JSON.parse(text);
-        error = data.error;
-      } catch { }
-    }
-    if (!response.ok) {
-      // console.log(error)
-      return Promise.reject(error ? `${response.statusText} ${JSON.stringify(error, null, 4)}` : ` ${response.statusText}`);
-    }
-    return data;
-  });
-};
-
 
 export const userService = {
   login,

@@ -6,6 +6,8 @@ import { withRouter } from "react-router-dom";
 
 import { UserForm } from "../../User";
 
+const roles = ["administrator", "supervisor"]
+
 class EditUser extends Component {
   state = {
     user: {},
@@ -80,10 +82,10 @@ class EditUser extends Component {
 
     return (
       <UserForm
+        roles={roles}
         user={user}
         validate={validate}
         canSubmit={canSubmit}
-        // skipEmptyPasswordValidation={true}
         onSubmit={this.handleSubmit}
         onReset={this.handleReset}
         onChange={this.handleChange}

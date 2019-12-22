@@ -1,42 +1,30 @@
-export const handleFetchError = rep => {
-  if (!rep.ok) {
-    return rep.text().then(err => {
-      return Promise.resolve({ err, rep: null });
-    });
+export const handleResponse = response => {
+
+  if (response.status === 204) {
+    return null;
   }
 
-  if (rep.status === 200) {
-    return rep.json().then(res => {
-      return Promise.resolve({ err: null, rep: res });
-    });
-  }
-
-  return Promise.resolve({ err: null, rep: null });
+  return response.text().then(text => {
+    let error;
+    let data = {};
+    if (text) {
+      try {
+        data = JSON.parse(text);
+        error = data.error;
+      } catch { }
+    }
+    if (!response.ok) {
+      // console.log(error)
+      return Promise.reject(error ? `${response.statusText} ${JSON.stringify(error, null, 4)}` : ` ${response.statusText}`);
+    }
+    return data;
+  });
 };
 
-export const handleFetchSuccessResponse = rep => {
-  if (!rep.ok) {
-    return rep.text().then(err => {
-      return Promise.resolve({ err, rep: null });
-    });
+export const handleFetchError = e => {
+  if (e instanceof TypeError) {
+    return Promise.reject("ไม่สามารถติดต่อเซิร์ฟเวอร์ได้");
   }
-
-  if (rep.status === 200) {
-    return Promise.resolve({ err: null, rep });
-  }
-
-  return Promise.resolve({ err: null, rep: null });
+  console.error("handleFetchError", e);
+  throw e;
 };
-
-// export const getCustomerByPeaId = peaId => {
-//   const reqConf = {
-//     method: "GET",
-//     headers: authHeader()
-//   };
-
-//   return fetch(`${config.apiUrl}/api/customers/peaid/${peaId}`, reqConf)
-//     .then(this.handleFetchError)
-//     .then(({ err, result }) => {
-//       return result;
-//     });
-// };

@@ -10,7 +10,7 @@ import { Form } from "react-bootstrap";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
 import FormButton from "../../Customer/FormButton";
 
-export class EditCustomer extends Component {
+class EditCustomer extends Component {
   state = {
     customer: {}
   };
