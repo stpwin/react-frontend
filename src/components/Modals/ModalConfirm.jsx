@@ -17,18 +17,20 @@ export const ModalConfirm = ({
 }) => {
   return (
     <Modal
-      // {...this.props}
-      // size="sm"
       show={show}
       onHide={onHide}
       aria-labelledby="contained-modal-title-vcenter"
       centered
-      // backdrop="static"
     >
       <Modal.Header>
-        <div className="pea-color">
-          <FaQuestionCircle size={32} />
-        </div>
+
+        {status === "risk" ?
+          (<FaExclamationTriangle className="text-danger" size={32} />)
+          :
+          (<FaQuestionCircle className="pea-color" size={32} />)
+        }
+
+
         {/* <Modal.Title>Modal title</Modal.Title> */}
       </Modal.Header>
 
@@ -73,7 +75,7 @@ export const ModalConfirm = ({
 };
 
 const Risk = ({ confirmtext }) => {
-  return <h4>{confirmtext}</h4>;
+  return <div>{confirmtext}</div>;
 };
 
 const DataChanged = () => {

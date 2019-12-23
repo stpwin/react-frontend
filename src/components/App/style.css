@@ -80,7 +80,7 @@ hr {
   min-width: 9.5em;
 }
 
-.td-tools-button .btn-toolbar>*+* {
+.td-tools-button .btn-toolbar > * + * {
   margin-left: 0.3em;
 }
 
@@ -88,13 +88,15 @@ hr {
   margin: 0 auto;
 }
 
-.custom-control-input:checked~.custom-control-label::before {
+.custom-control-input:checked ~ .custom-control-label::before {
   color: #fff;
   border-color: #563d7c;
   background-color: #563d7c;
 }
 
-.custom-radio .custom-control-input:disabled:checked~.custom-control-label::before {
+.custom-radio
+  .custom-control-input:disabled:checked
+  ~ .custom-control-label::before {
   background-color: #563d7c8a;
 }
 
@@ -117,10 +119,10 @@ mark {
   align-items: center;
 }
 
-.icon-before-text>*+*,
-.perPageDropdown>*+*,
-.spinner-margin>*+*,
-.btn-toolbar>*+* {
+.icon-before-text > * + *,
+.perPageDropdown > * + *,
+.spinner-margin > * + *,
+.btn-toolbar > * + * {
   margin-left: 0.5em;
 }
 
@@ -180,7 +182,7 @@ mark {
 
 .btn-outline-secondary:not(:disabled):not(.disabled):active,
 .btn-outline-secondary:not(:disabled):not(.disabled).active,
-.show>.btn-outline-secondary.dropdown-toggle {
+.show > .btn-outline-secondary.dropdown-toggle {
   color: #fff;
   background-color: #563d7c;
   border-color: #563d7c;
@@ -191,7 +193,7 @@ mark {
   background-color: #563d7c;
 }
 
-.card-header>.btn-link {
+.card-header > .btn-link {
   color: #fff;
 }
 
@@ -220,10 +222,10 @@ mark {
   color: white;
 }
 
-.navbar-light .navbar-nav .active>.nav-link,
+.navbar-light .navbar-nav .active > .nav-link,
 .navbar-light .navbar-nav .nav-link.active,
 .navbar-light .navbar-nav .nav-link.show,
-.navbar-light .navbar-nav .show>.nav-link {
+.navbar-light .navbar-nav .show > .nav-link {
   color: white;
 }
 
@@ -251,7 +253,7 @@ a:hover {
 }
 
 .nav-pills .nav-link.active,
-.nav-pills .show>.nav-link {
+.nav-pills .show > .nav-link {
   color: #fff;
   background-color: #563d7c;
 }
@@ -272,4 +274,10 @@ a:hover {
   .nav-item {
     font-size: 0.7rem;
   }
+}
+
+.database-manage-container {
+  padding: 1em;
+  background-color: #f7f7f7;
+  border-radius: 0.2rem;
 }
