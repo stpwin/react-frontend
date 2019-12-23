@@ -1,11 +1,32 @@
 import { databaseConstants } from "../constants";
 import { databaseService } from "../services";
 
-const set = (name, sequence) => {
+const getAllCounter = () => {
   return dispatch => {
     dispatch(request());
 
-    databaseService.set(name, sequence).then(
+    databaseService.getAllCounter().then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: databaseConstants.GET_ALL_COUNTER_REQUEST };
+  }
+  function success(data) {
+    return { type: databaseConstants.GET_ALL_COUNTER_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: databaseConstants.GET_ALL_COUNTER_FAILURE, error };
+  }
+};
+
+const setCounter = (name, sequence) => {
+  return dispatch => {
+    dispatch(request());
+
+    databaseService.setCounter(name, sequence).then(
       data => dispatch(success(data)),
       error => dispatch(failure(error))
     );
@@ -22,28 +43,7 @@ const set = (name, sequence) => {
   }
 };
 
-// const reset = name => {
-//   return dispatch => {
-//     dispatch(request());
-
-//     databaseService.reset(name).then(
-//       data => dispatch(success(data)),
-//       error => dispatch(failure(error))
-//     );
-//   };
-
-//   function request() {
-//     return { type: databaseConstants.RESET_COUNTER_REQUEST };
-//   }
-//   function success(data) {
-//     return { type: databaseConstants.RESET_COUNTER_SUCCESS, data };
-//   }
-//   function failure(error) {
-//     return { type: databaseConstants.RESET_COUNTER_FAILURE, error };
-//   }
-// };
-
 export const databaseActions = {
-  set
-  //   reset
+  getAllCounter,
+  setCounter
 };

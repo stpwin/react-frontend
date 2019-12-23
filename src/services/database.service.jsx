@@ -1,36 +1,35 @@
 import { authHeader, handleResponse, handleFetchError } from "../helpers";
 import config from "../config";
 
-const set = (name, sequence) => {
+const getAllCounter = () => {
   const requestOption = {
-    method: "PUT",
-    headers: authHeader(),
+    method: "GET",
+    headers: authHeader()
+  };
+
+  return fetch(`${config.apiUrl}/api/settings/database/counters`, requestOption)
+    .then(handleResponse)
+    .catch(handleFetchError);
+};
+
+
+const setCounter = (name, sequence) => {
+  const requestOption = {
+    method: "PATCH",
+    headers: { "Content-type": "application/json", ...authHeader() },
     body: JSON.stringify({
       name,
       sequence
     })
   };
 
-  return fetch(`${config.apiUrl}/api/database/counter/set`, requestOption)
+  return fetch(`${config.apiUrl}/api/settings/database/counters`, requestOption)
     .then(handleResponse)
     .catch(handleFetchError);
 };
 
-// const reset = name => {
-//   const requestOption = {
-//     method: "PUT",
-//     headers: authHeader(),
-//     body: JSON.stringify({
-//       name
-//     })
-//   };
-
-//   return fetch(`${config.apiUrl}/api/database/counter/reset`, requestOption)
-//     .then(handleResponse)
-//     .catch(handleFetchError);
-// };
 
 export const databaseService = {
-  set
-  //   reset
+  getAllCounter,
+  setCounter
 };
