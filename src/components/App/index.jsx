@@ -12,10 +12,11 @@ import Customers from "../Pages/Customers";
 import Login from "../Pages/Login";
 import Home from "../Pages/Home";
 import Users from "../Pages/Users";
-import { history } from "../../store"
+import Settings from "../Pages/Settings";
+import { history } from "../../store";
 
-const App = (props) => {
-  const { user, loggedIn } = props
+const App = props => {
+  const { user, loggedIn } = props;
   return (
     <Router history={history}>
       <Navigation user={user} loggedIn={loggedIn} />
@@ -23,6 +24,7 @@ const App = (props) => {
         <Route path="/login" component={Login}></Route>
         <PrivateRoute exact path="/" component={Home} />
         <PrivateRoute path="/users/:method?/:uid?" component={Users} />
+        <PrivateRoute path="/settings/:method" component={Settings} />
         <PrivateRoute
           path="/customers/:method?/:peaId?"
           component={Customers}
@@ -33,7 +35,7 @@ const App = (props) => {
       </Switch>
     </Router>
   );
-}
+};
 
 function mapStateToProps(state) {
   const {

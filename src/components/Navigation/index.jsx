@@ -1,18 +1,13 @@
 import React, { Fragment } from "react";
 
 import { Nav, Navbar } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap"
+import { LinkContainer } from "react-router-bootstrap";
 
 const Navigation = ({ user, loggedIn }) => {
   return (
     <Navbar expand="md" fixed="top">
-
       <LinkContainer to="/">
-        <Navbar.Brand
-          style={{ cursor: "pointer" }}
-        >
-          PEA WVPMS
-        </Navbar.Brand>
+        <Navbar.Brand style={{ cursor: "pointer" }}>PEA WVPMS</Navbar.Brand>
       </LinkContainer>
 
       {loggedIn ? (
@@ -22,24 +17,23 @@ const Navigation = ({ user, loggedIn }) => {
             <Nav className="mr-auto">
               <Nav.Item>
                 <LinkContainer to="/customers">
-                  <Nav.Link
-                  >
-                    จัดการข้อมูลลูกค้า
-                </Nav.Link >
+                  <Nav.Link>จัดการข้อมูลลูกค้า</Nav.Link>
                 </LinkContainer>
-
               </Nav.Item>
 
               {user.role === "administrator" ? (
-                <Nav.Item>
-                  <LinkContainer to="/users">
-                    <Nav.Link
-                    >
-                      จัดการผู้ใช้งาน
-                  </Nav.Link >
-                  </LinkContainer>
-
-                </Nav.Item>
+                <Fragment>
+                  <Nav.Item>
+                    <LinkContainer to="/users">
+                      <Nav.Link>จัดการผู้ใช้งาน</Nav.Link>
+                    </LinkContainer>
+                  </Nav.Item>
+                  <Nav.Item>
+                    <LinkContainer to="/settings/database">
+                      <Nav.Link>จัดการฐานข้อมูล</Nav.Link>
+                    </LinkContainer>
+                  </Nav.Item>
+                </Fragment>
               ) : null}
             </Nav>
 
@@ -50,19 +44,14 @@ const Navigation = ({ user, loggedIn }) => {
             </Nav.Item>
             <Nav.Item>
               <LinkContainer to="/login">
-                <Nav.Link
-                >
-                  ออกจากระบบ
-              </Nav.Link>
+                <Nav.Link>ออกจากระบบ</Nav.Link>
               </LinkContainer>
             </Nav.Item>
-
-
           </Navbar.Collapse>
         </Fragment>
       ) : null}
     </Navbar>
   );
-}
+};
 
 export default Navigation;

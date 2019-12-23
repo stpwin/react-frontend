@@ -1,6 +1,11 @@
 import config from "../config";
-import { authHeader, b64toBlob, handleResponse, handleFetchError } from "../helpers";
-import { Promise } from "q";
+import {
+  authHeader,
+  b64toBlob,
+  handleResponse,
+  handleFetchError
+} from "../helpers";
+// import { Promise } from "q";
 
 const create = ({
   peaId,
@@ -42,7 +47,7 @@ const create = ({
 
 const get = peaId => {
   if (!peaId) {
-    return Promise.reject("peaId required")
+    return Promise.reject("peaId required");
   }
   const requestOptions = {
     method: "GET",
@@ -95,7 +100,7 @@ const update = ({
   districtNo
 }) => {
   if (!peaId) {
-    return Promise.reject("peaId required")
+    return Promise.reject("peaId required");
   }
   const requestOptions = {
     method: "PUT",
@@ -124,7 +129,7 @@ const update = ({
 
 const verify = (peaId, { appearDate, signature }) => {
   if (!peaId || !appearDate) {
-    return Promise.reject("2 arguments required")
+    return Promise.reject("2 arguments required");
   }
 
   const formData = new FormData();
@@ -139,7 +144,7 @@ const verify = (peaId, { appearDate, signature }) => {
   // console.log("appearDate", JSON.stringify(appearDate))
   const requestOptions = {
     method: "PUT",
-    headers: { ...authHeader(), 'appearDate': JSON.stringify(appearDate) },
+    headers: { ...authHeader(), appearDate: JSON.stringify(appearDate) },
     body: formData
   };
 
@@ -150,7 +155,7 @@ const verify = (peaId, { appearDate, signature }) => {
 
 const remove = peaId => {
   if (!peaId) {
-    return Promise.reject("peaId required")
+    return Promise.reject("peaId required");
   }
   const requestOptions = {
     method: "DELETE",
@@ -163,7 +168,7 @@ const remove = peaId => {
 
 const getSignature = (peaId, sigId) => {
   if (!peaId || !sigId) {
-    return Promise.resolve(null)
+    return Promise.resolve(null);
   }
   const requestOptions = {
     method: "GET",
@@ -193,8 +198,6 @@ const getSignature = (peaId, sigId) => {
     })
     .catch(handleFetchError);
 };
-
-
 
 export const customerService = {
   create,

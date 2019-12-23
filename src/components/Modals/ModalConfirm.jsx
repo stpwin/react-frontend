@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 
 import { Spinner, Modal, Button } from "react-bootstrap";
 
@@ -8,64 +8,73 @@ import {
   FaQuestionCircle
 } from "react-icons/fa";
 
-export class ModalConfirm extends Component {
-  render() {
-    const { show, status, confirm, confirmtext, onHide } = this.props;
-    return (
-      <Modal
-        // {...this.props}
-        // size="sm"
-        show={show}
-        onHide={onHide}
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-        // backdrop="static"
-      >
-        <Modal.Header>
-          <div className="pea-color">
-            <FaQuestionCircle size={32} />
-          </div>
-          {/* <Modal.Title>Modal title</Modal.Title> */}
-        </Modal.Header>
+export const ModalConfirm = ({
+  show,
+  status,
+  confirm,
+  confirmtext,
+  onHide
+}) => {
+  return (
+    <Modal
+      // {...this.props}
+      // size="sm"
+      show={show}
+      onHide={onHide}
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+      // backdrop="static"
+    >
+      <Modal.Header>
+        <div className="pea-color">
+          <FaQuestionCircle size={32} />
+        </div>
+        {/* <Modal.Title>Modal title</Modal.Title> */}
+      </Modal.Header>
 
-        <Modal.Body className="text-center">
-          {status === "datachanged" ? (
-            <DataChanged />
-          ) : status === "delete" ? (
-            <ConfirmDelete confirmtext={confirmtext} />
-          ) : status === "getfail" ? (
-            <FetchFail />
-          ) : status === "saving" ? (
-            <Saving />
-          ) : status === "saved" ? (
-            <Saved />
-          ) : status === "require" ? (
-            <Require />
-          ) : status === "savefail" ? (
-            <SaveFail />
-          ) : status === "nodata" ? (
-            <NoData />
-          ) : status === "loading" ? (
-            <Loading />
-          ) : null}
-        </Modal.Body>
+      <Modal.Body className="text-center">
+        {status === "datachanged" ? (
+          <DataChanged />
+        ) : status === "delete" ? (
+          <ConfirmDelete confirmtext={confirmtext} />
+        ) : status === "getfail" ? (
+          <FetchFail />
+        ) : status === "saving" ? (
+          <Saving />
+        ) : status === "saved" ? (
+          <Saved />
+        ) : status === "require" ? (
+          <Require />
+        ) : status === "savefail" ? (
+          <SaveFail />
+        ) : status === "nodata" ? (
+          <NoData />
+        ) : status === "loading" ? (
+          <Loading />
+        ) : status === "risk" ? (
+          <Risk confirmtext={confirmtext} />
+        ) : null}
+      </Modal.Body>
 
-        <Modal.Footer>
-          <Button
-            variant="outline-secondary"
-            className="pea-color"
-            onClick={confirm}
-          >
-            ยืนยัน
-          </Button>
-          <Button variant="outline-secondary" onClick={onHide}>
-            ปิด
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-}
+      <Modal.Footer>
+        <Button
+          variant="outline-secondary"
+          className="pea-color"
+          onClick={confirm}
+        >
+          ยืนยัน
+        </Button>
+        <Button variant="outline-secondary" onClick={onHide}>
+          ปิด
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+const Risk = ({ confirmtext }) => {
+  return <h4>{confirmtext}</h4>;
+};
 
 const DataChanged = () => {
   return (
