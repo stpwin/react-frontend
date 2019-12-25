@@ -14,6 +14,14 @@ class CustomerPrintData extends Component {
       <div className="page">
         <div className="subpage">
           <div className="content">
+            <div style={{
+              marginTop: "-10mm",
+              marginRight: "-15mm",
+              float: "right",
+              border: "1px solid black",
+              padding: "1mm 3mm 1mm 3mm",
+              borderRadius: "2mm"
+            }}>ลำดับ:<b>{war ? `\u00A0\u00A0${seq}` : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"}</b></div>
             <div className="text-center">
               <PEALogo width="200px" />
             </div>
@@ -24,39 +32,31 @@ class CustomerPrintData extends Component {
             <br />
             <p className="">
               หมายเลขผู้ใช้ไฟ(CA):{"\u00A0\u00A0"}
-              <span>{peaId}</span>
+              {peaId ? <b>{peaId}</b> : <SpaceUnderline n={50} />}
             </p>
             <p className="">
               ชื่อ-สกุล:{"\u00A0\u00A0"}
-              <span>{name}</span>
+              {name ? <b>{name}</b> : <SpaceUnderline n={71} />}
             </p>
             <p className="">
               ที่อยู่:{"\u00A0\u00A0"}
-              {address ? <span>{address}</span> : <SpaceUnderline n={100} />}
+              {address ? <b>{address}</b> : <SpaceUnderline n={100} />}
             </p>
             <p className="">
               กรณีเป็น:{"\u00A0\u00A0"}
-              {authorize ? <span>{`${authorize}`}</span> : <SpaceUnderline />}
+              {authorize ? <b>{`${authorize}`}</b> : <SpaceUnderline />}
             </p>
             <p className="">
               เลขประจำตัวทหาร:{"\u00A0\u00A0"}
-              {soldierNo ? <span>{`${soldierNo}`}</span> : <SpaceUnderline />}
+              {soldierNo ? <b>{`${soldierNo}`}</b> : <SpaceUnderline n={44} />}
             </p>
             <p className="">
               ลดสิทธิ์สงคราม:{"\u00A0\u00A0"}
-              <span>{`${war} ${seq}`}</span>
+              {war ? <b>{`${war}`}</b> : <SpaceUnderline n={50} />}
             </p>
-            {/* <p className="">
-              วันที่ได้รับสิทธิ์:{"\u00A0\u00A0"}
-              {privilegeDate ? (
-                <span>{privilegeDate}</span>
-              ) : (
-                <SpaceUnderline />
-              )}
-            </p> */}
             <p className="">
               วันที่แสดงตน:{"\u00A0\u00A0"}
-              {appearDate ? <span>{appearDate}</span> : <SpaceUnderline />}
+              {appearDate ? <b>{appearDate}</b> : <SpaceUnderline />}
             </p>
             <br />
             <div className="text-center">
@@ -72,21 +72,21 @@ class CustomerPrintData extends Component {
                   />
                 </Fragment>
               ) : (
-                <Fragment>
-                  <p>ลายมือชื่อ</p>
-                  <div
-                    style={{
-                      border: "1px solid #dedede",
-                      width: "300px",
-                      height: "100px",
-                      marginBottom: "1rem",
-                      display: "inline-block"
-                    }}
-                  ></div>
-                  <br />
-                  <p>( {name} )</p>
-                </Fragment>
-              )}
+                  <Fragment>
+                    <p>ลายมือชื่อ</p>
+                    <div
+                      style={{
+                        border: "1px solid #dedede",
+                        width: "300px",
+                        height: "100px",
+                        marginBottom: "1rem",
+                        display: "inline-block"
+                      }}
+                    ></div>
+                    <br />
+                    <p>( {name || <SpaceUnderline n={50} />} )</p>
+                  </Fragment>
+                )}
             </div>
           </div>
 
@@ -95,7 +95,7 @@ class CustomerPrintData extends Component {
               <p className="text-danger">
                 <span>
                   *ถ้าท่านไม่ได้รับสิทธิ์ตั้งแต่เดือนกุมภาพันธ์เป็นต้นไป
-                  โปรดแจ้งที่เบอร์ <u>08-6431-0603</u>
+                  โปรดแจ้งที่เบอร์ <b>08-6431-0603</b>
                 </span>
                 <br />
                 <span>

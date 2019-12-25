@@ -3,7 +3,10 @@ import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
 import { getPostcodeFromDistrictNo } from "../../../helpers";
-import { Form } from "react-bootstrap";
+import { Form, Modal, Button } from "react-bootstrap";
+import {
+  FaCheck
+} from "react-icons/fa";
 
 import { ModalConfirm } from "../../Modals";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
@@ -30,7 +33,8 @@ class AddCustomer extends Component {
       mooNo: "",
       districtNo: "520101",
       postcode: "52000"
-    }
+    },
+    successModal: false
   };
 
   sigPad = null;
@@ -43,13 +47,13 @@ class AddCustomer extends Component {
     if (status === "create_success") {
       this.handleVerifyCustomer();
     } else if (status === "verify_success") {
-      this.handleSuccess();
+      this.setState({
+        successModal: true
+      })
     }
   }
 
   setSigpadRef = ref => (this.sigPad = ref);
-
-  handleSuccess = () => this.props.history.goBack();
 
   handleCancel = () => {
     this.setState({
@@ -65,8 +69,8 @@ class AddCustomer extends Component {
 
   handleCreateCustomer = event => {
     event.preventDefault();
-    const { canSubmit } = this.state;
-    canSubmit && this.props.createCustomer(this.state.customer);
+    const { customer, canSubmit } = this.state;
+    canSubmit && this.props.createCustomer(customer);
   };
 
   handleVerifyCustomer = () => {
@@ -117,8 +121,12 @@ class AddCustomer extends Component {
     }
   };
 
+  handleHideSuccessModal = () => {
+    this.setState({ successModal: false })
+  }
+
   render() {
-    const { statusModal, confirmModal, customer, peaIdInvalid } = this.state;
+    const { successModal, statusModal, confirmModal, customer, peaIdInvalid } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.handleCreateCustomer}>
@@ -136,10 +144,42 @@ class AddCustomer extends Component {
           <FormButton loading={statusModal} cancel={this.handleCancel} />
         </Form>
 
+        <Modal
+          show={successModal}
+          // onHide={this.handleHideSuccessModal}
+          backdrop="static"
+          centered={true}
+          aria-labelledby="contained-modal-title-vcenter" >
+          <Modal.Header>
+            <Modal.Title>บันทึกข้อมูลเสร็จสิ้น</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-center">
+              <FaCheck className="pea-color" size={48} />
+            </div>
+
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="outline-secondary"
+              className="pea-color"
+              onClick={() => this.props.history.replace(`/customers/print/${customer.peaId}`)}
+            >
+              พิมพ์
+          </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={() => this.props.history.goBack()}
+            >
+              กลับ
+          </Button>
+          </Modal.Footer>
+        </Modal>
+
         <ModalConfirm
           show={confirmModal}
           status="datachanged"
-          confirm={this.handleSuccess}
+          confirm={() => this.props.history.goBack()}
           close={this.handleConfirmModalClose}
         />
       </React.Fragment>
