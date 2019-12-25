@@ -87,6 +87,20 @@ const getFilter = (filter, page, limit, war = "-") => {
     .catch(handleFetchError);
 };
 
+const getBySequence = (war, seq) => {
+  const requestOptions = {
+    method: "GET",
+    headers: authHeader()
+  };
+
+  return fetch(
+    `${config.apiUrl}/api/customers/seq/${war}/${seq}`,
+    requestOptions
+  )
+    .then(handleResponse)
+    .catch(handleFetchError);
+};
+
 const update = ({
   peaId,
   title,
@@ -204,6 +218,7 @@ export const customerService = {
   get,
   getAll,
   getFilter,
+  getBySequence,
   update,
   verify,
   remove,
