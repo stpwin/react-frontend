@@ -1,17 +1,37 @@
 import React from "react";
 import { Form, FormControl, InputGroup, Col, Row } from "react-bootstrap";
 
-export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onChange,
-  customer: { peaId, title, firstName, lastName, houseNo, mooNo, districtNo, postcode, authorize, soldierNo, war } }) => {
+export const CustomerDataForm = ({
+  readOnly,
+  showPlaceholder,
+  peaIdReadOnly,
+  peaIdInvalid,
+  onChange,
+  customer: {
+    peaId,
+    title,
+    firstName,
+    lastName,
+    houseNo,
+    mooNo,
+    districtNo,
+    postcode,
+    authorize,
+    soldierNo,
+    war
+  }
+}) => {
+  console.log(peaIdInvalid);
   return (
     <React.Fragment>
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
           หมายเลขผู้ใช้ไฟฟ้า(CA)
-          </Form.Label>
+        </Form.Label>
         <Col sm={5}>
           <InputGroup className="mb-0">
             <FormControl
+              isInvalid={peaIdInvalid}
               aria-describedby="basic-addon3"
               maxLength={12}
               name="peaId"
@@ -21,13 +41,16 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
               onChange={onChange}
             />
           </InputGroup>
+          <Form.Text className="text-muted">
+            หมายเลขผู้ใช้ไฟฟ้า 12 หลัก เช่น 020005975100
+          </Form.Text>
         </Col>
       </Form.Group>
 
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
           คำนำหน้า
-          </Form.Label>
+        </Form.Label>
         <Col sm={3}>
           <Form.Control
             type="text"
@@ -43,7 +66,7 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
           ชื่อ-สกุล
-          </Form.Label>
+        </Form.Label>
         <Col sm={10}>
           <Form.Row>
             <Form.Group as={Col}>
@@ -74,7 +97,7 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
           ที่อยู่
-          </Form.Label>
+        </Form.Label>
         <Col sm={10}>
           <Form.Row>
             <Form.Group as={Col}>
@@ -155,7 +178,7 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
         <Form.Group as={Row}>
           <Form.Label as="legend" column sm={2}>
             กรณีเป็น
-            </Form.Label>
+          </Form.Label>
           <Col sm={10}>
             <Form.Check
               inline
@@ -212,7 +235,7 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
           เลขที่บัตรประจำตัวทหาร
-          </Form.Label>
+        </Form.Label>
         <Col sm={3}>
           <Form.Control
             type="text"
@@ -229,7 +252,7 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
           ลดสิทธิ์สงคราม
-          </Form.Label>
+        </Form.Label>
         <Col sm={3}>
           <Form.Control
             as="select"
@@ -241,6 +264,7 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
             <option value="ภายในประเทศ">ภายในประเทศ</option>
             <option value="เวียดนาม">เวียดนาม</option>
             <option value="เกาหลี">เกาหลี</option>
+            <option value="เหรียญชัยสมรภูมิ">เหรียญชัยสมรภูมิ</option>
             <option value="เอเชียบูรพา">เอเชียบูรพา</option>
             <option value="อินโดจีน">อินโดจีน</option>
             <option value="ฝรั่งเศส">ฝรั่งเศส</option>
@@ -249,6 +273,6 @@ export const CustomerDataForm = ({ readOnly, showPlaceholder, peaIdReadOnly, onC
       </Form.Group>
     </React.Fragment>
   );
-}
+};
 
 export default CustomerDataForm;
