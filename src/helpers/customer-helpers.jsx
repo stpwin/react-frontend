@@ -18,7 +18,7 @@ export const translateCustomer = customer => {
 
   const privilegeDate =
     customer.privilegeDate && toLocalDate(customer.privilegeDate);
-  const warType = getWarType(customer.war)
+  const warType = getWarType(customer.war);
   return {
     seq: `${warType}-${customer.seq}`,
     name: `${customer.title}${customer.firstName}\u00A0\u00A0${customer.lastName}`,

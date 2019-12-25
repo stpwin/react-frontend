@@ -16,13 +16,21 @@ import { DataTable } from "../../DataTable";
 
 const filters = [
   { text: "G1", wars: ["ภายในประเทศ", "เวียดนาม", "เกาหลี"] },
-  { text: "G2", wars: ["เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"] }
+  {
+    text: "G2",
+    wars: ["เหรียญชัยสมรภูมิ", "เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"]
+  }
 ];
 
 const columns = [
   { text: "#", dataField: "index", valign: "true", style: { width: "4%" } },
   { text: "ลำดับ", dataField: "seq", valign: "true", style: { width: "4%" } },
-  { text: "ชื่อ-สกุล", dataField: "name", canSearch: true, style: { width: "16%" } },
+  {
+    text: "ชื่อ-สกุล",
+    dataField: "name",
+    canSearch: true,
+    style: { width: "16%" }
+  },
   {
     text: "หมายเลขผู้ใช้ไฟฟ้า",
     dataField: "peaId",
@@ -31,7 +39,12 @@ const columns = [
   },
   { text: "ที่อยู่", dataField: "address" },
   { text: "สงคราม", dataField: "war", valign: "true" },
-  { text: "เลขทหาร", dataField: "soldierNo", valign: "true", style: { width: "8%" } },
+  {
+    text: "เลขทหาร",
+    dataField: "soldierNo",
+    valign: "true",
+    style: { width: "8%" }
+  },
   // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
   { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
   { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
@@ -89,11 +102,13 @@ class ListCustomer extends Component {
     }
   ];
 
-  topButtons = [{
-    text: "เพิ่มลูกค้า",
-    onClick: () => this.handleAddCustomer(),
-    key: "createCustomer"
-  }];
+  topButtons = [
+    {
+      text: "เพิ่มลูกค้า",
+      onClick: () => this.handleAddCustomer(),
+      key: "createCustomer"
+    }
+  ];
 
   UNSAFE_componentWillMount() {
     this.fetchNew();
@@ -104,7 +119,7 @@ class ListCustomer extends Component {
     const { limit } = this.state;
 
     if (filterLoading || loading) {
-      return
+      return;
     }
 
     if (customers) {
@@ -136,7 +151,6 @@ class ListCustomer extends Component {
       pages: 1,
       translated: []
     });
-
   }
 
   getWarFilter = () => {
@@ -144,11 +158,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
@@ -160,17 +174,22 @@ class ListCustomer extends Component {
   };
 
   handlePerPageChange = value => {
-    this.setState({
-      page: 1,
-      limit: parseInt(value)
-    }, this.fetchNew);
+    this.setState(
+      {
+        page: 1,
+        limit: parseInt(value)
+      },
+      this.fetchNew
+    );
   };
 
   handlePrevPage = () => {
     this.setState(
       {
         page: this.state.page > 1 ? this.state.page - 1 : 1
-      }, this.fetchNew);
+      },
+      this.fetchNew
+    );
   };
 
   handleNextPage = () => {
@@ -180,7 +199,9 @@ class ListCustomer extends Component {
           this.state.page < this.state.pages
             ? this.state.page + 1
             : this.state.page
-      }, this.fetchNew);
+      },
+      this.fetchNew
+    );
   };
 
   handlePageChange = event => {
@@ -189,9 +210,12 @@ class ListCustomer extends Component {
     const page = parseInt(event.target.text);
 
     if (page) {
-      this.setState({
-        page: page
-      }, this.fetchNew);
+      this.setState(
+        {
+          page: page
+        },
+        this.fetchNew
+      );
     }
   };
 
@@ -200,31 +224,37 @@ class ListCustomer extends Component {
     let newChecked = this.state.filterChecked;
     newChecked[index] = event.target.checked;
 
-    this.setState({
-      filterChecked: newChecked,
-      page: 1,
-      wars: this.getWarFilter()
-    }, this.fetchNew);
+    this.setState(
+      {
+        filterChecked: newChecked,
+        page: 1,
+        wars: this.getWarFilter()
+      },
+      this.fetchNew
+    );
   };
 
   handleFilterTextChange = e => {
-    this.setState({
-      filterText: e.target.value,
-      page: 1,
-      // pages: 1
-    }, this.fetchNew)
+    this.setState(
+      {
+        filterText: e.target.value,
+        page: 1
+        // pages: 1
+      },
+      this.fetchNew
+    );
   };
 
   handleClearFilterText = () => {
     this.setState(
       {
         filterText: "",
-        page: 1,
+        page: 1
         // pages: 1
       },
       this.fetchNew
     );
-  }
+  };
 
   onViewClick = peaId => {
     this.props.history.push(`/customers/view/${peaId}`);

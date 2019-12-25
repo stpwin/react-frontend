@@ -13,11 +13,12 @@ import FormButton from "../../Customer/FormButton";
 class AddCustomer extends Component {
   state = {
     appearDate: new Date(),
-    peaIdOk: true,
+    peaIdInvalid: true,
+    canSubmit: false,
     peaWarnText: "",
     confirmModal: false,
     customer: {
-      peaId: this.props.peaId,
+      peaId: this.props.peaId || "02",
       appearDate: null,
       title: "",
       firstName: "",
@@ -30,7 +31,6 @@ class AddCustomer extends Component {
       districtNo: "520101",
       postcode: "52000"
     }
-
   };
 
   sigPad = null;
@@ -43,13 +43,13 @@ class AddCustomer extends Component {
     if (status === "create_success") {
       this.handleVerifyCustomer();
     } else if (status === "verify_success") {
-      this.handleSuccess()
+      this.handleSuccess();
     }
   }
 
-  setSigpadRef = ref => this.sigPad = ref
+  setSigpadRef = ref => (this.sigPad = ref);
 
-  handleSuccess = () => this.props.history.goBack()
+  handleSuccess = () => this.props.history.goBack();
 
   handleCancel = () => {
     this.setState({
@@ -65,11 +65,15 @@ class AddCustomer extends Component {
 
   handleCreateCustomer = event => {
     event.preventDefault();
-    this.props.createCustomer(this.state.customer);
+    const { canSubmit } = this.state;
+    canSubmit && this.props.createCustomer(this.state.customer);
   };
 
   handleVerifyCustomer = () => {
-    const { customer: { peaId }, appearDate } = this.state;
+    const {
+      customer: { peaId },
+      appearDate
+    } = this.state;
     const signature =
       (!this.sigPad.isEmpty() &&
         this.sigPad.getTrimmedCanvas().toDataURL("image/png")) ||
@@ -84,14 +88,25 @@ class AddCustomer extends Component {
   };
 
   handleDataChange = e => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     if (name === "districtNo") {
       this.setState({
         customer: {
-          ...this.state.customer, districtNo: value,
+          ...this.state.customer,
+          districtNo: value,
           postcode: getPostcodeFromDistrictNo(value)
         }
-      })
+      });
+    } else if (name === "peaId") {
+      // console.log(value.length < 12);
+      this.setState({
+        peaIdInvalid: value.length < 12,
+        canSubmit: value.length === 12,
+        customer: {
+          ...this.state.customer,
+          peaId: value
+        }
+      });
     } else {
       this.setState({
         customer: {
@@ -100,14 +115,15 @@ class AddCustomer extends Component {
         }
       });
     }
-  }
+  };
 
   render() {
-    const { statusModal, confirmModal, customer } = this.state;
+    const { statusModal, confirmModal, customer, peaIdInvalid } = this.state;
     return (
       <React.Fragment>
         <Form onSubmit={this.handleCreateCustomer}>
           <CustomerDataForm
+            peaIdInvalid={peaIdInvalid}
             customer={customer}
             showPlaceholder={true}
             onChange={this.handleDataChange}
