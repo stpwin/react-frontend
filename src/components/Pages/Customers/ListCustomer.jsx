@@ -65,6 +65,7 @@ class ListCustomer extends Component {
 
     wars: "",
     filterText: "",
+    filterSequence: 0,
     filterChecked: [true, true],
 
     confirmDelete: false,
@@ -172,9 +173,14 @@ class ListCustomer extends Component {
   };
 
   fetchNew = () => {
-    const { filterText, page, limit, wars } = this.state;
+    const { filterSequence, filterText, page, limit, wars } = this.state;
     if (filterText) {
-      return this.props.getFilterCustomer(filterText, page, limit, wars);
+      return this.props.getFilterCustomer(
+        filterSequence || filterText,
+        page,
+        limit,
+        wars
+      );
     }
     this.props.getAllCustomer(page, limit, wars);
   };
@@ -241,9 +247,18 @@ class ListCustomer extends Component {
   };
 
   handleFilterTextChange = e => {
+    const filterText = e.target.value;
+    let filterSequence;
+    if (
+      (filterText.startsWith("g") || filterText.startsWith("G")) &&
+      filterText.length > 3
+    ) {
+      filterSequence = filterText.substring(3);
+    }
     this.setState(
       {
-        filterText: e.target.value,
+        filterText,
+        filterSequence,
         page: 1
         // pages: 1
       },
