@@ -4,6 +4,7 @@ const warsType = {
   ภายในประเทศ: "G1",
   เวียดนาม: "G1",
   เกาหลี: "G1",
+  เหรียญชัยสมรภูมิ: "G2",
   เอเชียบูรพา: "G2",
   อินโดจีน: "G2",
   ฝรั่งเศส: "G2"
@@ -20,14 +21,14 @@ export const translateCustomer = customer => {
     customer.privilegeDate && toLocalDate(customer.privilegeDate);
   const warType = getWarType(customer.war);
   return {
-    seq: `${warType}-${customer.seq}`,
+    seq: `${warType}-${customer.seq || ""}`,
     name: `${customer.title}${customer.firstName}\u00A0\u00A0${customer.lastName}`,
     peaId: customer.peaId,
     address: addressToString(customer.address),
     authorize: customer.authorize,
     soldierNo: customer.soldierNo,
     privilegeDate: privilegeDate,
-    war: `${customer.war} ${warType}`,
+    war: `${customer.war}`,
     ...getLastVerify(customer)
   };
 };

@@ -44,7 +44,7 @@ export const DataTable = ({
   onNextPage,
   onPrevPage,
   onPageChange,
-  onPerPageChange,
+  onPerPageChange
 }) => {
   return (
     <div className="data-table">
@@ -53,30 +53,26 @@ export const DataTable = ({
           <div className="top-button">
             {topButtons && topButtons.length > 0
               ? topButtons.map((item, index) => {
-                return (
-                  <Button
-                    key={`button-${item.key}`}
-                    variant="outline"
-                    className="pea-color"
-                    onClick={() => item.onClick()}
-                  >
-                    {item.text}
-                  </Button>
-                );
-              })
+                  return (
+                    <Button
+                      key={`button-${item.key}`}
+                      variant="outline"
+                      className="pea-color"
+                      onClick={() => item.onClick()}
+                    >
+                      {item.text}
+                    </Button>
+                  );
+                })
               : null}
           </div>
-
         </Col>
 
         <Col className="text-right align-self-center">
           {limit ? (
             <div className="perPageDropdown">
               <span>แสดง</span>
-              <Dropdown
-                id="dropdown-item-button"
-                onSelect={onPerPageChange}
-              >
+              <Dropdown id="dropdown-item-button" onSelect={onPerPageChange}>
                 <Dropdown.Toggle
                   variant="outline-secondary"
                   id="dropdown-basic"
@@ -88,10 +84,7 @@ export const DataTable = ({
                   {perPages &&
                     perPages.map((key, index) => {
                       return (
-                        <Dropdown.Item
-                          key={`perPage-${index}`}
-                          eventKey={key}
-                        >
+                        <Dropdown.Item key={`perPage-${index}`} eventKey={key}>
                           {key}
                         </Dropdown.Item>
                       );
@@ -135,20 +128,20 @@ export const DataTable = ({
                       {/* <span className="sr-only">Loading...</span> */}
                     </Button>
                   ) : (
-                      <Button
-                        variant="outline-secondary"
-                        onClick={onClearFilterText}
-                      >
-                        <FaTimes />
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline-secondary"
+                      onClick={onClearFilterText}
+                    >
+                      <FaTimes />
+                    </Button>
+                  )}
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
           </div>
         </Col>
 
-        {filters ?
+        {filters ? (
           <Col className="align-self-center" md="auto">
             <div className="top-button">
               {filters.map((filter, index) => {
@@ -166,8 +159,15 @@ export const DataTable = ({
                 );
               })}
             </div>
-          </Col> : null}
-        <Col className="align-self-center " sm md="auto" lg="5" style={{ marginInlineStart: "auto" }}>
+          </Col>
+        ) : null}
+        <Col
+          className="align-self-center "
+          sm
+          md="auto"
+          lg="5"
+          style={{ marginInlineStart: "auto" }}
+        >
           <Form.Group>
             <Paginator
               page={page}
@@ -183,13 +183,23 @@ export const DataTable = ({
       <Row>
         <Col>
           <div style={{ overflow: "auto" }}>
-            <Table responsive bordered hover size="sm" style={{ width: "1078px" }}>
+            <Table
+              responsive
+              bordered
+              hover
+              size="sm"
+              style={{ width: "1078px" }}
+            >
               <thead className="text-center thread-pea">
                 <tr>
                   {columns &&
                     columns.map((col, index) => {
                       return (
-                        <th key={`th-${index}`} className="align-middle" style={col.style}>
+                        <th
+                          key={`th-${index}`}
+                          className="align-middle"
+                          style={col.style}
+                        >
                           {col.text}
                         </th>
                       );
@@ -211,7 +221,7 @@ export const DataTable = ({
                                 key={`td-${colIndex}${dataIndex}`}
                                 className={`align-middle ${
                                   col.valign === "true" ? "text-center" : ""
-                                  }`}
+                                }`}
                               >
                                 {col.canSearch ? (
                                   <Highlight
@@ -221,11 +231,11 @@ export const DataTable = ({
                                     }}
                                     search={filterText || ""}
                                   >
-                                    {item[col.dataField]}
+                                    {item[col.dataField] || ""}
                                   </Highlight>
                                 ) : (
-                                    item[col.dataField]
-                                  )}
+                                  item[col.dataField] || ""
+                                )}
                               </td>
                             ); //////////////////List data
                           })}
@@ -247,21 +257,20 @@ export const DataTable = ({
                     );
                   })
                 ) : (
-                    <tr>
-                      <td
-                        className="text-center align-middle"
-                        colSpan={columns && columns.length + (tools ? 1 : 0)}
-                      >
-                        ไม่มีข้อมูล
-                </td>
-                    </tr>
-                  )}
+                  <tr>
+                    <td
+                      className="text-center align-middle"
+                      colSpan={columns && columns.length + (tools ? 1 : 0)}
+                    >
+                      ไม่มีข้อมูล
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </Table>
           </div>
         </Col>
       </Row>
-
 
       <Row>
         <Col />
@@ -276,9 +285,9 @@ export const DataTable = ({
           />
         </Col>
       </Row>
-    </div >
+    </div>
   );
-}
+};
 
 const ActionButtons = ({ tools, item, idKey, customValueKey }) => {
   return (

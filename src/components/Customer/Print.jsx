@@ -8,7 +8,7 @@ class CustomerPrintData extends Component {
   render() {
     const { customer, appearDate, signature, printDate } = this.props;
     if (!customer) return <div></div>;
-    const { peaId, name, address, authorize, soldierNo, war } = customer;
+    const { peaId, name, address, authorize, soldierNo, war, seq } = customer;
 
     return (
       <div className="page">
@@ -44,7 +44,7 @@ class CustomerPrintData extends Component {
             </p>
             <p className="">
               ลดสิทธิ์สงคราม:{"\u00A0\u00A0"}
-              <span>{war}</span>
+              <span>{`${war} ${seq}`}</span>
             </p>
             {/* <p className="">
               วันที่ได้รับสิทธิ์:{"\u00A0\u00A0"}
@@ -72,21 +72,21 @@ class CustomerPrintData extends Component {
                   />
                 </Fragment>
               ) : (
-                  <Fragment>
-                    <p>ลายมือชื่อ</p>
-                    <div
-                      style={{
-                        border: "1px solid #dedede",
-                        width: "300px",
-                        height: "100px",
-                        marginBottom: "1rem",
-                        display: "inline-block"
-                      }}
-                    ></div>
-                    <br />
-                    <p>( {name} )</p>
-                  </Fragment>
-                )}
+                <Fragment>
+                  <p>ลายมือชื่อ</p>
+                  <div
+                    style={{
+                      border: "1px solid #dedede",
+                      width: "300px",
+                      height: "100px",
+                      marginBottom: "1rem",
+                      display: "inline-block"
+                    }}
+                  ></div>
+                  <br />
+                  <p>( {name} )</p>
+                </Fragment>
+              )}
             </div>
           </div>
 
@@ -122,7 +122,9 @@ class CustomerPrintData extends Component {
 
 const SpaceUnderline = ({ n }) => {
   return (
-    <span style={{ textDecoration: "underline", whiteSpace: "pre", color: "grey" }}>
+    <span
+      style={{ textDecoration: "underline", whiteSpace: "pre", color: "grey" }}
+    >
       {"\u00A0".repeat(n || 40)}
     </span>
   );
