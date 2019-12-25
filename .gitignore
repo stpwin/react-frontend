@@ -22,4 +22,4 @@ yarn-error.log*
 *.cache
 *.log
 *.cache
-.firebase
+.firebase/
