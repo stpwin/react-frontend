@@ -24,7 +24,13 @@ const filters = [
 
 const columns = [
   { text: "#", dataField: "index", valign: "true", style: { width: "4%" } },
-  { text: "ลำดับ", dataField: "seq", valign: "true", style: { width: "4%" } },
+  {
+    text: "ลำดับ",
+    dataField: "seq",
+    valign: "true",
+    style: { width: "4%" },
+    canSearch: true
+  },
   {
     text: "ชื่อ-สกุล",
     dataField: "name",
@@ -318,7 +324,7 @@ class ListCustomer extends Component {
     return (
       <Fragment>
         <DataTable
-          filterPlaceholder="ค้นหาชื่อ หรือ รหัสผู้ใช้ไฟฟ้า(CA)"
+          filterPlaceholder="ค้นหาลำดับ/ชื่อ/รหัสผู้ใช้ไฟฟ้า(CA)"
           idKey="peaId"
           customValueKey="name"
           columns={columns}
