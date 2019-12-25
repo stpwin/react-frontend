@@ -65,7 +65,8 @@ class ListCustomer extends Component {
 
     wars: "",
     filterText: "",
-    filterSequence: 0,
+    // sequenceFilter: 0,
+    // sequenceWar: "",
     filterChecked: [true, true],
 
     confirmDelete: false,
@@ -130,28 +131,30 @@ class ListCustomer extends Component {
     }
 
     if (customers) {
+      let page = 1
+      let pages = 1
+      let start = 0
       if (customers.metadata) {
-        const page =
+        page =
           (customers.metadata && parseInt(customers.metadata.page)) || 1;
-        const pages =
+        pages =
           (customers.metadata && parseInt(customers.metadata.pages)) || 1;
-        const start = page > 1 ? (page - 1) * limit : 0;
-
-        const translated =
-          customers.customers &&
-          customers.customers.map((customer, index) => {
-            return {
-              index: index + start + 1,
-              ...translateCustomer(customer)
-            };
-          });
-
-        return this.setState({
-          page,
-          pages,
-          translated
-        });
+        start = page > 1 ? (page - 1) * limit : 0;
       }
+      const translated =
+        customers.customers &&
+        customers.customers.map((customer, index) => {
+          return {
+            index: index + start + 1,
+            ...translateCustomer(customer)
+          };
+        });
+
+      return this.setState({
+        page,
+        pages,
+        translated
+      });
     }
     this.setState({
       page: 1,
@@ -165,18 +168,31 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {
-    const { filterSequence, filterText, page, limit, wars } = this.state;
+    const { filterText, page, limit, wars } = this.state;
+
+    if (filterText.toLowerCase().startsWith("g") && filterText.length > 1) {
+
+      if (filterText.length > 3) {
+        const sequenceFilter = filterText.substring(3);
+        const sequenceWar = filterText.substring(1, 2);
+        return this.props.getCustomerBySequence(sequenceWar, sequenceFilter);
+      }
+
+      if (parseInt(filterText.substring(1))) {
+        return
+      }
+    }
     if (filterText) {
       return this.props.getFilterCustomer(
-        filterSequence || filterText,
+        filterText,
         page,
         limit,
         wars
@@ -248,17 +264,18 @@ class ListCustomer extends Component {
 
   handleFilterTextChange = e => {
     const filterText = e.target.value;
-    let filterSequence;
-    if (
-      (filterText.startsWith("g") || filterText.startsWith("G")) &&
-      filterText.length > 3
-    ) {
-      filterSequence = filterText.substring(3);
-    }
+    // let sequenceFilter = 0;
+    // let sequenceWar = "";
+    // if ((filterText.startsWith("g") || filterText.startsWith("G")) && filterText.length > 3) {
+    //   sequenceFilter = filterText.substring(3);
+    //   sequenceWar = filterText.substring(1, 2);
+    // }
+    // console.log({ sequenceFilter, sequenceWar })
     this.setState(
       {
         filterText,
-        filterSequence,
+        // sequenceFilter,
+        // sequenceWar,
         page: 1
         // pages: 1
       },
@@ -269,6 +286,7 @@ class ListCustomer extends Component {
   handleClearFilterText = () => {
     this.setState(
       {
+        sequenceFilter: 0,
         filterText: "",
         page: 1
         // pages: 1
@@ -391,6 +409,7 @@ const mapDispatchToProps = dispatch => {
       dispatch(customerActions.getAll(page, limit, war)),
     getFilterCustomer: (filter, page, limit, war) =>
       dispatch(customerActions.getFilter(filter, page, limit, war)),
+    getCustomerBySequence: (war, seq) => dispatch(customerActions.getBySequence(war, seq)),
     removeCustomer: peaId => dispatch(customerActions.remove(peaId))
   };
 };

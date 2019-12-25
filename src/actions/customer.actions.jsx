@@ -87,6 +87,27 @@ const getFilter = (filter, page, pages, war = "-") => {
   }
 };
 
+const getBySequence = (war, seq) => {
+  return dispatch => {
+    dispatch(request());
+
+    customerService.getBySequence(war, seq).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.GET_BY_SEQUENCE_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.GET_BY_SEQUENCE_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.GET_BY_SEQUENCE_FAILURE, error };
+  }
+};
+
 const update = customer => {
   return dispatch => {
     dispatch(request());
@@ -180,6 +201,7 @@ export const customerActions = {
   get,
   getAll,
   getFilter,
+  getBySequence,
   update,
   verify,
   remove,

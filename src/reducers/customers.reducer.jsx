@@ -24,6 +24,17 @@ export const customers = (state = {}, action) => {
         error: action.error
       };
 
+    case customerConstants.GET_BY_SEQUENCE_REQUEST:
+      return {
+        filterLoading: true
+      };
+    case customerConstants.GET_BY_SEQUENCE_SUCCESS:
+      return { customers: action.data };
+    case customerConstants.GET_BY_SEQUENCE_FAILURE:
+      return {
+        error: action.error
+      };
+
     case customerConstants.GET_ALL_REQUEST:
       return {
         loading: true
