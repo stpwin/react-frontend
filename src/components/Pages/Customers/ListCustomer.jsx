@@ -4,12 +4,15 @@ import { withRouter } from "react-router-dom";
 import { customerActions } from "../../../actions";
 import { translateCustomer } from "../../../helpers";
 
+import { Modal, Button } from "react-bootstrap";
+
 import {
   FaTrash,
   FaCheck,
   FaEdit,
   FaPrint,
-  FaExternalLinkAlt
+  FaExternalLinkAlt,
+  FaExclamationTriangle
 } from "react-icons/fa";
 import { ModalConfirm } from "../../Modals";
 import { DataTable } from "../../DataTable";
@@ -73,7 +76,9 @@ class ListCustomer extends Component {
     confirmDeleteText: "",
     confirmDeletePeaId: "",
 
-    translated: []
+    translated: [],
+    failModal: false,
+    failText: ""
   };
 
   tools = [
@@ -123,22 +128,32 @@ class ListCustomer extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { customers, filterLoading, loading } = nextProps;
+    const { customers, filterLoading, loading, error, status } = nextProps;
     const { limit } = this.state;
 
     if (filterLoading || loading) {
       return;
     }
 
+    if (status === "deleted") {
+      return;
+    }
+
+    if (error) {
+      // console.log(error);
+      return this.setState({
+        failText: error,
+        failModal: true
+      });
+    }
+
     if (customers) {
-      let page = 1
-      let pages = 1
-      let start = 0
+      let page = 1;
+      let pages = 1;
+      let start = 0;
       if (customers.metadata) {
-        page =
-          (customers.metadata && parseInt(customers.metadata.page)) || 1;
-        pages =
-          (customers.metadata && parseInt(customers.metadata.pages)) || 1;
+        page = (customers.metadata && parseInt(customers.metadata.page)) || 1;
+        pages = (customers.metadata && parseInt(customers.metadata.pages)) || 1;
         start = page > 1 ? (page - 1) * limit : 0;
       }
       const translated =
@@ -168,18 +183,17 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
     const { filterText, page, limit, wars } = this.state;
 
     if (filterText.toLowerCase().startsWith("g") && filterText.length > 1) {
-
       if (filterText.length > 3) {
         const sequenceFilter = filterText.substring(3);
         const sequenceWar = filterText.substring(1, 2);
@@ -187,16 +201,11 @@ class ListCustomer extends Component {
       }
 
       if (parseInt(filterText.substring(1))) {
-        return
+        return;
       }
     }
     if (filterText) {
-      return this.props.getFilterCustomer(
-        filterText,
-        page,
-        limit,
-        wars
-      );
+      return this.props.getFilterCustomer(filterText, page, limit, wars);
     }
     this.props.getAllCustomer(page, limit, wars);
   };
@@ -264,20 +273,10 @@ class ListCustomer extends Component {
 
   handleFilterTextChange = e => {
     const filterText = e.target.value;
-    // let sequenceFilter = 0;
-    // let sequenceWar = "";
-    // if ((filterText.startsWith("g") || filterText.startsWith("G")) && filterText.length > 3) {
-    //   sequenceFilter = filterText.substring(3);
-    //   sequenceWar = filterText.substring(1, 2);
-    // }
-    // console.log({ sequenceFilter, sequenceWar })
     this.setState(
       {
         filterText,
-        // sequenceFilter,
-        // sequenceWar,
         page: 1
-        // pages: 1
       },
       this.fetchNew
     );
@@ -289,7 +288,6 @@ class ListCustomer extends Component {
         sequenceFilter: 0,
         filterText: "",
         page: 1
-        // pages: 1
       },
       this.fetchNew
     );
@@ -339,6 +337,12 @@ class ListCustomer extends Component {
     this.props.history.push("/customers/add");
   };
 
+  handleCloseFailModal = () => {
+    this.setState({
+      failModal: false
+    });
+  };
+
   render() {
     const {
       pages,
@@ -349,11 +353,12 @@ class ListCustomer extends Component {
       filterText,
       confirmDelete,
       confirmDeleteText,
-      translated
+      translated,
+      failModal,
+      failText
     } = this.state;
 
     const { filterLoading } = this.props;
-
     return (
       <Fragment>
         <DataTable
@@ -387,6 +392,25 @@ class ListCustomer extends Component {
           status="delete"
           confirmtext={confirmDeleteText}
         />
+        <Modal show={failModal} onHide={this.handleCloseFailModal}>
+          <Modal.Header>
+            <Modal.Title className="text-danger">ล้มเหลว</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-center text-danger">
+              <FaExclamationTriangle size={48} />
+            </div>
+            <div className="text-center text-danger">{failText}</div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="outline-secondary"
+              onClick={this.handleCloseFailModal}
+            >
+              ปิด
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Fragment>
     );
   }
@@ -394,12 +418,14 @@ class ListCustomer extends Component {
 
 const mapStateToProps = state => {
   const {
-    customers: { customers, filterLoading, loading }
+    customers: { customers, filterLoading, loading, error, status }
   } = state;
   return {
     customers,
     filterLoading,
-    loading
+    loading,
+    error,
+    status
   };
 };
 
@@ -409,7 +435,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(customerActions.getAll(page, limit, war)),
     getFilterCustomer: (filter, page, limit, war) =>
       dispatch(customerActions.getFilter(filter, page, limit, war)),
-    getCustomerBySequence: (war, seq) => dispatch(customerActions.getBySequence(war, seq)),
+    getCustomerBySequence: (war, seq) =>
+      dispatch(customerActions.getBySequence(war, seq)),
     removeCustomer: peaId => dispatch(customerActions.remove(peaId))
   };
 };
