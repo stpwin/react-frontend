@@ -9,7 +9,8 @@ import {
   FaCheck,
   FaEdit,
   FaPrint,
-  FaExternalLinkAlt
+  FaInfoCircle,
+  FaGrimace
 } from "react-icons/fa";
 import { ModalConfirm } from "../../Modals";
 import { DataTable } from "../../DataTable";
@@ -79,10 +80,23 @@ class ListCustomer extends Component {
       onclick: peaId => this.onPrintClick(peaId)
     },
     {
-      overlaytext: "ยืนยันสิทธิ์",
-      icon: <FaCheck />,
+      overlaytext: "แสดงข้อมูล",
+      icon: <FaInfoCircle />,
+      onclick: peaId => this.onViewClick(peaId),
+      key: "view"
+    },
+    {
+      overlaytext: "แสดงตน",
+      icon: <FaGrimace />,
       key: "verify",
       onclick: peaId => this.onVerifyClick(peaId)
+    },
+    {
+      variable: "currentYearApproved",
+      overlaytext: "อนุมัติ",
+      icon: <FaCheck />,
+      key: "approve",
+      onclick: peaId => this.onApproveClick(peaId)
     },
     {
       overlaytext: "แก้ไข",
@@ -90,12 +104,7 @@ class ListCustomer extends Component {
       onclick: peaId => this.onEditClick(peaId),
       key: "edit"
     },
-    {
-      overlaytext: "แสดงข้อมูล",
-      icon: <FaExternalLinkAlt />,
-      onclick: peaId => this.onViewClick(peaId),
-      key: "view"
-    },
+
     {
       overlaytext: "ลบ",
       icon: <FaTrash />,
@@ -165,11 +174,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {
@@ -318,6 +327,10 @@ class ListCustomer extends Component {
   handleAddCustomer = () => {
     this.props.history.push("/customers/add");
   };
+
+  onApproveClick = peaId => {
+
+  }
 
   render() {
     const {

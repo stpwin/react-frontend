@@ -180,6 +180,57 @@ const remove = peaId => {
     .catch(handleFetchError);
 };
 
+const approve = (peaId, verifyId, approvedDate = new Date()) => {
+  if (!peaId || !verifyId) {
+    return Promise.resolve(null);
+  }
+
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Accept": "application/json", "Content-Type": "application/json", ...authHeader() },
+    body: JSON.stringify({
+      approvedDate
+    })
+  };
+  return fetch(`${config.apiUrl}/api/customers/approve/${peaId}/${verifyId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
+
+}
+
+const revokeApprove = (peaId, verifyId) => {
+  if (!peaId || !verifyId) {
+    return Promise.resolve(null);
+  }
+
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Accept": "application/json", "Content-Type": "application/json", ...authHeader() },
+  };
+  return fetch(`${config.apiUrl}/api/customers/revoke_approve/${peaId}/${verifyId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
+
+}
+
+const setVerify = (peaId, verifyId, state) => {
+  if (!peaId || !verifyId) {
+    return Promise.resolve(null);
+  }
+
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Accept": "application/json", "Content-Type": "application/json", ...authHeader() },
+    body: JSON.stringify({
+      state
+    })
+  };
+  return fetch(`${config.apiUrl}/api/customers/set_verify/${peaId}/${verifyId}`, requestOptions)
+    .then(handleResponse)
+    .catch(handleFetchError);
+
+}
+
 const getSignature = (peaId, sigId) => {
   if (!peaId || !sigId) {
     return Promise.resolve(null);
@@ -222,5 +273,8 @@ export const customerService = {
   update,
   verify,
   remove,
-  getSignature
+  getSignature,
+  approve,
+  revokeApprove,
+  setVerify
 };

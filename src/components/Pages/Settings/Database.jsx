@@ -151,7 +151,10 @@ class Database extends Component {
                       </Table>
                     </Tab.Pane>
                     <Tab.Pane eventKey="second">
-                      <div></div>
+                      <div className="text-center">สำรองข้อมูล ยังไม่พร้อมใช้งาน</div>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="third">
+                      <div className="text-center">ลบข้อมูล ยังไม่พร้อมใช้งาน</div>
                     </Tab.Pane>
                   </Tab.Content>
                 </Col>

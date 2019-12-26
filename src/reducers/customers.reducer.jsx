@@ -101,6 +101,39 @@ export const customers = (state = {}, action) => {
         error: action.error
       };
 
+    case customerConstants.APPROVE_REQUEST:
+      return {
+        loading: true
+      };
+    case customerConstants.APPROVE_SUCCESS:
+      return { approve: action.data };
+    case customerConstants.APPROVE_FAILURE:
+      return {
+        error: action.error
+      };
+
+    case customerConstants.REVOKE_APPROVE_REQUEST:
+      return {
+        loading: true
+      };
+    case customerConstants.REVOKE_APPROVE_SUCCESS:
+      return { approve: action.data };
+    case customerConstants.REVOKE_APPROVE_FAILURE:
+      return {
+        error: action.error
+      };
+
+    case customerConstants.SET_VERIFY_REQUEST:
+      return {
+        loading: true
+      };
+    case customerConstants.SET_VERIFY_SUCCESS:
+      return { verify: action.data };
+    case customerConstants.SET_VERIFY_FAILURE:
+      return {
+        error: action.error
+      };
+
     default:
       return state;
   }
