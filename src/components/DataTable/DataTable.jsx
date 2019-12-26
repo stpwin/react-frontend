@@ -35,7 +35,6 @@ export const DataTable = ({
   filterChecked,
   tools,
   idKey,
-  customValueKey,
   topButtons,
   filterLoading,
   onFilterTextChange,
@@ -53,17 +52,17 @@ export const DataTable = ({
           <div className="top-button">
             {topButtons && topButtons.length > 0
               ? topButtons.map((item, index) => {
-                  return (
-                    <Button
-                      key={`button-${item.key}`}
-                      variant="outline"
-                      className="pea-color"
-                      onClick={() => item.onClick()}
-                    >
-                      {item.text}
-                    </Button>
-                  );
-                })
+                return (
+                  <Button
+                    key={`button-${item.key}`}
+                    variant="outline"
+                    className="pea-color"
+                    onClick={() => item.onClick()}
+                  >
+                    {item.text}
+                  </Button>
+                );
+              })
               : null}
           </div>
         </Col>
@@ -128,13 +127,13 @@ export const DataTable = ({
                       {/* <span className="sr-only">Loading...</span> */}
                     </Button>
                   ) : (
-                    <Button
-                      variant="outline-secondary"
-                      onClick={onClearFilterText}
-                    >
-                      <FaTimes />
-                    </Button>
-                  )}
+                      <Button
+                        variant="outline-secondary"
+                        onClick={onClearFilterText}
+                      >
+                        <FaTimes />
+                      </Button>
+                    )}
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
@@ -221,8 +220,9 @@ export const DataTable = ({
                                 key={`td-${colIndex}${dataIndex}`}
                                 className={`align-middle ${
                                   col.valign === "true" ? "text-center" : ""
-                                }`}
+                                  } ${col.variable ? (item[col.variable] ? "approved" : "") : ""}`}
                               >
+
                                 {col.canSearch ? (
                                   <Highlight
                                     matchStyle={{
@@ -234,8 +234,8 @@ export const DataTable = ({
                                     {item[col.dataField] || ""}
                                   </Highlight>
                                 ) : (
-                                  item[col.dataField] || ""
-                                )}
+                                    item[col.dataField] || ""
+                                  )}
                               </td>
                             ); //////////////////List data
                           })}
@@ -244,12 +244,12 @@ export const DataTable = ({
                             key={`td-toolsbar`}
                             className="align-middle text-center td-tools-button"
                           >
+
                             <ActionButtons
-                              // key={`action-buttons-${item.key}-${dataIndex}`}
+
                               tools={tools}
                               item={item}
                               idKey={idKey}
-                              customValueKey={customValueKey}
                             />
                           </td>
                         ) : null}
@@ -257,15 +257,15 @@ export const DataTable = ({
                     );
                   })
                 ) : (
-                  <tr>
-                    <td
-                      className="text-center align-middle"
-                      colSpan={columns && columns.length + (tools ? 1 : 0)}
-                    >
-                      ไม่มีข้อมูล
+                    <tr>
+                      <td
+                        className="text-center align-middle"
+                        colSpan={columns && columns.length + (tools ? 1 : 0)}
+                      >
+                        ไม่มีข้อมูล
                     </td>
-                  </tr>
-                )}
+                    </tr>
+                  )}
               </tbody>
             </Table>
           </div>
@@ -289,7 +289,7 @@ export const DataTable = ({
   );
 };
 
-const ActionButtons = ({ tools, item, idKey, customValueKey }) => {
+const ActionButtons = ({ tools, item, idKey }) => {
   return (
     <ButtonToolbar aria-label="Toolbar with button groups">
       {tools.map((data, index) => {
@@ -308,14 +308,29 @@ const ActionButtons = ({ tools, item, idKey, customValueKey }) => {
               >
                 {tools.map((data1, index1) => {
                   if (index1 > 1) {
+                    if (data1.toggle && item[data1.toggleVar]) {
+                      return (
+                        <Dropdown.Item
+                          key={`dropdown-item-${data1.key}-${index1}`}
+                          className="pea-color"
+                          onClick={() =>
+                            data1.variable
+                              ? data1.onclickSecond(item[idKey], item[data1.variable])
+                              : data1.onclickSecond(item[idKey])
+                          }
+                        >
+                          {data1.iconSecond}
+                          <span className="ml-2">{data1.overlaytextSecond}</span>
+                        </Dropdown.Item>
+                      );
+                    }
                     return (
                       <Dropdown.Item
                         key={`dropdown-item-${data1.key}-${index1}`}
-                        eventKey="1"
                         className="pea-color"
                         onClick={() =>
-                          data1.customValue
-                            ? data1.onclick(item[idKey], item[customValueKey])
+                          data1.variable
+                            ? data1.onclick(item[idKey], item[data1.variable])
                             : data1.onclick(item[idKey])
                         }
                       >
@@ -331,6 +346,34 @@ const ActionButtons = ({ tools, item, idKey, customValueKey }) => {
           }
           return null;
         }
+
+        if (data.toggle && item[data.toggleVar]) {
+          return (
+            <OverlayTrigger
+              key={`overlay-button-${data.key}-${index}`}
+              placement={"top"}
+              overlay={
+                <Tooltip id={`tooltip-${data.key}-${index}`}>
+                  {data.overlaytextSecond}
+                </Tooltip>
+              }
+            >
+              <Button
+                key={`dropdown-item-${data.key}-${index}`}
+                eventKey={`dropdown-item-${data.key}-${index}`}
+                className="pea-color"
+                onClick={() =>
+                  data.variable
+                    ? data.onclickSecond(item[idKey], item[data.variable])
+                    : data.onclickSecond(item[idKey])
+                }
+              >
+                {data.iconSecond}
+              </Button>
+            </OverlayTrigger>
+          );
+        }
+
         return (
           <OverlayTrigger
             key={`overlay-button-${data.key}-${index}`}
@@ -347,8 +390,8 @@ const ActionButtons = ({ tools, item, idKey, customValueKey }) => {
               size={"sm"}
               className={"pea-color"}
               onClick={() =>
-                data.customValue
-                  ? data.onclick(item[idKey], item[customValueKey])
+                data.variable
+                  ? data.onclick(item[idKey], item[data.variable])
                   : data.onclick(item[idKey])
               }
             >

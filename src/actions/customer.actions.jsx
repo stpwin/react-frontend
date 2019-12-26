@@ -108,11 +108,11 @@ const getBySequence = (war, seq) => {
   }
 };
 
-const update = customer => {
+const update = (peaId, customer) => {
   return dispatch => {
     dispatch(request());
 
-    customerService.update(customer).then(
+    customerService.update(peaId, customer).then(
       data => dispatch(success(data)),
       error => dispatch(failure(error))
     );
@@ -196,6 +196,78 @@ const getSignature = (peaId, sigId) => {
   }
 };
 
+const approve = (peaId, verifyId, approvedDate = new Date()) => {
+  return dispatch => {
+    if (!peaId || !verifyId) {
+      return dispatch(success(null))
+    }
+    dispatch(request());
+
+    customerService.approve(peaId, verifyId, approvedDate).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.APPROVE_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.APPROVE_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.APPROVE_FAILURE, error };
+  }
+};
+
+const revokeApprove = (peaId, verifyId) => {
+  return dispatch => {
+    if (!peaId || !verifyId) {
+      return dispatch(success(null))
+    }
+    dispatch(request());
+
+    customerService.revokeApprove(peaId, verifyId).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.REVOKE_APPROVE_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.REVOKE_APPROVE_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.REVOKE_APPROVE_FAILURE, error };
+  }
+};
+
+const setVerify = (peaId, verifyId, state) => {
+  return dispatch => {
+    if (!peaId || !verifyId || !state) {
+      return dispatch(success(null))
+    }
+    dispatch(request());
+
+    customerService.setVerify(peaId, verifyId, state).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.SET_VERIFY_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.SET_VERIFY_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.SET_VERIFY_FAILURE, error };
+  }
+};
+
 export const customerActions = {
   create,
   get,
@@ -205,5 +277,8 @@ export const customerActions = {
   update,
   verify,
   remove,
-  getSignature
+  getSignature,
+  approve,
+  revokeApprove,
+  setVerify
 };

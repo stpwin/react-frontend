@@ -12,7 +12,8 @@ import {
   Card,
   Accordion,
   Image,
-  ListGroup
+  ListGroup,
+  Badge
 } from "react-bootstrap";
 
 const basicDataRow = [
@@ -120,10 +121,10 @@ class ViewCustomer extends Component {
                     basicDataRow.map(item => {
                       return (
                         <ListGroup.Item key={item.key} >
-                          <span className="text-dark">{item.title}</span>
-                          <span className="ml-2">{`${
+                          <span className="text-dark">{item.title}:</span>
+                          <b className="ml-2">{`${
                             translated[item.field]
-                            }`}</span>
+                            }`}</b>
                         </ListGroup.Item>
                       );
                     })}
@@ -164,7 +165,7 @@ class ViewCustomer extends Component {
   }
 }
 
-const VerifyData = ({ appearDate, signatureUrl, index }) => {
+const VerifyData = ({ appearDate, signatureUrl, index, approvedDate }) => {
   return (
     <Card>
       <Card.Header as="h5">
@@ -173,6 +174,12 @@ const VerifyData = ({ appearDate, signatureUrl, index }) => {
             <span className="mr-1">วันที่แสดงตน:</span>
             <span>
               {toLocalDate(appearDate)}
+            </span>
+            <span className="ml-3">
+              {approvedDate ?
+                (<Badge variant="success">{`อนุมัติเมื่อ ${toLocalDate(approvedDate)}`}</Badge>)
+                : (<Badge variant="danger">ยังไม่อนุมัติ</Badge>)
+              }
             </span>
           </div>
         </Accordion.Toggle>
