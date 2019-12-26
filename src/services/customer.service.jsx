@@ -101,7 +101,7 @@ const getBySequence = (war, seq) => {
     .catch(handleFetchError);
 };
 
-const update = ({
+const update = (peaIdRef, {
   peaId,
   title,
   firstName,
@@ -113,7 +113,7 @@ const update = ({
   mooNo,
   districtNo
 }) => {
-  if (!peaId) {
+  if (!peaId || !peaIdRef) {
     return Promise.reject("peaId required");
   }
   const requestOptions = {
@@ -121,6 +121,7 @@ const update = ({
     headers: { "Content-Type": "application/json", ...authHeader() },
     body: JSON.stringify({
       customer: {
+        peaId,
         title,
         firstName,
         lastName,
@@ -136,7 +137,7 @@ const update = ({
     })
   };
 
-  return fetch(`${config.apiUrl}/api/customers/${peaId}`, requestOptions)
+  return fetch(`${config.apiUrl}/api/customers/${peaIdRef}`, requestOptions)
     .then(handleResponse)
     .catch(handleFetchError);
 };

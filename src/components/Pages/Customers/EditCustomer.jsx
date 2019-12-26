@@ -71,7 +71,7 @@ class EditCustomer extends Component {
 
   handleUpdateCustomer = event => {
     event.preventDefault();
-    this.props.updateCustomer(this.state.customer);
+    this.props.updateCustomer(this.props.peaId, this.state.customer);
   };
 
   render() {
@@ -81,7 +81,7 @@ class EditCustomer extends Component {
     return (
       <Form onSubmit={this.handleUpdateCustomer}>
         <CustomerDataForm
-          peaIdReadOnly={true}
+          // peaIdReadOnly={true}
           customer={customer}
           showPlaceholder={true}
           onChange={this.handleDataChange}
@@ -100,7 +100,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     getCustomer: peaId => dispatch(customerActions.get(peaId)),
-    updateCustomer: customer => dispatch(customerActions.update(customer))
+    updateCustomer: (peaId, customer) => dispatch(customerActions.update(peaId, customer))
   };
 };
 

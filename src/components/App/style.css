@@ -281,3 +281,8 @@ a:hover {
   background-color: #f7f7f7;
   border-radius: 0.2rem;
 }
+
+.approved {
+  background-color: #247ab8;
+  color: white;
+}

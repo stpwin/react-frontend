@@ -108,11 +108,11 @@ const getBySequence = (war, seq) => {
   }
 };
 
-const update = customer => {
+const update = (peaId, customer) => {
   return dispatch => {
     dispatch(request());
 
-    customerService.update(customer).then(
+    customerService.update(peaId, customer).then(
       data => dispatch(success(data)),
       error => dispatch(failure(error))
     );
