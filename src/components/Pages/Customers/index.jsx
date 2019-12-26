@@ -15,39 +15,44 @@ import ViewCustomer from "./ViewCustomer";
 
 class Customers extends Component {
   state = {
-    statusOpen: true,
+    statusOpen: false,
     failText: ""
   };
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { loading, error } = nextProps;
 
-    this.setState({
-      statusOpen: loading || error ? true : false
-    });
-  }
-
-  componentDidMount() {
-    const { loading, error } = this.props;
-
-    this.setState({
-      statusOpen: loading || error ? true : false
-    });
+    if (loading) {
+      this.setState({
+        statusOpen: true,
+        failText: ""
+      });
+    } else if (error) {
+      this.setState({
+        statusOpen: true,
+        failText: error
+      });
+    } else {
+      this.setState({
+        statusOpen: false,
+        failText: ""
+      });
+    }
   }
 
   handleStatusHide = () => {
     this.setState({
-      statusOpen: false
+      statusOpen: false,
+      failText: ""
     });
   };
+
   render() {
-    const { statusOpen } = this.state;
+    const { statusOpen, failText } = this.state;
     const {
       match: {
         params: { method, peaId }
-      },
-      loading,
-      error
+      }
     } = this.props;
     return (
       <Container>
@@ -63,8 +68,8 @@ class Customers extends Component {
               <ViewCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-              <NoPeaID />
-            )
+            <NoPeaID />
+          )
         ) : method === "edit" ? (
           peaId ? (
             <Fragment>
@@ -72,8 +77,8 @@ class Customers extends Component {
               <EditCustomer peaId={peaId} />
             </Fragment>
           ) : (
-              <NoPeaID />
-            )
+            <NoPeaID />
+          )
         ) : method === "verify" ? (
           peaId ? (
             <Fragment>
@@ -81,8 +86,8 @@ class Customers extends Component {
               <VerifyCustomer peaId={peaId} />
             </Fragment>
           ) : (
-              <NoPeaID />
-            )
+            <NoPeaID />
+          )
         ) : method === "print" ? (
           peaId ? (
             <Fragment>
@@ -90,18 +95,18 @@ class Customers extends Component {
               <PrintCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-              <NoPeaID />
-            )
-        ) :
-                  <Fragment>
-                    <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
-                    <ListCustomer />
-                  </Fragment>
-        }
+            <NoPeaID />
+          )
+        ) : (
+          <Fragment>
+            <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
+            <ListCustomer />
+          </Fragment>
+        )}
         <ModalStatus
           show={statusOpen}
-          status={loading ? "loading" : error ? "error" : null}
-          failText={error}
+          status={failText ? "error" : "loading"}
+          failText={failText}
           onHide={this.handleStatusHide}
         />
       </Container>

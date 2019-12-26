@@ -4,15 +4,12 @@ import { withRouter } from "react-router-dom";
 import { customerActions } from "../../../actions";
 import { translateCustomer } from "../../../helpers";
 
-import { Modal, Button } from "react-bootstrap";
-
 import {
   FaTrash,
   FaCheck,
   FaEdit,
   FaPrint,
-  FaExternalLinkAlt,
-  FaExclamationTriangle
+  FaExternalLinkAlt
 } from "react-icons/fa";
 import { ModalConfirm } from "../../Modals";
 import { DataTable } from "../../DataTable";
@@ -65,20 +62,13 @@ class ListCustomer extends Component {
     pages: 0,
     limit: 10,
     perPages: [10, 20, 50, 100],
-
     wars: "",
     filterText: "",
-    // sequenceFilter: 0,
-    // sequenceWar: "",
     filterChecked: [true, true],
-
     confirmDelete: false,
     confirmDeleteText: "",
     confirmDeletePeaId: "",
-
-    translated: [],
-    failModal: false,
-    failText: ""
+    translated: []
   };
 
   tools = [
@@ -131,20 +121,12 @@ class ListCustomer extends Component {
     const { customers, filterLoading, loading, error, status } = nextProps;
     const { limit } = this.state;
 
-    if (filterLoading || loading) {
+    if (filterLoading || loading || error) {
       return;
     }
 
     if (status === "deleted") {
-      return;
-    }
-
-    if (error) {
-      // console.log(error);
-      return this.setState({
-        failText: error,
-        failModal: true
-      });
+      return this.fetchNew();
     }
 
     if (customers) {
@@ -330,17 +312,11 @@ class ListCustomer extends Component {
       confirmDelete: false
     });
     this.props.removeCustomer(this.state.confirmDeletePeaId);
-    this.fetchNew();
+    // this.fetchNew();
   };
 
   handleAddCustomer = () => {
     this.props.history.push("/customers/add");
-  };
-
-  handleCloseFailModal = () => {
-    this.setState({
-      failModal: false
-    });
   };
 
   render() {
@@ -353,9 +329,7 @@ class ListCustomer extends Component {
       filterText,
       confirmDelete,
       confirmDeleteText,
-      translated,
-      failModal,
-      failText
+      translated
     } = this.state;
 
     const { filterLoading } = this.props;
@@ -392,25 +366,6 @@ class ListCustomer extends Component {
           status="delete"
           confirmtext={confirmDeleteText}
         />
-        <Modal show={failModal} onHide={this.handleCloseFailModal}>
-          <Modal.Header>
-            <Modal.Title className="text-danger">ล้มเหลว</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="text-center text-danger">
-              <FaExclamationTriangle size={48} />
-            </div>
-            <div className="text-center text-danger">{failText}</div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="outline-secondary"
-              onClick={this.handleCloseFailModal}
-            >
-              ปิด
-            </Button>
-          </Modal.Footer>
-        </Modal>
       </Fragment>
     );
   }
