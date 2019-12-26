@@ -1,17 +1,14 @@
 export function getPostcodeFromDistrictNo(districtNo) {
   if (
-    districtNo === "520102" ||
-    districtNo === "520104" ||
-    districtNo === "520106" ||
-    districtNo === "520108" ||
-    districtNo === "520113" ||
-    districtNo === "520114" ||
-    districtNo === "520115" ||
-    districtNo === "520116"
+    districtNo === "520103" || //สวนดอก
+    districtNo === "520104" || //สบตุ๋ย
+    districtNo === "520106" || //ชมพู
+    districtNo === "520108" || //ปงแสนทอง
+    districtNo === "520113" || //บ้านเอื้อม
+    districtNo === "520114" || //บ้านเป้า
+    districtNo === "520115" //บ้านค่า
   ) {
     return 52100;
-  } else if (districtNo === "520105") {
-    return 52220;
   }
   return 52000;
 }
@@ -64,7 +61,9 @@ export function getDistrictName(districtNo) {
 export function getAddressStringByDistrictNo(districtNo, short = true) {
   return `${short ? "ต." : "ตำบล"}${getDistrictName(districtNo)} ${
     short ? "อ." : "อำเภอ"
-    }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${getPostcodeFromDistrictNo(districtNo)}`;
+  }เมือง ${short ? "จ." : "จังหวัด"}ลำปาง ${getPostcodeFromDistrictNo(
+    districtNo
+  )}`;
 }
 
 export function addressToString(addr, short = true) {

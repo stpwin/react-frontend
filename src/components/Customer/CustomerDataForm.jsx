@@ -21,7 +21,6 @@ export const CustomerDataForm = ({
     war
   }
 }) => {
-  console.log(peaIdInvalid);
   return (
     <React.Fragment>
       <Form.Group as={Row}>

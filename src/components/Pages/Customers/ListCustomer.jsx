@@ -62,17 +62,12 @@ class ListCustomer extends Component {
     pages: 0,
     limit: 10,
     perPages: [10, 20, 50, 100],
-
     wars: "",
     filterText: "",
-    // sequenceFilter: 0,
-    // sequenceWar: "",
     filterChecked: [true, true],
-
     confirmDelete: false,
     confirmDeleteText: "",
     confirmDeletePeaId: "",
-
     translated: []
   };
 
@@ -123,22 +118,24 @@ class ListCustomer extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { customers, filterLoading, loading } = nextProps;
+    const { customers, filterLoading, loading, error, status } = nextProps;
     const { limit } = this.state;
 
-    if (filterLoading || loading) {
+    if (filterLoading || loading || error) {
       return;
     }
 
+    if (status === "deleted") {
+      return this.fetchNew();
+    }
+
     if (customers) {
-      let page = 1
-      let pages = 1
-      let start = 0
+      let page = 1;
+      let pages = 1;
+      let start = 0;
       if (customers.metadata) {
-        page =
-          (customers.metadata && parseInt(customers.metadata.page)) || 1;
-        pages =
-          (customers.metadata && parseInt(customers.metadata.pages)) || 1;
+        page = (customers.metadata && parseInt(customers.metadata.page)) || 1;
+        pages = (customers.metadata && parseInt(customers.metadata.pages)) || 1;
         start = page > 1 ? (page - 1) * limit : 0;
       }
       const translated =
@@ -168,18 +165,17 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
     const { filterText, page, limit, wars } = this.state;
 
     if (filterText.toLowerCase().startsWith("g") && filterText.length > 1) {
-
       if (filterText.length > 3) {
         const sequenceFilter = filterText.substring(3);
         const sequenceWar = filterText.substring(1, 2);
@@ -187,16 +183,11 @@ class ListCustomer extends Component {
       }
 
       if (parseInt(filterText.substring(1))) {
-        return
+        return;
       }
     }
     if (filterText) {
-      return this.props.getFilterCustomer(
-        filterText,
-        page,
-        limit,
-        wars
-      );
+      return this.props.getFilterCustomer(filterText, page, limit, wars);
     }
     this.props.getAllCustomer(page, limit, wars);
   };
@@ -264,20 +255,10 @@ class ListCustomer extends Component {
 
   handleFilterTextChange = e => {
     const filterText = e.target.value;
-    // let sequenceFilter = 0;
-    // let sequenceWar = "";
-    // if ((filterText.startsWith("g") || filterText.startsWith("G")) && filterText.length > 3) {
-    //   sequenceFilter = filterText.substring(3);
-    //   sequenceWar = filterText.substring(1, 2);
-    // }
-    // console.log({ sequenceFilter, sequenceWar })
     this.setState(
       {
         filterText,
-        // sequenceFilter,
-        // sequenceWar,
         page: 1
-        // pages: 1
       },
       this.fetchNew
     );
@@ -289,7 +270,6 @@ class ListCustomer extends Component {
         sequenceFilter: 0,
         filterText: "",
         page: 1
-        // pages: 1
       },
       this.fetchNew
     );
@@ -332,7 +312,7 @@ class ListCustomer extends Component {
       confirmDelete: false
     });
     this.props.removeCustomer(this.state.confirmDeletePeaId);
-    this.fetchNew();
+    // this.fetchNew();
   };
 
   handleAddCustomer = () => {
@@ -353,7 +333,6 @@ class ListCustomer extends Component {
     } = this.state;
 
     const { filterLoading } = this.props;
-
     return (
       <Fragment>
         <DataTable
@@ -394,12 +373,14 @@ class ListCustomer extends Component {
 
 const mapStateToProps = state => {
   const {
-    customers: { customers, filterLoading, loading }
+    customers: { customers, filterLoading, loading, error, status }
   } = state;
   return {
     customers,
     filterLoading,
-    loading
+    loading,
+    error,
+    status
   };
 };
 
@@ -409,7 +390,8 @@ const mapDispatchToProps = dispatch => {
       dispatch(customerActions.getAll(page, limit, war)),
     getFilterCustomer: (filter, page, limit, war) =>
       dispatch(customerActions.getFilter(filter, page, limit, war)),
-    getCustomerBySequence: (war, seq) => dispatch(customerActions.getBySequence(war, seq)),
+    getCustomerBySequence: (war, seq) =>
+      dispatch(customerActions.getBySequence(war, seq)),
     removeCustomer: peaId => dispatch(customerActions.remove(peaId))
   };
 };
