@@ -56,7 +56,12 @@ const columns = [
   },
   // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
   { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
-  { text: "วันที่มาแสดงตน", dataField: "appearDate", valign: "true" }
+  {
+    text: "วันที่มาแสดงตน",
+    dataField: "appearDate",
+    valign: "true",
+    variable: "currentYearAppear"
+  }
 ];
 
 class ListCustomer extends Component {
@@ -102,7 +107,8 @@ class ListCustomer extends Component {
       iconSecond: <FaTimes />,
       key: "approve",
       onclick: (peaId, verifyId) => this.onApproveClick(peaId, verifyId),
-      onclickSecond: (peaId, verifyId) => this.onRevokeApproveClick(peaId, verifyId),
+      onclickSecond: (peaId, verifyId) =>
+        this.onRevokeApproveClick(peaId, verifyId),
       toggle: true
     },
     {
@@ -117,7 +123,7 @@ class ListCustomer extends Component {
       overlaytext: "ลบ",
       icon: <FaTrash />,
       onclick: (peaId, customerName) => this.onDeleteClick(peaId, customerName),
-      key: "delete",
+      key: "delete"
       // customValue: true
     }
   ];
@@ -135,7 +141,14 @@ class ListCustomer extends Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
-    const { customers, filterLoading, loading, error, status, approve } = nextProps;
+    const {
+      customers,
+      filterLoading,
+      loading,
+      error,
+      status,
+      approve
+    } = nextProps;
     const { limit } = this.state;
 
     if (filterLoading || loading || error) {
@@ -147,15 +160,18 @@ class ListCustomer extends Component {
     }
 
     if (approve) {
-      let { translated } = this.state
-      const cusIndex = translated.findIndex(item => item.peaId === approve.approve.peaId)
+      let { translated } = this.state;
+      const cusIndex = translated.findIndex(
+        item => item.peaId === approve.approve.peaId
+      );
       if (cusIndex > -1) {
-        translated[cusIndex].currentYearApproved = (approve.status === "approved")
+        translated[cusIndex].currentYearApproved =
+          approve.status === "approved";
         this.setState({
           translated
-        })
+        });
       }
-      return
+      return;
     }
 
     if (customers) {
@@ -181,12 +197,13 @@ class ListCustomer extends Component {
         pages,
         translated
       });
+    } else {
+      this.setState({
+        page: 1,
+        pages: 1,
+        translated: []
+      });
     }
-    // this.setState({
-    //   page: 1,
-    //   pages: 1,
-    //   translated: []
-    // });
   }
 
   getWarFilter = () => {
@@ -194,11 +211,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
@@ -350,13 +367,13 @@ class ListCustomer extends Component {
 
   onApproveClick = (peaId, verifyId) => {
     // console.log({ peaId, verifyId })
-    this.props.approveCustomer(peaId, verifyId)
-  }
+    this.props.approveCustomer(peaId, verifyId);
+  };
 
   onRevokeApproveClick = (peaId, verifyId) => {
     // console.log({ peaId, verifyId })
-    this.props.revokeApproveCustomer(peaId, verifyId)
-  }
+    this.props.revokeApproveCustomer(peaId, verifyId);
+  };
 
   render() {
     const {
@@ -432,8 +449,10 @@ const mapDispatchToProps = dispatch => {
     getCustomerBySequence: (war, seq) =>
       dispatch(customerActions.getBySequence(war, seq)),
     removeCustomer: peaId => dispatch(customerActions.remove(peaId)),
-    approveCustomer: (peaId, verifyId) => dispatch(customerActions.approve(peaId, verifyId)),
-    revokeApproveCustomer: (peaId, verifyId) => dispatch(customerActions.revokeApprove(peaId, verifyId)),
+    approveCustomer: (peaId, verifyId) =>
+      dispatch(customerActions.approve(peaId, verifyId)),
+    revokeApproveCustomer: (peaId, verifyId) =>
+      dispatch(customerActions.revokeApprove(peaId, verifyId))
   };
 };
 

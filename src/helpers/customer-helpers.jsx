@@ -42,8 +42,16 @@ const getLastVerify = ({ verifies }) => {
     return {
       appearDate: lastVerify.appearDate && toLocalDate(lastVerify.appearDate),
       lastVerifyId: lastVerify._id,
-      lastApprovedDate: lastVerify.approvedDate && toLocalDate(lastVerify.approvedDate),
-      currentYearApproved: lastVerify.approvedDate ? new Date(lastVerify.approvedDate).getFullYear() === new Date().getFullYear() : false
+      lastApprovedDate:
+        lastVerify.approvedDate && toLocalDate(lastVerify.approvedDate),
+      currentYearAppear: lastVerify.appearDate
+        ? new Date(lastVerify.appearDate).getFullYear() ===
+          new Date().getFullYear()
+        : false,
+      currentYearApproved: lastVerify.approvedDate
+        ? new Date(lastVerify.approvedDate).getFullYear() ===
+          new Date().getFullYear()
+        : false
     };
   }
 };
