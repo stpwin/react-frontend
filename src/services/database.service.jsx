@@ -12,7 +12,6 @@ const getAllCounter = () => {
     .catch(handleFetchError);
 };
 
-
 const setCounter = (name, sequence) => {
   const requestOption = {
     method: "PATCH",
@@ -28,8 +27,19 @@ const setCounter = (name, sequence) => {
     .catch(handleFetchError);
 };
 
+const getInfo = () => {
+  const requestOption = {
+    method: "GET",
+    headers: authHeader()
+  };
+
+  return fetch(`${config.apiUrl}/api/settings/database/info`, requestOption)
+    .then(handleResponse)
+    .catch(handleFetchError);
+};
 
 export const databaseService = {
   getAllCounter,
-  setCounter
+  setCounter,
+  getInfo
 };
