@@ -29,7 +29,7 @@ class PrintCustomer extends Component {
   printRef = null;
   toPrintRef = null;
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.props.getCustomer(this.props.peaId);
   }
 
@@ -86,6 +86,15 @@ class PrintCustomer extends Component {
     );
   };
 
+  handleGoBack = () => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    if (state && state.from) {
+      return history.replace(state.from, { from: pathname, filter: state.filter })
+    }
+    history.goBack()
+  }
+
   render() {
     const {
       translated,
@@ -134,7 +143,7 @@ class PrintCustomer extends Component {
               <Button
                 variant="outline-secondary"
                 className="pea-color"
-                onClick={() => this.props.history.goBack()}
+                onClick={this.handleGoBack}
               >
                 กลับ
               </Button>

@@ -102,7 +102,6 @@ class AddCustomer extends Component {
         }
       });
     } else if (name === "peaId") {
-      // console.log(value.length < 12);
       this.setState({
         peaIdInvalid: value.length < 12,
         canSubmit: value.length === 12,
@@ -123,6 +122,22 @@ class AddCustomer extends Component {
 
   handleHideSuccessModal = () => {
     this.setState({ successModal: false })
+  }
+
+
+  handleGotoPrint = () => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    history.replace(`/customers/print/${this.state.customer.peaId}`, { from: pathname, filter: state && state.filter });
+  }
+
+  handleGoBack = () => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    if (state && state.from) {
+      return history.replace(state.from, { from: pathname, filter: state.filter })
+    }
+    history.goBack()
   }
 
   render() {
@@ -163,13 +178,13 @@ class AddCustomer extends Component {
             <Button
               variant="outline-secondary"
               className="pea-color"
-              onClick={() => this.props.history.replace(`/customers/print/${customer.peaId}`)}
+              onClick={this.handleGotoPrint}
             >
               พิมพ์
           </Button>
             <Button
               variant="outline-secondary"
-              onClick={() => this.props.history.goBack()}
+              onClick={this.handleGoBack}
             >
               กลับ
           </Button>
@@ -179,7 +194,7 @@ class AddCustomer extends Component {
         <ModalConfirm
           show={confirmModal}
           status="datachanged"
-          confirm={() => this.props.history.goBack()}
+          confirm={this.handleGoBack}
           close={this.handleConfirmModalClose}
         />
       </React.Fragment>

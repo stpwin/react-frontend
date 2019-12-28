@@ -68,26 +68,26 @@ class Customers extends Component {
               <ViewCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : method === "edit" ? (
           peaId ? (
             <Fragment>
               <h1 className="header-text text-center">แก้ไขข้อมูลลูกค้า</h1>
-              <EditCustomer peaId={peaId} />
+              <EditCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : method === "verify" ? (
           peaId ? (
             <Fragment>
               <h1 className="header-text text-center">ยืนยันสิทธิ์</h1>
-              <VerifyCustomer peaId={peaId} />
+              <VerifyCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : method === "print" ? (
           peaId ? (
             <Fragment>
@@ -95,14 +95,14 @@ class Customers extends Component {
               <PrintCustomer peaId={peaId} history={this.props.history} />
             </Fragment>
           ) : (
-            <NoPeaID />
-          )
+              <NoPeaID />
+            )
         ) : (
-          <Fragment>
-            <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
-            <ListCustomer />
-          </Fragment>
-        )}
+                    <Fragment>
+                      <h1 className="header-text text-center">จัดการข้อมูลลูกค้า</h1>
+                      <ListCustomer {...this.props} />
+                    </Fragment>
+                  )}
         <ModalStatus
           show={statusOpen}
           status={failText ? "error" : "loading"}

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { withRouter } from "react-router-dom";
 
 import { getPostcodeFromDistrictNo } from "../../../helpers";
 
@@ -15,7 +14,7 @@ class EditCustomer extends Component {
     customer: {}
   };
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.props.getCustomer(this.props.peaId);
   }
 
@@ -46,9 +45,14 @@ class EditCustomer extends Component {
     }
   }
 
-  handleCancel = () => {
-    this.props.history.goBack();
-  };
+  handleGoBack = () => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    if (state && state.from) {
+      return history.replace(state.from, { from: pathname, filter: state.filter })
+    }
+    history.goBack()
+  }
 
   handleDataChange = e => {
     const { name, value } = e.target
@@ -76,7 +80,7 @@ class EditCustomer extends Component {
 
   render() {
     const { customer } = this.state
-    const { customers: { loading } } = this.props;
+    const { loading } = this.props;
 
     return (
       <Form onSubmit={this.handleUpdateCustomer}>
@@ -86,7 +90,7 @@ class EditCustomer extends Component {
           showPlaceholder={true}
           onChange={this.handleDataChange}
         />
-        <FormButton loading={loading} cancel={this.handleCancel} />
+        <FormButton loading={loading} cancel={this.handleGoBack} />
       </Form>
     );
   }
@@ -94,7 +98,8 @@ class EditCustomer extends Component {
 
 const mapStateToProps = state => {
   const { customers } = state;
-  return { customers };
+  const { loading } = customers
+  return { customers, loading };
 };
 
 const mapDispatchToProps = dispatch => {
@@ -104,6 +109,6 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
+export default
   connect(mapStateToProps, mapDispatchToProps)(EditCustomer)
-);
+

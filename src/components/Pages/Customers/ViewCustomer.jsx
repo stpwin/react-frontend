@@ -34,7 +34,8 @@ class ViewCustomer extends Component {
     verifies: {}
   };
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
+    console.log(this.props)
     this.props.getCustomer(this.props.peaId);
   }
 
@@ -60,8 +61,35 @@ class ViewCustomer extends Component {
     }
   }
 
+  goTo = path => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    history.push(path, { from: pathname, filter: state && state.filter });
+  }
+
+  handleGotoPrint = () => {
+    this.goTo(`/customers/print/${this.props.peaId}`)
+  }
+
+  handleGotoVerify = () => {
+    this.goTo(`/customers/verify/${this.props.peaId}`)
+  }
+
+  handleGotoEdit = () => {
+    this.goTo(`/customers/edit/${this.props.peaId}`)
+  }
+
+
+  handleGoBack = () => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    if (state && state.from) {
+      return history.push("/customers", { from: pathname, filter: state && state.filter });
+    }
+    history.goBack();
+  }
+
   render() {
-    const { peaId } = this.props;
     const { translated, customer, signatures } = this.state;
     return (
       <Fragment>
@@ -72,9 +100,7 @@ class ViewCustomer extends Component {
                 key="button-print"
                 variant="outline-secondary"
                 className="pea-color"
-                onClick={() => {
-                  this.props.history.push(`/customers/print/${peaId}`);
-                }}
+                onClick={this.handleGotoPrint}
               >
                 พิมพ์
               </Button>
@@ -82,9 +108,7 @@ class ViewCustomer extends Component {
                 key="button-verify"
                 variant="outline-secondary"
                 className="pea-color"
-                onClick={() => {
-                  this.props.history.push(`/customers/verify/${peaId}`);
-                }}
+                onClick={this.handleGotoVerify}
               >
                 ยืนยันสิทธิ์
               </Button>
@@ -92,9 +116,7 @@ class ViewCustomer extends Component {
                 key="button-edit"
                 variant="outline-secondary"
                 className="pea-color"
-                onClick={() => {
-                  this.props.history.push(`/customers/edit/${peaId}`);
-                }}
+                onClick={this.handleGotoEdit}
               >
                 แก้ไขข้อมูล
               </Button>
@@ -102,9 +124,7 @@ class ViewCustomer extends Component {
                 key="button-back"
                 variant="outline-secondary"
                 className="pea-color"
-                onClick={() => {
-                  this.props.history.goBack();
-                }}
+                onClick={this.handleGoBack}
               >
                 กลับ
               </Button>

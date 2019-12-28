@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { withRouter } from "react-router-dom";
+// import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 
 import { getPostcodeFromDistrictNo } from "../../../helpers";
@@ -56,10 +56,14 @@ class VerifyCustomer extends Component {
     this.sigPad = ref;
   };
 
-  handleCancel = () => {
-    this.props.history.goBack();
-  };
-
+  handleGoBack = () => {
+    const { history } = this.props
+    const { location: { state, pathname } } = history
+    if (state && state.from) {
+      return history.replace(state.from, { from: pathname, filter: state.filter })
+    }
+    history.goBack()
+  }
   handleAppearDateChange = date => {
     this.setState({
       appearDate: date
@@ -89,7 +93,7 @@ class VerifyCustomer extends Component {
           setSigpadRef={this.setSigpadRef}
           onAppearDateChange={this.handleAppearDateChange}
         />
-        <FormButton loading={loading} cancel={this.handleCancel} />
+        <FormButton loading={loading} cancel={this.handleGoBack} />
       </Form>
     );
   }
@@ -114,6 +118,4 @@ VerifyCustomer.propTypes = {
   peaId: PropTypes.string.isRequired
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(VerifyCustomer)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyCustomer)

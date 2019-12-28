@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+// import { withRouter } from "react-router-dom";
 import { customerActions } from "../../../actions";
 import { translateCustomer } from "../../../helpers";
 
@@ -67,12 +67,13 @@ const columns = [
 class ListCustomer extends Component {
   state = {
     page: 1,
-    pages: 0,
     limit: 10,
-    perPages: [10, 20, 50, 100],
-    wars: "",
     filterText: "",
     filterChecked: [true, true],
+    wars: "",
+
+    pages: 0,
+    perPages: [10, 20, 50, 100],
     confirmDelete: false,
     confirmDeleteText: "",
     confirmDeletePeaId: "",
@@ -136,9 +137,17 @@ class ListCustomer extends Component {
     }
   ];
 
-  UNSAFE_componentWillMount() {
-    this.fetchNew();
+  componentDidMount() {
+    // console.log(this.props)
+    const { history: { location: { state } } } = this.props
+    if (state && state.filter) {
+      return this.setState({
+        ...state.filter
+      }, this.fetchNew)
+    }
+    this.fetchNew()
   }
+
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
@@ -321,31 +330,25 @@ class ListCustomer extends Component {
     );
   };
 
-  onViewClick = peaId => {
-    this.props.history.push(`/customers/view/${peaId}`);
-  };
+  handleAddCustomer = () => this.props.history.push("/customers/add", { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
 
-  onVerifyClick = peaId => {
-    this.props.history.push(`/customers/verify/${peaId}`);
-  };
+  onPrintClick = peaId => this.props.history.push(`/customers/print/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
 
-  onEditClick = peaId => {
-    this.props.history.push(`/customers/edit/${peaId}`);
-  };
+  onViewClick = peaId => this.props.history.push(`/customers/view/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+
+  onVerifyClick = peaId => this.props.history.push(`/customers/verify/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+
+  onEditClick = peaId => this.props.history.push(`/customers/edit/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
 
   onDeleteClick = (peaId, customValue) => {
     if (!peaId) return;
-
     this.setState({
       confirmDelete: true,
-      confirmDeleteText: `${peaId}\n${customValue}`,
+      confirmDeleteText: <Fragment>{`${peaId}`}<br />{`${customValue}`}</Fragment>,
       confirmDeletePeaId: peaId
     });
   };
 
-  onPrintClick = peaId => {
-    this.props.history.push(`/customers/print/${peaId}`);
-  };
 
   handleDeleteModalClose = () => {
     this.setState({
@@ -358,20 +361,13 @@ class ListCustomer extends Component {
       confirmDelete: false
     });
     this.props.removeCustomer(this.state.confirmDeletePeaId);
-    // this.fetchNew();
-  };
-
-  handleAddCustomer = () => {
-    this.props.history.push("/customers/add");
   };
 
   onApproveClick = (peaId, verifyId) => {
-    // console.log({ peaId, verifyId })
     this.props.approveCustomer(peaId, verifyId);
   };
 
   onRevokeApproveClick = (peaId, verifyId) => {
-    // console.log({ peaId, verifyId })
     this.props.revokeApproveCustomer(peaId, verifyId);
   };
 
@@ -456,6 +452,6 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default withRouter(
+export default
   connect(mapStateToProps, mapDispatchToProps)(ListCustomer)
-);
+  ;
