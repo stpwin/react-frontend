@@ -23,6 +23,8 @@ class Database extends Component {
     counters: [],
     dbInfo: {
       total: 0,
+      appearTotal: 0,
+      approvedCount: 0,
       groups: [],
       details: []
     }
@@ -45,30 +47,43 @@ class Database extends Component {
     }
 
     if (info) {
+      const g1_filter = info
+        .filter(obj =>
+          ["ภายในประเทศ", "เวียดนาม", "เกาหลี"].includes(obj.war)
+        )
+      const g2_filter = info
+        .filter(obj =>
+          [
+            "เหรียญชัยสมรภูมิ",
+            "เอเชียบูรพา",
+            "อินโดจีน",
+            "ฝรั่งเศส"
+          ].includes(obj.war)
+        )
+
       this.setState({
         dbInfo: {
           total: info.reduce((acc, obj) => acc + obj.count, 0),
+          appearTotal: info.reduce((acc, obj) => acc + obj.appearCount, 0),
+          approvedTotal: info.reduce((acc, obj) => acc + obj.approvedCount, 0),
           groups: [
             {
               name: "G1",
-              count: info
-                .filter(obj =>
-                  ["ภายในประเทศ", "เวียดนาม", "เกาหลี"].includes(obj.war)
-                )
-                .reduce((acc, obj) => acc + obj.count, 0)
+              count: g1_filter
+                .reduce((acc, obj) => acc + obj.count, 0),
+              appearCount: g1_filter
+                .reduce((acc, obj) => acc + obj.appearCount, 0),
+              approvedCount: g1_filter
+                .reduce((acc, obj) => acc + obj.approvedCount, 0)
             },
             {
               name: "G2",
-              count: info
-                .filter(obj =>
-                  [
-                    "เหรียญชัยสมรภูมิ",
-                    "เอเชียบูรพา",
-                    "อินโดจีน",
-                    "ฝรั่งเศส"
-                  ].includes(obj.war)
-                )
-                .reduce((acc, obj) => acc + obj.count, 0)
+              count: g2_filter
+                .reduce((acc, obj) => acc + obj.count, 0),
+              appearCount: g2_filter
+                .reduce((acc, obj) => acc + obj.appearCount, 0),
+              approvedCount: g2_filter
+                .reduce((acc, obj) => acc + obj.approvedCount, 0)
             }
           ],
           details: info
@@ -182,7 +197,8 @@ class Database extends Component {
                             <th>#</th>
                             <th>ฐานข้อมูลลูกค้า</th>
                             <th>จำนวน</th>
-                            {/* <th>เครื่องมือ</th> */}
+                            <th>ยืนยันสิทธิ์แล้วในปีนี้</th>
+                            <th>อนุมัติแล้วในปีนี้</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -196,6 +212,8 @@ class Database extends Component {
                                   <td>{index + 1}</td>
                                   <td>{item.war}</td>
                                   <td>{item.count}</td>
+                                  <td>{item.appearCount}</td>
+                                  <td>{item.approvedCount}</td>
                                 </tr>
                               );
                             })}
@@ -208,13 +226,21 @@ class Database extends Component {
                                 >
                                   <td colSpan={2}>{item.name}</td>
                                   <td>{item.count}</td>
+                                  <td>{item.appearCount}</td>
+                                  <td>{item.approvedCount}</td>
                                 </tr>
                               );
                             })}
-                          <tr className="text-right">
+                          <tr className="text-right font-weight-bold">
                             <td colSpan="2">รวม</td>
                             <td>{dbInfo.total}</td>
+                            <td>{dbInfo.appearTotal}</td>
+                            <td>{dbInfo.approvedTotal}</td>
                           </tr>
+                          {/* <tr className="text-center">
+                            <td colSpan="2">ทั้งหมด</td>
+                            <td colSpan="3">{dbInfo.total}</td>
+                          </tr> */}
                         </tbody>
                       </Table>
                     </Tab.Pane>

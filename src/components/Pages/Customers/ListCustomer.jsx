@@ -197,7 +197,7 @@ class ListCustomer extends Component {
         pages,
         translated
       });
-    } else {
+    } else if (customers === null) {
       this.setState({
         page: 1,
         pages: 1,
@@ -211,11 +211,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {
