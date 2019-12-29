@@ -52,17 +52,17 @@ export const DataTable = ({
           <div className="top-button">
             {topButtons && topButtons.length > 0
               ? topButtons.map((item, index) => {
-                return (
-                  <Button
-                    key={`button-${item.key}`}
-                    variant="outline"
-                    className="pea-color"
-                    onClick={() => item.onClick()}
-                  >
-                    {item.text}
-                  </Button>
-                );
-              })
+                  return (
+                    <Button
+                      key={`button-${item.key}`}
+                      variant="outline"
+                      className="pea-color"
+                      onClick={() => item.onClick()}
+                    >
+                      {item.text}
+                    </Button>
+                  );
+                })
               : null}
           </div>
         </Col>
@@ -127,13 +127,13 @@ export const DataTable = ({
                       {/* <span className="sr-only">Loading...</span> */}
                     </Button>
                   ) : (
-                      <Button
-                        variant="outline-secondary"
-                        onClick={onClearFilterText}
-                      >
-                        <FaTimes />
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline-secondary"
+                      onClick={onClearFilterText}
+                    >
+                      <FaTimes />
+                    </Button>
+                  )}
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
@@ -218,11 +218,17 @@ export const DataTable = ({
                             return (
                               <td
                                 key={`td-${colIndex}${dataIndex}`}
+                                style={col.tdStyle}
                                 className={`align-middle ${
                                   col.valign === "true" ? "text-center" : ""
-                                  } ${col.variable ? (item[col.variable] ? "approved" : "") : ""}`}
+                                } ${
+                                  col.variable
+                                    ? item[col.variable]
+                                      ? "approved"
+                                      : ""
+                                    : ""
+                                }`}
                               >
-
                                 {col.canSearch ? (
                                   <Highlight
                                     matchStyle={{
@@ -234,8 +240,8 @@ export const DataTable = ({
                                     {item[col.dataField] || ""}
                                   </Highlight>
                                 ) : (
-                                    item[col.dataField] || ""
-                                  )}
+                                  item[col.dataField] || ""
+                                )}
                               </td>
                             ); //////////////////List data
                           })}
@@ -244,9 +250,7 @@ export const DataTable = ({
                             key={`td-toolsbar`}
                             className="align-middle text-center td-tools-button"
                           >
-
                             <ActionButtons
-
                               tools={tools}
                               item={item}
                               idKey={idKey}
@@ -257,15 +261,15 @@ export const DataTable = ({
                     );
                   })
                 ) : (
-                    <tr>
-                      <td
-                        className="text-center align-middle"
-                        colSpan={columns && columns.length + (tools ? 1 : 0)}
-                      >
-                        ไม่มีข้อมูล
+                  <tr>
+                    <td
+                      className="text-center align-middle"
+                      colSpan={columns && columns.length + (tools ? 1 : 0)}
+                    >
+                      ไม่มีข้อมูล
                     </td>
-                    </tr>
-                  )}
+                  </tr>
+                )}
               </tbody>
             </Table>
           </div>
@@ -315,12 +319,17 @@ const ActionButtons = ({ tools, item, idKey }) => {
                           className="pea-color"
                           onClick={() =>
                             data1.variable
-                              ? data1.onclickSecond(item[idKey], item[data1.variable])
+                              ? data1.onclickSecond(
+                                  item[idKey],
+                                  item[data1.variable]
+                                )
                               : data1.onclickSecond(item[idKey])
                           }
                         >
                           {data1.iconSecond}
-                          <span className="ml-2">{data1.overlaytextSecond}</span>
+                          <span className="ml-2">
+                            {data1.overlaytextSecond}
+                          </span>
                         </Dropdown.Item>
                       );
                     }

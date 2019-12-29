@@ -47,19 +47,14 @@ class Database extends Component {
     }
 
     if (info) {
-      const g1_filter = info
-        .filter(obj =>
-          ["ภายในประเทศ", "เวียดนาม", "เกาหลี"].includes(obj.war)
+      const g1_filter = info.filter(obj =>
+        ["ภายในประเทศ", "เวียดนาม", "เกาหลี"].includes(obj.war)
+      );
+      const g2_filter = info.filter(obj =>
+        ["เหรียญชัยสมรภูมิ", "เอเชียบูรพา", "อินโดจีน", "ฝรั่งเศส"].includes(
+          obj.war
         )
-      const g2_filter = info
-        .filter(obj =>
-          [
-            "เหรียญชัยสมรภูมิ",
-            "เอเชียบูรพา",
-            "อินโดจีน",
-            "ฝรั่งเศส"
-          ].includes(obj.war)
-        )
+      );
 
       this.setState({
         dbInfo: {
@@ -68,22 +63,28 @@ class Database extends Component {
           approvedTotal: info.reduce((acc, obj) => acc + obj.approvedCount, 0),
           groups: [
             {
-              name: "G1",
-              count: g1_filter
-                .reduce((acc, obj) => acc + obj.count, 0),
-              appearCount: g1_filter
-                .reduce((acc, obj) => acc + obj.appearCount, 0),
-              approvedCount: g1_filter
-                .reduce((acc, obj) => acc + obj.approvedCount, 0)
+              name: "G1 รวม",
+              count: g1_filter.reduce((acc, obj) => acc + obj.count, 0),
+              appearCount: g1_filter.reduce(
+                (acc, obj) => acc + obj.appearCount,
+                0
+              ),
+              approvedCount: g1_filter.reduce(
+                (acc, obj) => acc + obj.approvedCount,
+                0
+              )
             },
             {
-              name: "G2",
-              count: g2_filter
-                .reduce((acc, obj) => acc + obj.count, 0),
-              appearCount: g2_filter
-                .reduce((acc, obj) => acc + obj.appearCount, 0),
-              approvedCount: g2_filter
-                .reduce((acc, obj) => acc + obj.approvedCount, 0)
+              name: "G2 รวม",
+              count: g2_filter.reduce((acc, obj) => acc + obj.count, 0),
+              appearCount: g2_filter.reduce(
+                (acc, obj) => acc + obj.appearCount,
+                0
+              ),
+              approvedCount: g2_filter.reduce(
+                (acc, obj) => acc + obj.approvedCount,
+                0
+              )
             }
           ],
           details: info
@@ -217,11 +218,14 @@ class Database extends Component {
                                 </tr>
                               );
                             })}
+                          <tr>
+                            <td colSpan={5}>&nbsp;</td>
+                          </tr>
                           {dbInfo &&
                             dbInfo.groups.map((item, index) => {
                               return (
                                 <tr
-                                  className="text-right"
+                                  className="text-center"
                                   key={`group-tr-${index}`}
                                 >
                                   <td colSpan={2}>{item.name}</td>
@@ -231,8 +235,8 @@ class Database extends Component {
                                 </tr>
                               );
                             })}
-                          <tr className="text-right font-weight-bold">
-                            <td colSpan="2">รวม</td>
+                          <tr className="text-center font-weight-bold">
+                            <td colSpan="2">รวมทั้งหมด</td>
                             <td>{dbInfo.total}</td>
                             <td>{dbInfo.appearTotal}</td>
                             <td>{dbInfo.approvedTotal}</td>

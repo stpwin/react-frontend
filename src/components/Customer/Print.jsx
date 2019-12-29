@@ -14,14 +14,23 @@ class CustomerPrintData extends Component {
       <div className="page">
         <div className="subpage">
           <div className="content">
-            <div style={{
-              marginTop: "-10mm",
-              marginRight: "-15mm",
-              float: "right",
-              border: "1px solid black",
-              padding: "1mm 3mm 1mm 3mm",
-              borderRadius: "2mm"
-            }}>ลำดับ:<b>{war ? `\u00A0\u00A0${seq}` : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"}</b></div>
+            <div
+              style={{
+                marginTop: "-10mm",
+                marginRight: "-15mm",
+                float: "right",
+                border: "1px solid black",
+                padding: "1mm 3mm 1mm 3mm",
+                borderRadius: "2mm"
+              }}
+            >
+              ลำดับ:
+              <b>
+                {war
+                  ? `\u00A0\u00A0${seq}`
+                  : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0"}
+              </b>
+            </div>
             <div className="text-center">
               <PEALogo width="200px" />
             </div>
@@ -72,27 +81,27 @@ class CustomerPrintData extends Component {
                   />
                 </Fragment>
               ) : (
-                  <Fragment>
-                    <p>ลายมือชื่อ</p>
-                    <div
-                      style={{
-                        border: "1px solid #dedede",
-                        width: "300px",
-                        height: "100px",
-                        marginBottom: "1rem",
-                        display: "inline-block"
-                      }}
-                    ></div>
-                    <br />
-                    <p>( {name || <SpaceUnderline n={50} />} )</p>
-                  </Fragment>
-                )}
+                <Fragment>
+                  <p>ลายมือชื่อ</p>
+                  <div
+                    style={{
+                      border: "1px solid #dedede",
+                      width: "300px",
+                      height: "100px",
+                      marginBottom: "1rem",
+                      display: "inline-block"
+                    }}
+                  ></div>
+                  <br />
+                  <p>( {name || <SpaceUnderline n={50} />} )</p>
+                </Fragment>
+              )}
             </div>
           </div>
 
           <div className="footer">
             <div className="footer-content">
-              <p className="text-danger">
+              <mark>
                 <span>
                   *ถ้าท่านไม่ได้รับสิทธิ์ตั้งแต่เดือนกุมภาพันธ์เป็นต้นไป
                   โปรดแจ้งที่เบอร์ <b>08-6431-0603</b>
@@ -102,7 +111,7 @@ class CustomerPrintData extends Component {
                   *หากท่านไม่โทรแจ้ง ท่านจะไม่ได้รับสิทธิ์ภายในเดือนถัดไป
                   จนกว่าจะมีการแจ้งมายัง กฟภ.ลำปาง
                 </span>
-              </p>
+              </mark>
               <p className="text-right small-text">
                 พิมพ์เมื่อ{"\u00A0\u00A0"}
                 {printDate}

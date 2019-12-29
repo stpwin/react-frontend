@@ -14,11 +14,11 @@ export const getWarType = war => {
   return warsType[war];
 };
 
-export const translateCustomer = customer => {
+export const translateCustomer = (customer, fullDate = true) => {
   if (!customer) return;
 
   const privilegeDate =
-    customer.privilegeDate && toLocalDate(customer.privilegeDate);
+    customer.privilegeDate && toLocalDate(customer.privilegeDate, fullDate);
   const warType = getWarType(customer.war);
   return {
     seq: `${warType}-${customer.seq || ""}`,
@@ -29,21 +29,23 @@ export const translateCustomer = customer => {
     soldierNo: customer.soldierNo,
     privilegeDate: privilegeDate,
     war: `${customer.war}`,
-    ...getLastVerify(customer)
+    ...getLastVerify(customer, fullDate)
   };
 };
 
-const getLastVerify = ({ verifies }) => {
+const getLastVerify = ({ verifies }, fullDate) => {
   if (verifies && verifies.length > 0) {
     verifies.sort((a, b) => {
       return new Date(b.appearDate) - new Date(a.appearDate);
     });
     const lastVerify = verifies[0];
     return {
-      appearDate: lastVerify.appearDate && toLocalDate(lastVerify.appearDate),
+      appearDate:
+        lastVerify.appearDate && toLocalDate(lastVerify.appearDate, fullDate),
       lastVerifyId: lastVerify._id,
       lastApprovedDate:
-        lastVerify.approvedDate && toLocalDate(lastVerify.approvedDate),
+        lastVerify.approvedDate &&
+        toLocalDate(lastVerify.approvedDate, fullDate),
       currentYearAppear: lastVerify.appearDate
         ? new Date(lastVerify.appearDate).getFullYear() ===
           new Date().getFullYear()

@@ -30,7 +30,7 @@ const columns = [
     text: "ลำดับ",
     dataField: "seq",
     valign: "true",
-    style: { width: "4%" },
+    style: { width: "6%" },
     canSearch: true,
     variable: "currentYearApproved"
   },
@@ -46,8 +46,16 @@ const columns = [
     valign: "true",
     canSearch: true
   },
-  { text: "ที่อยู่", dataField: "address" },
-  { text: "สงคราม", dataField: "war", valign: "true" },
+  {
+    text: "ที่อยู่",
+    dataField: "address",
+    tdStyle: { fontSize: "0.9rem" }
+  },
+  {
+    text: "สงคราม",
+    dataField: "war",
+    valign: "true"
+  },
   {
     text: "เลขทหาร",
     dataField: "soldierNo",
@@ -139,15 +147,21 @@ class ListCustomer extends Component {
 
   componentDidMount() {
     // console.log(this.props)
-    const { history: { location: { state } } } = this.props
+    const {
+      history: {
+        location: { state }
+      }
+    } = this.props;
     if (state && state.filter) {
-      return this.setState({
-        ...state.filter
-      }, this.fetchNew)
+      return this.setState(
+        {
+          ...state.filter
+        },
+        this.fetchNew
+      );
     }
-    this.fetchNew()
+    this.fetchNew();
   }
-
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
@@ -197,7 +211,7 @@ class ListCustomer extends Component {
         customers.customers.map((customer, index) => {
           return {
             index: index + start + 1,
-            ...translateCustomer(customer)
+            ...translateCustomer(customer, false)
           };
         });
 
@@ -220,11 +234,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
@@ -330,25 +344,80 @@ class ListCustomer extends Component {
     );
   };
 
-  handleAddCustomer = () => this.props.history.push("/customers/add", { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+  handleAddCustomer = () =>
+    this.props.history.push("/customers/add", {
+      from: "/customers",
+      filter: {
+        page: this.state.page,
+        limit: this.state.limit,
+        filterText: this.state.filterText,
+        filterChecked: this.state.filterChecked,
+        wars: this.state.wars
+      }
+    });
 
-  onPrintClick = peaId => this.props.history.push(`/customers/print/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+  onPrintClick = peaId =>
+    this.props.history.push(`/customers/print/${peaId}`, {
+      from: "/customers",
+      filter: {
+        page: this.state.page,
+        limit: this.state.limit,
+        filterText: this.state.filterText,
+        filterChecked: this.state.filterChecked,
+        wars: this.state.wars
+      }
+    });
 
-  onViewClick = peaId => this.props.history.push(`/customers/view/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+  onViewClick = peaId =>
+    this.props.history.push(`/customers/view/${peaId}`, {
+      from: "/customers",
+      filter: {
+        page: this.state.page,
+        limit: this.state.limit,
+        filterText: this.state.filterText,
+        filterChecked: this.state.filterChecked,
+        wars: this.state.wars
+      }
+    });
 
-  onVerifyClick = peaId => this.props.history.push(`/customers/verify/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+  onVerifyClick = peaId =>
+    this.props.history.push(`/customers/verify/${peaId}`, {
+      from: "/customers",
+      filter: {
+        page: this.state.page,
+        limit: this.state.limit,
+        filterText: this.state.filterText,
+        filterChecked: this.state.filterChecked,
+        wars: this.state.wars
+      }
+    });
 
-  onEditClick = peaId => this.props.history.push(`/customers/edit/${peaId}`, { from: "/customers", filter: { page: this.state.page, limit: this.state.limit, filterText: this.state.filterText, filterChecked: this.state.filterChecked, wars: this.state.wars } });
+  onEditClick = peaId =>
+    this.props.history.push(`/customers/edit/${peaId}`, {
+      from: "/customers",
+      filter: {
+        page: this.state.page,
+        limit: this.state.limit,
+        filterText: this.state.filterText,
+        filterChecked: this.state.filterChecked,
+        wars: this.state.wars
+      }
+    });
 
   onDeleteClick = (peaId, customValue) => {
     if (!peaId) return;
     this.setState({
       confirmDelete: true,
-      confirmDeleteText: <Fragment>{`${peaId}`}<br />{`${customValue}`}</Fragment>,
+      confirmDeleteText: (
+        <Fragment>
+          {`${peaId}`}
+          <br />
+          {`${customValue}`}
+        </Fragment>
+      ),
       confirmDeletePeaId: peaId
     });
   };
-
 
   handleDeleteModalClose = () => {
     this.setState({
@@ -452,6 +521,4 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default
-  connect(mapStateToProps, mapDispatchToProps)(ListCustomer)
-  ;
+export default connect(mapStateToProps, mapDispatchToProps)(ListCustomer);

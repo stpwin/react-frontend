@@ -27,10 +27,10 @@ export const arrayBufferToBase64 = buffer => {
   return window.btoa(binary);
 };
 
-export const toLocalDate = _date => {
+export const toLocalDate = (_date, fullDate = true) => {
   return new Date(_date).toLocaleDateString("th-TH", {
     year: "numeric",
-    month: "long",
+    month: fullDate ? "long" : "numeric",
     day: "numeric"
   });
 };
