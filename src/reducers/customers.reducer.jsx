@@ -134,6 +134,17 @@ export const customers = (state = {}, action) => {
         error: action.error
       };
 
+    case customerConstants.REMOVE_VERIFY_REQUEST:
+      return {
+        loading: true
+      };
+    case customerConstants.REMOVE_VERIFY_SUCCESS:
+      return { verify: action.data };
+    case customerConstants.REMOVE_VERIFY_FAILURE:
+      return {
+        error: action.error
+      };
+
     default:
       return state;
   }

@@ -1,8 +1,13 @@
 import React, { Component, Fragment } from "react";
-
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { arrayBufferToBase64, translateCustomer, toLocalDate } from "../../../helpers";
+import {
+  arrayBufferToBase64,
+  translateCustomer,
+  toLocalDate
+} from "../../../helpers";
+
+import { FaTrash } from "react-icons/fa";
 
 import {
   Row,
@@ -15,6 +20,8 @@ import {
   ListGroup,
   Badge
 } from "react-bootstrap";
+
+import { ModalConfirm } from "../../Modals";
 
 const basicDataRow = [
   { field: "peaId", title: "หมายเลขผู้ใช้ไฟ(CA)", key: "peaId" },
@@ -31,17 +38,20 @@ class ViewCustomer extends Component {
     translated: {},
     isLoading: true,
     signatures: {},
-    verifies: {}
+    verifies: {},
+    confirmShow: false,
+    selectedVerifyId: "",
+    confirmText: ""
   };
 
   componentDidMount() {
-    console.log(this.props)
+    // console.log(this.props);
     this.props.getCustomer(this.props.peaId);
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
-      customers: { customer, signature }
+      customers: { customer, signature, verify }
     } = nextProps;
 
     if (customer) {
@@ -59,38 +69,84 @@ class ViewCustomer extends Component {
         }
       });
     }
+
+    if (verify) {
+      if (verify.status === "remove_verify_success") {
+        this.props.getCustomer(this.props.peaId);
+      }
+    }
   }
 
   goTo = path => {
-    const { history } = this.props
-    const { location: { state, pathname } } = history
+    const { history } = this.props;
+    const {
+      location: { state, pathname }
+    } = history;
     history.push(path, { from: pathname, filter: state && state.filter });
-  }
+  };
 
   handleGotoPrint = () => {
-    this.goTo(`/customers/print/${this.props.peaId}`)
-  }
+    this.goTo(`/customers/print/${this.props.peaId}`);
+  };
 
   handleGotoVerify = () => {
-    this.goTo(`/customers/verify/${this.props.peaId}`)
-  }
+    this.goTo(`/customers/verify/${this.props.peaId}`);
+  };
 
   handleGotoEdit = () => {
-    this.goTo(`/customers/edit/${this.props.peaId}`)
-  }
-
+    this.goTo(`/customers/edit/${this.props.peaId}`);
+  };
 
   handleGoBack = () => {
-    const { history } = this.props
-    const { location: { state, pathname } } = history
+    const { history } = this.props;
+    const {
+      location: { state, pathname }
+    } = history;
     if (state && state.from) {
-      return history.push("/customers", { from: pathname, filter: state && state.filter });
+      return history.push("/customers", {
+        from: pathname,
+        filter: state && state.filter
+      });
     }
     history.goBack();
-  }
+  };
+
+  handleVerifyRemove = (id, title) => {
+    this.setState({
+      selectedVerifyId: id,
+      confirmShow: true,
+      confirmText: (
+        <Fragment>
+          <br />
+          {`การแสดงตนเมื่อ ${title}`}
+        </Fragment>
+      )
+    });
+  };
+
+  handleConfirmHide = () => {
+    this.setState({
+      confirmShow: false
+    });
+  };
+
+  handleConfirm = () => {
+    this.setState({
+      confirmShow: false,
+      confirmText: ""
+    });
+    this.props.removeVerify(this.props.peaId, this.state.selectedVerifyId);
+    // console.log(this.state.selectedVerifyId);
+  };
 
   render() {
-    const { translated, customer, signatures } = this.state;
+    const {
+      translated,
+      customer,
+      signatures,
+      confirmShow,
+      confirmText
+    } = this.state;
     return (
       <Fragment>
         <Row>
@@ -140,11 +196,9 @@ class ViewCustomer extends Component {
                   {translated &&
                     basicDataRow.map(item => {
                       return (
-                        <ListGroup.Item key={item.key} >
+                        <ListGroup.Item key={item.key}>
                           <span className="text-dark">{item.title}:</span>
-                          <b className="ml-2">{`${
-                            translated[item.field]
-                            }`}</b>
+                          <b className="ml-2">{`${translated[item.field]}`}</b>
                         </ListGroup.Item>
                       );
                     })}
@@ -157,52 +211,84 @@ class ViewCustomer extends Component {
             <Row>
               <Col>
                 {customer &&
-                  customer.verifies &&
-                  customer.verifies.length > 0 ? (
-                    <Accordion>
-                      {customer.verifies.map((data, index) => {
-                        return (
-                          <VerifyData
-                            key={`card-${index}`}
-                            index={index}
-                            signatureUrl={signatures && signatures[data._id]}
-                            {...data}
-                          />
-                        );
-                      })}
-                    </Accordion>
-                  ) : (
-                    <div className="text-center">
-                      <span className="text-secondary">ไม่มีข้อมูลการยืนยัน</span>
-                    </div>
-                  )}
+                customer.verifies &&
+                customer.verifies.length > 0 ? (
+                  <Accordion>
+                    {customer.verifies.map((data, index) => {
+                      return (
+                        <VerifyData
+                          key={`card-${index}`}
+                          index={index}
+                          signatureUrl={signatures && signatures[data._id]}
+                          onRemove={() =>
+                            this.handleVerifyRemove(
+                              data._id,
+                              toLocalDate(data.appearDate)
+                            )
+                          }
+                          {...data}
+                        />
+                      );
+                    })}
+                  </Accordion>
+                ) : (
+                  <div className="text-center">
+                    <span className="text-secondary">ไม่มีข้อมูลการยืนยัน</span>
+                  </div>
+                )}
               </Col>
             </Row>
           </Col>
         </Row>
-      </Fragment >
+        <ModalConfirm
+          show={confirmShow}
+          status="delete"
+          confirm={this.handleConfirm}
+          confirmtext={confirmText}
+          onHide={this.handleConfirmHide}
+        />
+      </Fragment>
     );
   }
 }
 
-const VerifyData = ({ appearDate, signatureUrl, index, approvedDate }) => {
+const VerifyData = ({
+  appearDate,
+  signatureUrl,
+  index,
+  approvedDate,
+  onRemove
+}) => {
   return (
     <Card>
-      <Card.Header as="h5">
+      <Card.Header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}
+      >
         <Accordion.Toggle as={Button} variant="link" eventKey={index}>
-          <div>
-            <span className="mr-1">วันที่แสดงตน:</span>
-            <span>
-              {toLocalDate(appearDate)}
-            </span>
-            <span className="ml-3">
-              {approvedDate ?
-                (<Badge variant="success">{`อนุมัติเมื่อ ${toLocalDate(approvedDate)}`}</Badge>)
-                : (<Badge variant="danger">ยังไม่อนุมัติ</Badge>)
-              }
-            </span>
-          </div>
+          <span className="mr-1">วันที่แสดงตน:</span>
+          <span>{toLocalDate(appearDate)}</span>
+          <span className="ml-3">
+            {approvedDate ? (
+              <Badge variant="success">{`อนุมัติเมื่อ ${toLocalDate(
+                approvedDate
+              )}`}</Badge>
+            ) : (
+              <Badge variant="danger">ยังไม่อนุมัติ</Badge>
+            )}
+          </span>
         </Accordion.Toggle>
+        <Button
+          size="sm"
+          className="mr-1"
+          variant="outline-light"
+          onClick={() => onRemove()}
+        >
+          <FaTrash />
+        </Button>
       </Card.Header>
       <Accordion.Collapse eventKey={index}>
         <Card.Body>
@@ -214,8 +300,8 @@ const VerifyData = ({ appearDate, signatureUrl, index, approvedDate }) => {
                 src={`data:image/png;base64,${signatureUrl}`}
               />
             ) : (
-                <span className="text-secondary">ไม่พบไฟล์ภาพ</span>
-              )}
+              <span className="text-secondary">ไม่พบไฟล์ภาพ</span>
+            )}
           </div>
         </Card.Body>
       </Accordion.Collapse>
@@ -234,7 +320,9 @@ const mapDispatchToProps = dispatch => {
   return {
     getCustomer: peaId => dispatch(customerActions.get(peaId)),
     getSignature: (peaId, sigId) =>
-      dispatch(customerActions.getSignature(peaId, sigId))
+      dispatch(customerActions.getSignature(peaId, sigId)),
+    removeVerify: (peaId, verifyId) =>
+      dispatch(customerActions.removeVerify(peaId, verifyId))
   };
 };
 

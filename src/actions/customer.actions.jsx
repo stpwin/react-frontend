@@ -172,10 +172,9 @@ const remove = peaId => {
 };
 
 const getSignature = (peaId, sigId) => {
-
   return dispatch => {
     if (!peaId || !sigId) {
-      return dispatch(success(null))
+      return dispatch(success(null));
     }
     dispatch(request());
 
@@ -199,7 +198,7 @@ const getSignature = (peaId, sigId) => {
 const approve = (peaId, verifyId, approvedDate = new Date()) => {
   return dispatch => {
     if (!peaId || !verifyId) {
-      return dispatch(success(null))
+      return dispatch(success(null));
     }
     dispatch(request());
 
@@ -223,7 +222,7 @@ const approve = (peaId, verifyId, approvedDate = new Date()) => {
 const revokeApprove = (peaId, verifyId) => {
   return dispatch => {
     if (!peaId || !verifyId) {
-      return dispatch(success(null))
+      return dispatch(success(null));
     }
     dispatch(request());
 
@@ -247,7 +246,7 @@ const revokeApprove = (peaId, verifyId) => {
 const setVerify = (peaId, verifyId, state) => {
   return dispatch => {
     if (!peaId || !verifyId || !state) {
-      return dispatch(success(null))
+      return dispatch(success(null));
     }
     dispatch(request());
 
@@ -268,6 +267,30 @@ const setVerify = (peaId, verifyId, state) => {
   }
 };
 
+const removeVerify = (peaId, verifyId) => {
+  return dispatch => {
+    if (!peaId || !verifyId) {
+      return dispatch(success(null));
+    }
+    dispatch(request());
+
+    customerService.removeVerify(peaId, verifyId).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.REMOVE_VERIFY_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.REMOVE_VERIFY_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.REMOVE_VERIFY_FAILURE, error };
+  }
+};
+
 export const customerActions = {
   create,
   get,
@@ -280,5 +303,6 @@ export const customerActions = {
   getSignature,
   approve,
   revokeApprove,
-  setVerify
+  setVerify,
+  removeVerify
 };
