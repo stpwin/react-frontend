@@ -25,7 +25,7 @@ const filters = [
 ];
 
 const columns = [
-  { text: "#", dataField: "index", valign: "true", style: { width: "4%" } },
+  { text: "#", dataField: "index", valign: "true", style: { width: "4%" }, badge: { variant: "dark" } },
   {
     text: "ลำดับ",
     dataField: "seq",
@@ -44,7 +44,13 @@ const columns = [
     text: "หมายเลขผู้ใช้ไฟฟ้า",
     dataField: "peaId",
     valign: "true",
-    canSearch: true
+    canSearch: true,
+    tdStyle: {
+
+      fontSize: "80%",
+      fontWeight: "700",
+
+    }
   },
   {
     text: "ที่อยู่",
@@ -54,21 +60,24 @@ const columns = [
   {
     text: "สงคราม",
     dataField: "war",
-    valign: "true"
+    valign: "true",
+    badge: { variant: "dark" }
   },
   {
     text: "เลขทหาร",
     dataField: "soldierNo",
     valign: "true",
-    style: { width: "8%" }
+    style: { width: "8%" },
+    badge: { variant: "light" }
   },
   // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
-  { text: "กรณีเป็น", dataField: "authorize", valign: "true" },
+  { text: "กรณีเป็น", dataField: "authorize", valign: "true", badge: { variant: "secondary" } },
   {
     text: "วันที่มาแสดงตน",
     dataField: "appearDate",
     valign: "true",
-    variable: "currentYearAppear"
+    variable: "currentYearAppear",
+    badge: { variant: "dark" }
   }
 ];
 
@@ -234,11 +243,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {
@@ -457,7 +466,7 @@ class ListCustomer extends Component {
     return (
       <Fragment>
         <DataTable
-          filterPlaceholder="ค้นหาลำดับ/ชื่อ/รหัสผู้ใช้ไฟฟ้า(CA)"
+          filterPlaceholder="ค้นหาลำดับ/ชื่อ-สกุล/หมายเลขผู้ใช้ไฟฟ้า"
           idKey="peaId"
           columns={columns}
           filters={filters}
