@@ -16,6 +16,8 @@ import {
 
 import { ModalConfirm } from "../../Modals";
 
+const tempDate = new Date();
+
 class Database extends Component {
   state = {
     confirmModal: false,
@@ -27,7 +29,17 @@ class Database extends Component {
       approvedCount: 0,
       groups: [],
       details: []
-    }
+    },
+    sinceYear: `${new Date(
+      tempDate.setUTCFullYear(tempDate.getUTCFullYear() - 1)
+    ).toLocaleDateString("th-TH", {
+      month: "short",
+      year: "2-digit"
+    })} - ${new Date(
+      tempDate
+        .setUTCMonth(1)
+        .toLocaleDateString("th-TH", { month: "short", year: "2-digit" })
+    )}`
   };
 
   UNSAFE_componentWillMount() {
@@ -59,6 +71,7 @@ class Database extends Component {
       this.setState({
         dbInfo: {
           total: info.reduce((acc, obj) => acc + obj.count, 0),
+          today: info.reduce((acc, obj) => acc + obj.today, 0),
           appearTotal: info.reduce((acc, obj) => acc + obj.appearCount, 0),
           approvedTotal: info.reduce((acc, obj) => acc + obj.approvedCount, 0),
           groups: [
@@ -158,7 +171,13 @@ class Database extends Component {
   };
 
   render() {
-    const { confirmModal, confirmText, counters, dbInfo } = this.state;
+    const {
+      confirmModal,
+      confirmText,
+      counters,
+      dbInfo,
+      sinceYear
+    } = this.state;
     return (
       <div className="database-manage-container">
         <Row>
@@ -192,13 +211,26 @@ class Database extends Component {
                 <Col sm={9}>
                   <Tab.Content>
                     <Tab.Pane eventKey="info">
+                      {/* <Table striped bordered size="sm">
+                        <thead>
+                          <tr className="text-center">
+                            <th>แสดงตนวันนี้</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="text-center">
+                            <td>{dbInfo && dbInfo.today}</td>
+                          </tr>
+                        </tbody>
+                      </Table> */}
                       <Table striped bordered size="sm">
                         <thead>
                           <tr className="text-center">
                             <th>#</th>
-                            <th>ฐานข้อมูลลูกค้า</th>
+                            <th>สงคราม</th>
                             <th>จำนวน</th>
-                            <th>ยืนยันสิทธิ์แล้วในปีนี้</th>
+                            <th>ยืนยันสิทธิ์แล้วในวันนี้</th>
+                            <th>ยืนยันสิทธิ์ตั้งแต่ {sinceYear}</th>
                             <th>อนุมัติแล้วในปีนี้</th>
                           </tr>
                         </thead>
@@ -213,13 +245,14 @@ class Database extends Component {
                                   <td>{index + 1}</td>
                                   <td>{item.war}</td>
                                   <td>{item.count}</td>
+                                  <td>{item.today}</td>
                                   <td>{item.appearCount}</td>
                                   <td>{item.approvedCount}</td>
                                 </tr>
                               );
                             })}
                           <tr>
-                            <td colSpan={5}>&nbsp;</td>
+                            <td colSpan={6}>&nbsp;</td>
                           </tr>
                           {dbInfo &&
                             dbInfo.groups.map((item, index) => {
@@ -230,6 +263,7 @@ class Database extends Component {
                                 >
                                   <td colSpan={2}>{item.name}</td>
                                   <td>{item.count}</td>
+                                  <td>{item.today}</td>
                                   <td>{item.appearCount}</td>
                                   <td>{item.approvedCount}</td>
                                 </tr>
@@ -238,13 +272,10 @@ class Database extends Component {
                           <tr className="text-center font-weight-bold">
                             <td colSpan="2">รวมทั้งหมด</td>
                             <td>{dbInfo.total}</td>
+                            <td>{dbInfo.today}</td>
                             <td>{dbInfo.appearTotal}</td>
                             <td>{dbInfo.approvedTotal}</td>
                           </tr>
-                          {/* <tr className="text-center">
-                            <td colSpan="2">ทั้งหมด</td>
-                            <td colSpan="3">{dbInfo.total}</td>
-                          </tr> */}
                         </tbody>
                       </Table>
                     </Tab.Pane>
