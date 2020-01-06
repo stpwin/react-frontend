@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-
+import "./table.css"
 import { connect } from "react-redux";
 import { databaseActions } from "../../../actions";
 
@@ -17,6 +17,7 @@ import {
 import { ModalConfirm } from "../../Modals";
 
 const tempDate = new Date();
+const lastYearDate = new Date(tempDate.getUTCFullYear() - 1, 1, 1);
 
 class Database extends Component {
   state = {
@@ -25,21 +26,22 @@ class Database extends Component {
     counters: [],
     dbInfo: {
       total: 0,
+      todayAppear: 0,
+      todayApproved: 0,
       appearTotal: 0,
       approvedCount: 0,
       groups: [],
       details: []
     },
-    sinceYear: `${new Date(
-      tempDate.setUTCFullYear(tempDate.getUTCFullYear() - 1)
-    ).toLocaleDateString("th-TH", {
-      month: "short",
-      year: "2-digit"
-    })} - ${new Date(
-      tempDate
-        .setUTCMonth(1)
-        .toLocaleDateString("th-TH", { month: "short", year: "2-digit" })
-    )}`
+    sinceYear: `${lastYearDate
+      .toLocaleDateString("th-TH", {
+        day: "numeric",
+        month: "short",
+        year: "2-digit"
+      })} - ${new Date(tempDate.getUTCFullYear(), 0, 31)
+
+        .toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" })
+      }`
   };
 
   UNSAFE_componentWillMount() {
@@ -71,7 +73,8 @@ class Database extends Component {
       this.setState({
         dbInfo: {
           total: info.reduce((acc, obj) => acc + obj.count, 0),
-          today: info.reduce((acc, obj) => acc + obj.today, 0),
+          todayAppear: info.reduce((acc, obj) => acc + obj.todayAppear, 0),
+          todayApproved: info.reduce((acc, obj) => acc + obj.todayApproved, 0),
           appearTotal: info.reduce((acc, obj) => acc + obj.appearCount, 0),
           approvedTotal: info.reduce((acc, obj) => acc + obj.approvedCount, 0),
           groups: [
@@ -85,6 +88,14 @@ class Database extends Component {
               approvedCount: g1_filter.reduce(
                 (acc, obj) => acc + obj.approvedCount,
                 0
+              ),
+              todayAppear: g1_filter.reduce(
+                (acc, obj) => acc + obj.todayAppear,
+                0
+              ),
+              todayApproved: g1_filter.reduce(
+                (acc, obj) => acc + obj.todayApproved,
+                0
               )
             },
             {
@@ -96,6 +107,14 @@ class Database extends Component {
               ),
               approvedCount: g2_filter.reduce(
                 (acc, obj) => acc + obj.approvedCount,
+                0
+              ),
+              todayAppear: g2_filter.reduce(
+                (acc, obj) => acc + obj.todayAppear,
+                0
+              ),
+              todayApproved: g2_filter.reduce(
+                (acc, obj) => acc + obj.todayApproved,
                 0
               )
             }
@@ -211,27 +230,20 @@ class Database extends Component {
                 <Col sm={9}>
                   <Tab.Content>
                     <Tab.Pane eventKey="info">
-                      {/* <Table striped bordered size="sm">
-                        <thead>
-                          <tr className="text-center">
-                            <th>แสดงตนวันนี้</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="text-center">
-                            <td>{dbInfo && dbInfo.today}</td>
-                          </tr>
-                        </tbody>
-                      </Table> */}
                       <Table striped bordered size="sm">
                         <thead>
                           <tr className="text-center">
-                            <th>#</th>
-                            <th>สงคราม</th>
-                            <th>จำนวน</th>
-                            <th>ยืนยันสิทธิ์แล้วในวันนี้</th>
-                            <th>ยืนยันสิทธิ์ตั้งแต่ {sinceYear}</th>
-                            <th>อนุมัติแล้วในปีนี้</th>
+                            <th rowSpan={2}>#</th>
+                            <th rowSpan={2}>สงคราม</th>
+                            <th rowSpan={2}>จำนวน</th>
+                            <th colSpan={2}>วันนี้</th>
+                            <th colSpan={2}>{sinceYear}</th>
+                          </tr>
+                          <tr className="text-center">
+                            <th>ยืนยันสิทธิ์แล้ว</th>
+                            <th>อนุมัติแล้ว</th>
+                            <th>ยืนยันสิทธิ์แล้ว</th>
+                            <th>อนุมัติแล้ว</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -245,14 +257,15 @@ class Database extends Component {
                                   <td>{index + 1}</td>
                                   <td>{item.war}</td>
                                   <td>{item.count}</td>
-                                  <td>{item.today}</td>
+                                  <td>{item.todayAppear}</td>
+                                  <td>{item.todayApproved}</td>
                                   <td>{item.appearCount}</td>
                                   <td>{item.approvedCount}</td>
                                 </tr>
                               );
                             })}
                           <tr>
-                            <td colSpan={6}>&nbsp;</td>
+                            <td colSpan={7}>&nbsp;</td>
                           </tr>
                           {dbInfo &&
                             dbInfo.groups.map((item, index) => {
@@ -263,7 +276,8 @@ class Database extends Component {
                                 >
                                   <td colSpan={2}>{item.name}</td>
                                   <td>{item.count}</td>
-                                  <td>{item.today}</td>
+                                  <td>{item.todayAppear}</td>
+                                  <td>{item.todayApproved}</td>
                                   <td>{item.appearCount}</td>
                                   <td>{item.approvedCount}</td>
                                 </tr>
@@ -272,7 +286,8 @@ class Database extends Component {
                           <tr className="text-center font-weight-bold">
                             <td colSpan="2">รวมทั้งหมด</td>
                             <td>{dbInfo.total}</td>
-                            <td>{dbInfo.today}</td>
+                            <td>{dbInfo.todayAppear}</td>
+                            <td>{dbInfo.todayApproved}</td>
                             <td>{dbInfo.appearTotal}</td>
                             <td>{dbInfo.approvedTotal}</td>
                           </tr>
