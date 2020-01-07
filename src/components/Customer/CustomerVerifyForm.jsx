@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker, { registerLocale } from "react-datepicker";
 import th from "date-fns/locale/th";
 
-import { Form, Col, Row, Button, ButtonToolbar } from "react-bootstrap";
+import { Form, Col, Row, Button } from "react-bootstrap";
 
 import Signature from "./Signature";
 import { ModalCamera } from "../Modals";
@@ -96,21 +96,37 @@ export class CustomerVerifyForm extends Component {
           <Form.Label column sm={2}>
             รูปถ่าย / ลายมือชื่อ
           </Form.Label>
-          <Col className="vertical-divider">
-            <Signature setSigpadRef={this.setSigpadRef} onClearSigpad={this.handleClearSigpad}></Signature>
+
+          <Col>
+            <Row>
+              <Col sm={3}>
+                <Button
+                  variant="outline-secondary"
+                  className="pea-color btn-block mb-3"
+                  size="sm"
+                  onClick={this.handleShowCamera}
+                >
+                  กล้อง
+              </Button>
+              </Col>
+            </Row>
+
+
+            <Signature setSigpadRef={this.setSigpadRef} onClearSigpad={this.handleClearSigpad} />
           </Col>
-          <Col className="text-center align-self-center">
+
+          {/* <Col className="text-center align-self-center" sm={3}>
             <ButtonToolbar>
               <Button
                 variant="outline-secondary"
-                className="pea-color"
+                className="pea-color btn-block"
                 size="sm"
                 onClick={this.handleShowCamera}
               >
                 กล้อง
               </Button>
             </ButtonToolbar>
-          </Col>
+          </Col> */}
         </Form.Group>
         <ModalCamera
           show={showCamera}

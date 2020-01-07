@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, ButtonToolbar, Row, Col } from "react-bootstrap";
+import { Button, Row, Col } from "react-bootstrap";
 
 import SignatureCanvas from "react-signature-canvas";
 import "./Signature.css";
@@ -21,21 +21,21 @@ export const Signature = ({ setSigpadRef, onClearSigpad }) => {
               }}
             />
           </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col className="text-right">
-          <ButtonToolbar>
-            <Button
-              variant="outline-danger"
-              size="sm"
-              onClick={onClearSigpad}
-            >
-              ล้างลายเซ็น
+          <Row>
+            <Col sm={3}>
+              <Button
+                variant="outline-danger"
+                className="btn-block"
+                size="sm"
+                onClick={onClearSigpad}
+              >
+                ล้างลายเซ็น
               </Button>
-          </ButtonToolbar>
+            </Col>
+          </Row>
         </Col>
       </Row>
+
     </React.Fragment>
   );
 }

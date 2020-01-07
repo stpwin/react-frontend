@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
 import { getPostcodeFromDistrictNo } from "../../../helpers";
-import { Form, Modal, Button } from "react-bootstrap";
+import { Form, Modal, Button, Row, Col } from "react-bootstrap";
 import {
   FaCheck
 } from "react-icons/fa";
@@ -34,7 +34,8 @@ class AddCustomer extends Component {
       districtNo: "520101",
       postcode: "52000"
     },
-    successModal: false
+    successModal: false,
+    verifySection: true
   };
 
   sigPad = null;
@@ -45,6 +46,11 @@ class AddCustomer extends Component {
     } = nextProps;
 
     if (status === "create_success") {
+      if (!this.state.verifySection) {
+        return this.setState({
+          successModal: true
+        })
+      }
       this.handleVerifyCustomer();
     } else if (status === "verify_success") {
       this.setState({
@@ -126,24 +132,31 @@ class AddCustomer extends Component {
 
 
   handleGotoPrint = () => {
-    const { history } = this.props
-    const { location: { state, pathname } } = history
-    history.replace(`/customers/print/${this.state.customer.peaId}`, { from: pathname, filter: state && state.filter });
+    const { history, location: { state } } = this.props
+    history.replace(`/customers/print/${this.state.customer.peaId}`, { from: state.from, filter: state && state.filter });
   }
 
   handleGoBack = () => {
     const { history } = this.props
-    const { location: { state, pathname } } = history
+    const { location: { state } } = history
     if (state && state.from) {
-      return history.replace(state.from, { from: pathname, filter: state.filter })
+      return history.replace(state.from, { from: state.from, filter: state.filter })
     }
     history.goBack()
   }
 
+  handleVerifySectionChange = e => {
+    console.log(e)
+    this.setState({
+      verifySection: e.target.checked
+    })
+
+  }
+
   render() {
-    const { successModal, statusModal, confirmModal, customer, peaIdInvalid } = this.state;
+    const { successModal, statusModal, confirmModal, customer, peaIdInvalid, verifySection } = this.state;
     return (
-      <React.Fragment>
+      <Fragment>
         <Form onSubmit={this.handleCreateCustomer}>
           <CustomerDataForm
             peaIdInvalid={peaIdInvalid}
@@ -152,10 +165,29 @@ class AddCustomer extends Component {
             onChange={this.handleDataChange}
           />
           <hr />
-          <CustomerVerifyForm
-            setSigpadRef={this.setSigpadRef}
-            onAppearDateChange={this.handleAppearDateChange}
-          />
+          <Row>
+            <Col className="text-center mb-3">
+              <Form.Check
+                custom
+                inline
+                label="ยืนยันสิทธิ์"
+                checked={verifySection}
+                onChange={this.handleVerifySectionChange}
+                id="showVerifySection"
+              />
+            </Col>
+          </Row>
+
+          {verifySection ?
+
+            <CustomerVerifyForm
+              setSigpadRef={this.setSigpadRef}
+              onAppearDateChange={this.handleAppearDateChange}
+            />
+
+            : null}
+
+
           <FormButton loading={statusModal} cancel={this.handleCancel} />
         </Form>
 
@@ -197,7 +229,7 @@ class AddCustomer extends Component {
           confirm={this.handleGoBack}
           close={this.handleConfirmModalClose}
         />
-      </React.Fragment>
+      </Fragment>
     );
   }
 }

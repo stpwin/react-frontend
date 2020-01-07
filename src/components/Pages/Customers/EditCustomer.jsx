@@ -23,7 +23,7 @@ class EditCustomer extends Component {
       customers: { status, customer }
     } = nextProps;
     if (status === "update_success") {
-      this.props.history.goBack();
+      this.handleGoBack();
       return
     }
     if (customer) {

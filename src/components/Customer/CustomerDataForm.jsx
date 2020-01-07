@@ -111,9 +111,9 @@ export const CustomerDataForm = ({
             </Form.Group>
 
             <Form.Group as={Col} sm={2}>
-              <Form.Label>หมู่ที่</Form.Label>
+              <Form.Label>หมู่</Form.Label>
               <Form.Control
-                placeholder={showPlaceholder ? "หมู่ที่" : ""}
+                placeholder={showPlaceholder ? "หมู่" : ""}
                 maxLength="2"
                 name="mooNo"
                 disabled={readOnly}
@@ -233,12 +233,12 @@ export const CustomerDataForm = ({
 
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
-          เลขที่บัตรประจำตัวทหาร
+          เลขประจำตัวทหาร
         </Form.Label>
-        <Col sm={3}>
+        <Col sm={4}>
           <Form.Control
             type="text"
-            placeholder={showPlaceholder ? "เลขที่บัตรประจำตัวทหาร" : ""}
+            placeholder={showPlaceholder ? "เลขประจำตัวทหาร" : ""}
             name="soldierNo"
             disabled={readOnly}
             value={soldierNo || ""}
@@ -250,9 +250,9 @@ export const CustomerDataForm = ({
 
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
-          ลดสิทธิ์สงคราม
+          สงคราม
         </Form.Label>
-        <Col sm={3}>
+        <Col sm={4}>
           <Form.Control
             as="select"
             name="war"
