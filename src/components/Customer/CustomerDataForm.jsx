@@ -189,7 +189,7 @@ export const CustomerDataForm = ({
               checked={authorize === "ทหาร"}
               onChange={onChange}
               disabled={readOnly}
-              id={`inline-1`}
+              id={`authorize-check-1`}
             />
             <Form.Check
               inline
@@ -201,7 +201,7 @@ export const CustomerDataForm = ({
               checked={authorize === "ตัวแทน"}
               onChange={onChange}
               disabled={readOnly}
-              id={`inline-2`}
+              id={`authorize-check-2`}
             />
             <Form.Check
               inline
@@ -213,7 +213,7 @@ export const CustomerDataForm = ({
               checked={authorize === "ภรรยา"}
               onChange={onChange}
               disabled={readOnly}
-              id={`inline-3`}
+              id={`authorize-check-3`}
             />
             <Form.Check
               inline
@@ -225,7 +225,19 @@ export const CustomerDataForm = ({
               checked={authorize === "ทายาท"}
               onChange={onChange}
               disabled={readOnly}
-              id={`inline-4`}
+              id={`authorize-check-4`}
+            />
+            <Form.Check
+              inline
+              custom
+              type="radio"
+              label="มารดาทหาร"
+              name="authorize"
+              value="มารดาทหาร"
+              checked={authorize === "มารดาทหาร"}
+              onChange={onChange}
+              disabled={readOnly}
+              id={`authorize-check-5`}
             />
           </Col>
         </Form.Group>
