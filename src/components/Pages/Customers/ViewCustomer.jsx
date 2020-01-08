@@ -27,9 +27,11 @@ const basicDataRow = [
   { field: "peaId", title: "หมายเลขผู้ใช้ไฟ(CA)", key: "peaId" },
   { field: "name", title: "ชื่อ-สกุล", key: "name" },
   { field: "address", title: "ที่อยู่", key: "address" },
+  { field: "tel", title: "โทรศัพท์", key: "tel" },
   { field: "authorize", title: "กรณีเป็น", key: "authorize" },
   { field: "soldierNo", title: "หมายเลขทหาร", key: "soldierNo" },
-  { field: "war", title: "ลดสิทธิ์สงคราม", key: "war" }
+  { field: "war", title: "ลดสิทธิ์สงคราม", key: "war" },
+  { field: "description", title: "เพิ่มเติม", key: "description" }
 ];
 
 class ViewCustomer extends Component {
@@ -187,7 +189,7 @@ class ViewCustomer extends Component {
             </ButtonToolbar>
           </Col>
         </Row>
-        <Row className="mt-4">
+        <Row className="mt-4 mb-5">
           <Col>
             <h4 className="text-center">ข้อมูลพื้นฐาน</h4>
             <Row>
@@ -197,8 +199,16 @@ class ViewCustomer extends Component {
                     basicDataRow.map(item => {
                       return (
                         <ListGroup.Item key={item.key}>
-                          <span className="text-dark">{item.title}:</span>
-                          <b className="ml-2">{`${translated[item.field]}`}</b>
+                          <Row>
+                            <Col sm={5}>
+                              <span className="text-dark">{item.title}:</span>
+                            </Col>
+                            <Col>
+                              <b style={{ whiteSpace: "pre-wrap" }}>
+                                {`${translated[item.field] || "-"}`}
+                              </b>
+                            </Col>
+                          </Row>
                         </ListGroup.Item>
                       );
                     })}

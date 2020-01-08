@@ -17,7 +17,9 @@ const create = ({
   districtNo,
   authorize,
   soldierNo,
-  war
+  war,
+  tel,
+  description
 }) => {
   const requestOptions = {
     method: "POST",
@@ -35,7 +37,9 @@ const create = ({
           houseNo,
           mooNo,
           districtNo
-        }
+        },
+        tel,
+        description
       }
     })
   };
@@ -113,7 +117,9 @@ const update = (
     war,
     houseNo,
     mooNo,
-    districtNo
+    districtNo,
+    tel,
+    description
   }
 ) => {
   if (!peaId || !peaIdRef) {
@@ -135,7 +141,9 @@ const update = (
           houseNo,
           mooNo,
           districtNo
-        }
+        },
+        tel,
+        description
       }
     })
   };

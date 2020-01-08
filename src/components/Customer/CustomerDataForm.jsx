@@ -18,7 +18,9 @@ export const CustomerDataForm = ({
     postcode,
     authorize,
     soldierNo,
-    war
+    war,
+    tel,
+    description
   }
 }) => {
   return (
@@ -245,6 +247,23 @@ export const CustomerDataForm = ({
 
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
+          โทรศัพท์
+        </Form.Label>
+        <Col sm={4}>
+          <Form.Control
+            type="text"
+            placeholder={showPlaceholder ? "โทรศัพท์" : ""}
+            name="tel"
+            disabled={readOnly}
+            value={tel || ""}
+            maxLength="15"
+            onChange={onChange}
+          />
+        </Col>
+      </Form.Group>
+
+      <Form.Group as={Row}>
+        <Form.Label column sm={2}>
           เลขประจำตัวทหาร
         </Form.Label>
         <Col sm={4}>
@@ -280,6 +299,21 @@ export const CustomerDataForm = ({
             <option value="อินโดจีน">อินโดจีน</option>
             <option value="ฝรั่งเศส">ฝรั่งเศส</option>
           </Form.Control>
+        </Col>
+      </Form.Group>
+
+      <Form.Group as={Row}>
+        <Form.Label column sm={2}>
+          เพิ่มเติม
+        </Form.Label>
+        <Col sm={4}>
+          <Form.Control
+            as="textarea"
+            name="description"
+            row="3"
+            value={description}
+            onChange={onChange}
+          ></Form.Control>
         </Col>
       </Form.Group>
     </React.Fragment>

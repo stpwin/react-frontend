@@ -4,9 +4,7 @@ import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
 import { getPostcodeFromDistrictNo } from "../../../helpers";
 import { Form, Modal, Button, Row, Col } from "react-bootstrap";
-import {
-  FaCheck
-} from "react-icons/fa";
+import { FaCheck } from "react-icons/fa";
 
 import { ModalConfirm } from "../../Modals";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
@@ -32,7 +30,9 @@ class AddCustomer extends Component {
       houseNo: "",
       mooNo: "",
       districtNo: "520101",
-      postcode: "52000"
+      postcode: "52000",
+      tel: "",
+      description: ""
     },
     successModal: false,
     verifySection: true
@@ -49,13 +49,13 @@ class AddCustomer extends Component {
       if (!this.state.verifySection) {
         return this.setState({
           successModal: true
-        })
+        });
       }
       this.handleVerifyCustomer();
     } else if (status === "verify_success") {
       this.setState({
         successModal: true
-      })
+      });
     }
   }
 
@@ -127,34 +127,50 @@ class AddCustomer extends Component {
   };
 
   handleHideSuccessModal = () => {
-    this.setState({ successModal: false })
-  }
-
+    this.setState({ successModal: false });
+  };
 
   handleGotoPrint = () => {
-    const { history, location: { state } } = this.props
-    history.replace(`/customers/print/${this.state.customer.peaId}`, { from: state.from, filter: state && state.filter });
-  }
+    const {
+      history,
+      location: { state }
+    } = this.props;
+    history.replace(`/customers/print/${this.state.customer.peaId}`, {
+      from: state.from,
+      filter: state && state.filter
+    });
+  };
 
   handleGoBack = () => {
-    const { history } = this.props
-    const { location: { state } } = history
+    const { history } = this.props;
+    const {
+      location: { state }
+    } = history;
     if (state && state.from) {
-      return history.replace(state.from, { from: state.from, filter: state.filter })
+      return history.replace(state.from, {
+        from: state.from,
+        filter: state.filter
+      });
     }
-    history.goBack()
-  }
+    history.goBack();
+  };
 
   handleVerifySectionChange = e => {
-    console.log(e)
+    console.log(e);
     this.setState({
       verifySection: e.target.checked
-    })
-
-  }
+    });
+  };
 
   render() {
-    const { successModal, statusModal, confirmModal, customer, peaIdInvalid, verifySection } = this.state;
+    const {
+      successModal,
+      statusModal,
+      confirmModal,
+      customer,
+      peaIdInvalid,
+      verifySection
+    } = this.state;
     return (
       <Fragment>
         <Form onSubmit={this.handleCreateCustomer}>
@@ -178,15 +194,12 @@ class AddCustomer extends Component {
             </Col>
           </Row>
 
-          {verifySection ?
-
+          {verifySection ? (
             <CustomerVerifyForm
               setSigpadRef={this.setSigpadRef}
               onAppearDateChange={this.handleAppearDateChange}
             />
-
-            : null}
-
+          ) : null}
 
           <FormButton loading={statusModal} cancel={this.handleCancel} />
         </Form>
@@ -196,7 +209,8 @@ class AddCustomer extends Component {
           // onHide={this.handleHideSuccessModal}
           backdrop="static"
           centered={true}
-          aria-labelledby="contained-modal-title-vcenter" >
+          aria-labelledby="contained-modal-title-vcenter"
+        >
           <Modal.Header>
             <Modal.Title>บันทึกข้อมูลเสร็จสิ้น</Modal.Title>
           </Modal.Header>
@@ -204,7 +218,6 @@ class AddCustomer extends Component {
             <div className="text-center">
               <FaCheck className="pea-color" size={48} />
             </div>
-
           </Modal.Body>
           <Modal.Footer>
             <Button
@@ -213,13 +226,10 @@ class AddCustomer extends Component {
               onClick={this.handleGotoPrint}
             >
               พิมพ์
-          </Button>
-            <Button
-              variant="outline-secondary"
-              onClick={this.handleGoBack}
-            >
+            </Button>
+            <Button variant="outline-secondary" onClick={this.handleGoBack}>
               กลับ
-          </Button>
+            </Button>
           </Modal.Footer>
         </Modal>
 

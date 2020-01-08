@@ -24,7 +24,7 @@ class EditCustomer extends Component {
     } = nextProps;
     if (status === "update_success") {
       this.handleGoBack();
-      return
+      return;
     }
     if (customer) {
       this.setState({
@@ -39,30 +39,38 @@ class EditCustomer extends Component {
           postcode: getPostcodeFromDistrictNo(customer.address.districtNo),
           authorize: customer.authorize,
           soldierNo: customer.soldierNo,
-          war: customer.war
+          war: customer.war,
+          tel: customer.tel,
+          description: customer.description
         }
-      })
+      });
     }
   }
 
   handleGoBack = () => {
-    const { history } = this.props
-    const { location: { state, pathname } } = history
+    const { history } = this.props;
+    const {
+      location: { state, pathname }
+    } = history;
     if (state && state.from) {
-      return history.replace(state.from, { from: pathname, filter: state.filter })
+      return history.replace(state.from, {
+        from: pathname,
+        filter: state.filter
+      });
     }
-    history.goBack()
-  }
+    history.goBack();
+  };
 
   handleDataChange = e => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     if (name === "districtNo") {
       this.setState({
         customer: {
-          ...this.state.customer, districtNo: value,
+          ...this.state.customer,
+          districtNo: value,
           postcode: getPostcodeFromDistrictNo(value)
         }
-      })
+      });
     } else {
       this.setState({
         customer: {
@@ -71,7 +79,7 @@ class EditCustomer extends Component {
         }
       });
     }
-  }
+  };
 
   handleUpdateCustomer = event => {
     event.preventDefault();
@@ -79,7 +87,7 @@ class EditCustomer extends Component {
   };
 
   render() {
-    const { customer } = this.state
+    const { customer } = this.state;
     const { loading } = this.props;
 
     return (
@@ -98,17 +106,16 @@ class EditCustomer extends Component {
 
 const mapStateToProps = state => {
   const { customers } = state;
-  const { loading } = customers
+  const { loading } = customers;
   return { customers, loading };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getCustomer: peaId => dispatch(customerActions.get(peaId)),
-    updateCustomer: (peaId, customer) => dispatch(customerActions.update(peaId, customer))
+    updateCustomer: (peaId, customer) =>
+      dispatch(customerActions.update(peaId, customer))
   };
 };
 
-export default
-  connect(mapStateToProps, mapDispatchToProps)(EditCustomer)
-
+export default connect(mapStateToProps, mapDispatchToProps)(EditCustomer);

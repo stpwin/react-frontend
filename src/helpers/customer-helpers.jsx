@@ -25,6 +25,8 @@ export const translateCustomer = (customer, fullDate = true) => {
     name: `${customer.title}${customer.firstName}\u00A0\u00A0${customer.lastName}`,
     peaId: customer.peaId,
     address: addressToString(customer.address),
+    tel: customer.tel,
+    description: customer.description,
     authorize: customer.authorize,
     soldierNo: customer.soldierNo,
     privilegeDate: privilegeDate,
