@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, forwardRef } from "react";
 import "./table.css";
 import { connect } from "react-redux";
 import { databaseActions } from "../../../actions";
@@ -15,24 +15,25 @@ import {
   ButtonToolbar,
   Button,
   Form,
-  Dropdown,
-  DropdownButton
+  // Dropdown,
+  // DropdownButton
 } from "react-bootstrap";
 
 import { ModalConfirm } from "../../Modals";
 
 const tempDate = new Date();
+tempDate.setHours(0, 0, 0, 0)
 const lastYearDate = new Date(tempDate.getUTCFullYear() - 1, 1, 1);
-const totalCountSince = [
-  { name: "วันนี้", value: "" },
-  { name: "เมื่อวานนี้", value: "" },
-  { name: "2 วันที่แล้ว", value: "" },
-  { name: "3 วันที่แล้ว", value: "" },
-  { name: "4 วันที่แล้ว", value: "" },
-  { name: "5 วันที่แล้ว", value: "" },
-  { name: "6 วันที่แล้ว", value: "" },
-  { name: "7 วันที่แล้ว", value: "" }
-];
+// const totalCountSince = [
+//   { name: "วันนี้", value: tempDate },
+//   { name: "เมื่อวานนี้", value: new Date(tempDate.getUTCFullYear()) tempDate.setUTCDate(tempDate.getUTCDate() - 1) },
+//   { name: "2 วันที่แล้ว", value: tempDate.setUTCDate(tempDate.getUTCDate() - 2) },
+//   { name: "3 วันที่แล้ว", value: tempDate.setUTCDate(tempDate.getUTCDate() - 3) },
+//   { name: "4 วันที่แล้ว", value: tempDate.setUTCDate(tempDate.getUTCDate() - 4) },
+//   { name: "5 วันที่แล้ว", value: tempDate.setUTCDate(tempDate.getUTCDate() - 5) },
+//   { name: "6 วันที่แล้ว", value: tempDate.setUTCDate(tempDate.getUTCDate() - 6) },
+//   { name: "7 วันที่แล้ว", value: tempDate.setUTCDate(tempDate.getUTCDate() - 7) }
+// ];
 
 class Database extends Component {
   state = {
@@ -60,7 +61,6 @@ class Database extends Component {
         year: "2-digit"
       }
     )}`,
-    selectedSince: "วันนี้",
     sinceDate: new Date()
   };
 
@@ -210,18 +210,12 @@ class Database extends Component {
     this.handleConfirmHide();
   };
 
-  handleCountSinceChange = e => {
-    console.log(e);
+  handleSinceDateChange = date => {
+    console.log(date)
     this.setState({
-      selectedSince: totalCountSince[e].name
-    });
-  };
-
-  handleCountSinceCustom = () => {
-    this.setState({
-      selectedSince: "กำหนดเอง"
-    });
-  };
+      sinceDate: date
+    })
+  }
 
   render() {
     const {
@@ -230,7 +224,6 @@ class Database extends Component {
       counters,
       dbInfo,
       sinceYear,
-      selectedSince,
       sinceDate
     } = this.state;
     return (
@@ -273,43 +266,19 @@ class Database extends Component {
                             <th rowSpan={2}>สงคราม</th>
                             <th rowSpan={2}>จำนวน</th>
                             <th colSpan={2}>
-                              <div style={{ display: "flex" }}>
-                                <DropdownButton
-                                  variant="outline-secondary"
-                                  size="sm"
-                                  title={selectedSince}
-                                  id="dropdown-count-since"
-                                >
-                                  {totalCountSince.map((k, i) => {
-                                    return (
-                                      <Dropdown.Item
-                                        onClick={() =>
-                                          this.handleCountSinceChange(i)
-                                        }
-                                        key={`dropdown-since-${i}`}
-                                      >
-                                        {k.name}
-                                      </Dropdown.Item>
-                                    );
-                                  })}
-                                  <Dropdown.Item
-                                    onClick={this.handleCountSinceCustom}
-                                    key={`dropdown-since-custom`}
-                                  >
-                                    กำหนดเอง
-                                  </Dropdown.Item>
-                                </DropdownButton>
-                                <DatePicker
-                                  locale="th"
-                                  // todayButton="เลือกวันนี้"
-                                  className="form-control form-control-sm ml-1 text-center"
-                                  style={{ flex: "1 1 auto" }}
-                                  selected={sinceDate}
-                                  // dateFormatCalendar="LLLL yyyy"
-                                  // dateFormat="d MMMM y"
-                                  // onChange={this.handleAppearDateChange}
-                                />
-                              </div>
+                              <DatePicker
+                                locale="th"
+                                todayButton="เลือกวันนี้"
+                                className="form-control form-control-sm ml-1 text-center"
+                                style={{ flex: "1 1 auto" }}
+                                selected={sinceDate}
+                                shouldCloseOnSelect={false}
+                                dateFormatCalendar="LLLL yyyy"
+                                dateFormat="d MMMM y"
+                                onChange={this.handleSinceDateChange}
+                                customInput={<DatePickerButton />}
+                              />
+                              {/* </div> */}
                             </th>
                             <th colSpan={2}>{sinceYear}</th>
                           </tr>
@@ -450,6 +419,10 @@ const Tools = ({ onSet, onReset }) => {
     </ButtonToolbar>
   );
 };
+
+const DatePickerButton = forwardRef((props, ref) => {
+  return <Button ref={ref} variant="outline-secondary" size="sm" className="ml-2" onClick={props.onClick} style={{ width: "9rem" }}>{props.value}</Button>
+})
 
 const mapStateToProps = state => {
   const { database } = state;
