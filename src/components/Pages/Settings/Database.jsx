@@ -1,7 +1,10 @@
 import React, { Component, Fragment } from "react";
-import "./table.css"
+import "./table.css";
 import { connect } from "react-redux";
 import { databaseActions } from "../../../actions";
+
+import DatePicker, { registerLocale } from "react-datepicker";
+import th from "date-fns/locale/th";
 
 import {
   Row,
@@ -11,13 +14,25 @@ import {
   Tab,
   ButtonToolbar,
   Button,
-  Form
+  Form,
+  Dropdown,
+  DropdownButton
 } from "react-bootstrap";
 
 import { ModalConfirm } from "../../Modals";
 
 const tempDate = new Date();
 const lastYearDate = new Date(tempDate.getUTCFullYear() - 1, 1, 1);
+const totalCountSince = [
+  { name: "วันนี้", value: "" },
+  { name: "เมื่อวานนี้", value: "" },
+  { name: "2 วันที่แล้ว", value: "" },
+  { name: "3 วันที่แล้ว", value: "" },
+  { name: "4 วันที่แล้ว", value: "" },
+  { name: "5 วันที่แล้ว", value: "" },
+  { name: "6 วันที่แล้ว", value: "" },
+  { name: "7 วันที่แล้ว", value: "" }
+];
 
 class Database extends Component {
   state = {
@@ -33,18 +48,24 @@ class Database extends Component {
       groups: [],
       details: []
     },
-    sinceYear: `${lastYearDate
-      .toLocaleDateString("th-TH", {
+    sinceYear: `${lastYearDate.toLocaleDateString("th-TH", {
+      day: "numeric",
+      month: "short",
+      year: "2-digit"
+    })} - ${new Date(tempDate.getUTCFullYear(), 0, 31).toLocaleDateString(
+      "th-TH",
+      {
         day: "numeric",
         month: "short",
         year: "2-digit"
-      })} - ${new Date(tempDate.getUTCFullYear(), 0, 31)
-
-        .toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "2-digit" })
-      }`
+      }
+    )}`,
+    selectedSince: "วันนี้",
+    sinceDate: new Date()
   };
 
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
+    registerLocale("th", th);
     this.props.getDatabaseCounters();
     this.props.getDatabaseInfo();
   }
@@ -189,13 +210,28 @@ class Database extends Component {
     this.handleConfirmHide();
   };
 
+  handleCountSinceChange = e => {
+    console.log(e);
+    this.setState({
+      selectedSince: totalCountSince[e].name
+    });
+  };
+
+  handleCountSinceCustom = () => {
+    this.setState({
+      selectedSince: "กำหนดเอง"
+    });
+  };
+
   render() {
     const {
       confirmModal,
       confirmText,
       counters,
       dbInfo,
-      sinceYear
+      sinceYear,
+      selectedSince,
+      sinceDate
     } = this.state;
     return (
       <div className="database-manage-container">
@@ -215,7 +251,7 @@ class Database extends Component {
                         การนับลำดับ
                       </Nav.Link>
                     </Nav.Item>
-                    <Nav.Item>
+                    {/* <Nav.Item>
                       <Nav.Link className="tab-link" eventKey="second">
                         สำรองข้อมูล
                       </Nav.Link>
@@ -224,7 +260,7 @@ class Database extends Component {
                       <Nav.Link className="tab-link" eventKey="third">
                         ลบข้อมูล
                       </Nav.Link>
-                    </Nav.Item>
+                    </Nav.Item> */}
                   </Nav>
                 </Col>
                 <Col sm={9}>
@@ -236,7 +272,45 @@ class Database extends Component {
                             <th rowSpan={2}>#</th>
                             <th rowSpan={2}>สงคราม</th>
                             <th rowSpan={2}>จำนวน</th>
-                            <th colSpan={2}>วันนี้</th>
+                            <th colSpan={2}>
+                              <div style={{ display: "flex" }}>
+                                <DropdownButton
+                                  variant="outline-secondary"
+                                  size="sm"
+                                  title={selectedSince}
+                                  id="dropdown-count-since"
+                                >
+                                  {totalCountSince.map((k, i) => {
+                                    return (
+                                      <Dropdown.Item
+                                        onClick={() =>
+                                          this.handleCountSinceChange(i)
+                                        }
+                                        key={`dropdown-since-${i}`}
+                                      >
+                                        {k.name}
+                                      </Dropdown.Item>
+                                    );
+                                  })}
+                                  <Dropdown.Item
+                                    onClick={this.handleCountSinceCustom}
+                                    key={`dropdown-since-custom`}
+                                  >
+                                    กำหนดเอง
+                                  </Dropdown.Item>
+                                </DropdownButton>
+                                <DatePicker
+                                  locale="th"
+                                  // todayButton="เลือกวันนี้"
+                                  className="form-control form-control-sm ml-1 text-center"
+                                  style={{ flex: "1 1 auto" }}
+                                  selected={sinceDate}
+                                  // dateFormatCalendar="LLLL yyyy"
+                                  // dateFormat="d MMMM y"
+                                  // onChange={this.handleAppearDateChange}
+                                />
+                              </div>
+                            </th>
                             <th colSpan={2}>{sinceYear}</th>
                           </tr>
                           <tr className="text-center">
@@ -336,7 +410,7 @@ class Database extends Component {
                         </tbody>
                       </Table>
                     </Tab.Pane>
-                    <Tab.Pane eventKey="second">
+                    {/* <Tab.Pane eventKey="second">
                       <div className="text-center">
                         สำรองข้อมูล ยังไม่พร้อมใช้งาน
                       </div>
@@ -345,7 +419,7 @@ class Database extends Component {
                       <div className="text-center">
                         ลบข้อมูล ยังไม่พร้อมใช้งาน
                       </div>
-                    </Tab.Pane>
+                    </Tab.Pane> */}
                   </Tab.Content>
                 </Col>
               </Row>
