@@ -14,7 +14,13 @@ export const getWarType = war => {
   return warsType[war];
 };
 
-export const translateCustomer = (customer, fullDate = true) => {
+export const translateCustomer = (
+  customer,
+  fullDate = true,
+  shortAddress = false,
+  onlyDistrict = false,
+  telInAddress = false
+) => {
   if (!customer) return;
 
   const privilegeDate =
@@ -24,7 +30,11 @@ export const translateCustomer = (customer, fullDate = true) => {
     seq: `${warType}-${customer.seq || ""}`,
     name: `${customer.title}${customer.firstName}\u00A0\u00A0${customer.lastName}`,
     peaId: customer.peaId,
-    address: addressToString(customer.address),
+    address: `${addressToString(
+      customer.address,
+      shortAddress,
+      onlyDistrict
+    )} ${telInAddress && customer.tel ? customer.tel : ""}`,
     tel: customer.tel,
     description: customer.description,
     authorize: customer.authorize,

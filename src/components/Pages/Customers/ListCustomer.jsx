@@ -25,20 +25,32 @@ const filters = [
 ];
 
 const columns = [
-  { text: "#", dataField: "index", valign: "true", style: { width: "4%" }, badge: { variant: "dark" } },
+  {
+    text: "#",
+    dataField: "index",
+    valign: "true",
+    style: { width: "4%" },
+    badge: { variant: "dark" }
+  },
   {
     text: "ลำดับ",
     dataField: "seq",
     valign: "true",
     style: { width: "6%" },
     canSearch: true,
-    variable: "currentYearApproved"
+    variable: "currentYearApproved",
+    tdStyle: {
+      fontSize: "smaller"
+    }
   },
   {
     text: "ชื่อ-สกุล",
     dataField: "name",
     canSearch: true,
-    style: { width: "16%" }
+    style: { width: "16%" },
+    tdStyle: {
+      fontSize: "smaller"
+    }
   },
   {
     text: "หมายเลขผู้ใช้ไฟฟ้า",
@@ -46,16 +58,14 @@ const columns = [
     valign: "true",
     canSearch: true,
     tdStyle: {
-
       fontSize: "80%",
-      fontWeight: "700",
-
+      fontWeight: "700"
     }
   },
   {
     text: "ที่อยู่",
     dataField: "address",
-    tdStyle: { fontSize: "0.9rem" }
+    tdStyle: { fontSize: "smaller" }
   },
   {
     text: "สงคราม",
@@ -71,7 +81,12 @@ const columns = [
     badge: { variant: "light" }
   },
   // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
-  { text: "กรณีเป็น", dataField: "authorize", valign: "true", badge: { variant: "secondary" } },
+  {
+    text: "กรณีเป็น",
+    dataField: "authorize",
+    valign: "true",
+    badge: { variant: "secondary" }
+  },
   {
     text: "วันที่มาแสดงตน",
     dataField: "appearDate",
@@ -220,7 +235,7 @@ class ListCustomer extends Component {
         customers.customers.map((customer, index) => {
           return {
             index: index + start + 1,
-            ...translateCustomer(customer, false)
+            ...translateCustomer(customer, false, true, true, true)
           };
         });
 
@@ -243,11 +258,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-        .map((data, index) => {
-          return data === true ? filters[index].wars.join() : null;
-        })
-        .filter(Boolean)
-        .join() || "-";
+          .map((data, index) => {
+            return data === true ? filters[index].wars.join() : null;
+          })
+          .filter(Boolean)
+          .join() || "-";
   };
 
   fetchNew = () => {
