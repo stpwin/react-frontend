@@ -64,11 +64,14 @@ const getInfo = () => {
   }
 };
 
-const getVerifyInfoByDate = date => {
+const getVerifyInfoByDate = (date, betweenStart, betweenEnd) => {
+  // if (!betweenStart || !betweenEnd) {
+  //   return dispatch => dispatch(failure("error"));
+  // }
   return dispatch => {
     dispatch(request());
 
-    databaseService.getVerifyInfoByDate(date).then(
+    databaseService.getVerifyInfoByDate(date, betweenStart, betweenEnd).then(
       data => dispatch(success(data)),
       error => dispatch(failure(error))
     );

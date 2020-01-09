@@ -38,13 +38,13 @@ const getInfo = () => {
     .catch(handleFetchError);
 };
 
-const getVerifyInfoByDate = date => {
+const getVerifyInfoByDate = (date, betweenStart, betweenEnd) => {
   const requestOption = {
     method: "GET",
     headers: authHeader()
   };
   return fetch(
-    `${config.apiUrl}/api/settings/database/verifyinfo?date=${date}`,
+    `${config.apiUrl}/api/settings/database/verifyinfo?date=${date}&betweenStart=${betweenStart}&betweenEnd=${betweenEnd}`,
     requestOption
   )
     .then(handleResponse)

@@ -23,7 +23,7 @@ import { ModalConfirm } from "../../Modals";
 
 const tempDate = new Date();
 tempDate.setHours(0, 0, 0, 0);
-const lastYearDate = new Date(tempDate.getUTCFullYear() - 1, 1, 1);
+// const lastYearDate = new Date(tempDate.getUTCFullYear() - 1, 1, 1);
 // const totalCountSince = [
 //   { name: "วันนี้", value: tempDate },
 //   { name: "เมื่อวานนี้", value: new Date(tempDate.getUTCFullYear()) tempDate.setUTCDate(tempDate.getUTCDate() - 1) },
@@ -49,26 +49,33 @@ class Database extends Component {
       groups: [],
       details: []
     },
-    sinceYear: `${lastYearDate.toLocaleDateString("th-TH", {
-      day: "numeric",
-      month: "short",
-      year: "2-digit"
-    })} - ${new Date(tempDate.getUTCFullYear(), 0, 31).toLocaleDateString(
-      "th-TH",
-      {
-        day: "numeric",
-        month: "short",
-        year: "2-digit"
-      }
-    )}`,
+    // sinceYear: `${lastYearDate.toLocaleDateString("th-TH", {
+    //   day: "numeric",
+    //   month: "short",
+    //   year: "2-digit"
+    // })} - ${new Date(tempDate.getUTCFullYear(), 0, 31).toLocaleDateString(
+    //   "th-TH",
+    //   {
+    //     day: "numeric",
+    //     month: "short",
+    //     year: "2-digit"
+    //   }
+    // )}`,
+    startDate: new Date(new Date().getUTCFullYear() - 1, 0, 1),
+    endDate: new Date(),
     sinceDate: new Date()
   };
 
   componentDidMount() {
     registerLocale("th", th);
+    const { startDate, endDate, sinceDate } = this.state;
     this.props.getDatabaseCounters();
     // this.props.getDatabaseInfo();
-    this.props.getVerifyInfoByDate(this.state.sinceDate.toJSON());
+    this.props.getVerifyInfoByDate(
+      sinceDate.toJSON(),
+      startDate.toJSON(),
+      endDate.toJSON()
+    );
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -91,6 +98,8 @@ class Database extends Component {
           obj.war
         )
       );
+
+      info.sort((a, b) => a.war.localeCompare(b.war));
 
       this.setState({
         dbInfo: {
@@ -212,13 +221,49 @@ class Database extends Component {
   };
 
   handleSinceDateChange = date => {
-    // console.log();
+    const { startDate, endDate } = this.state;
     this.setState(
       {
         sinceDate: date
       },
       () => {
-        this.props.getVerifyInfoByDate(date.toJSON());
+        this.props.getVerifyInfoByDate(
+          date.toJSON(),
+          startDate.toJSON(),
+          endDate.toJSON()
+        );
+      }
+    );
+  };
+
+  setStartDate = date => {
+    const { sinceDate, endDate } = this.state;
+    this.setState(
+      {
+        startDate: date
+      },
+      () => {
+        this.props.getVerifyInfoByDate(
+          sinceDate.toJSON(),
+          date.toJSON(),
+          endDate.toJSON()
+        );
+      }
+    );
+  };
+
+  setEndDate = date => {
+    const { sinceDate, startDate } = this.state;
+    this.setState(
+      {
+        endDate: date
+      },
+      () => {
+        this.props.getVerifyInfoByDate(
+          sinceDate.toJSON(),
+          startDate.toJSON(),
+          date.toJSON()
+        );
       }
     );
   };
@@ -229,7 +274,8 @@ class Database extends Component {
       confirmText,
       counters,
       dbInfo,
-      sinceYear,
+      startDate,
+      endDate,
       sinceDate
     } = this.state;
     return (
@@ -284,9 +330,54 @@ class Database extends Component {
                                 onChange={this.handleSinceDateChange}
                                 customInput={<DatePickerButton />}
                               />
-                              {/* </div> */}
                             </th>
-                            <th colSpan={2}>{sinceYear}</th>
+                            <th colSpan={2}>
+                              <div className="d-inline-flex">
+                                <span
+                                  style={{
+                                    fontSize: "smaller",
+                                    fontWeight: "lighter",
+                                    alignSelf: "center"
+                                  }}
+                                >
+                                  ระหว่าง
+                                </span>
+                                <DatePicker
+                                  locale="th"
+                                  todayButton="เลือกวันนี้"
+                                  selected={startDate}
+                                  onChange={date => this.setStartDate(date)}
+                                  dateFormatCalendar="LLLL yyyy"
+                                  dateFormat="d MMMM y"
+                                  selectsStart
+                                  startDate={startDate}
+                                  endDate={endDate}
+                                  customInput={<DatePickerButton />}
+                                />
+                                <span
+                                  style={{
+                                    fontSize: "smaller",
+                                    fontWeight: "lighter",
+                                    alignSelf: "center"
+                                  }}
+                                >
+                                  ถึง
+                                </span>
+                                <DatePicker
+                                  locale="th"
+                                  todayButton="เลือกวันนี้"
+                                  selected={endDate}
+                                  onChange={date => this.setEndDate(date)}
+                                  dateFormatCalendar="LLLL yyyy"
+                                  dateFormat="d MMMM y"
+                                  selectsEnd
+                                  startDate={startDate}
+                                  endDate={endDate}
+                                  minDate={startDate}
+                                  customInput={<DatePickerButton />}
+                                />
+                              </div>
+                            </th>
                           </tr>
                           <tr className="text-center">
                             <th>ยืนยันสิทธิ์แล้ว</th>
@@ -432,9 +523,9 @@ const DatePickerButton = forwardRef((props, ref) => {
       ref={ref}
       variant="outline-secondary"
       size="sm"
-      className="ml-2"
+      className="ml-1 mr-1"
       onClick={props.onClick}
-      style={{ width: "9rem" }}
+      style={{ width: "8.5rem" }}
     >
       {props.value}
     </Button>
@@ -454,8 +545,8 @@ const mapDispatchToProps = dispatch => {
     setDatabaseCounter: (name, sequence) =>
       dispatch(databaseActions.setCounter(name, sequence)),
     getDatabaseInfo: () => dispatch(databaseActions.getInfo()),
-    getVerifyInfoByDate: date =>
-      dispatch(databaseActions.getVerifyInfoByDate(date))
+    getVerifyInfoByDate: (date, startDate, endDate) =>
+      dispatch(databaseActions.getVerifyInfoByDate(date, startDate, endDate))
   };
 };
 
