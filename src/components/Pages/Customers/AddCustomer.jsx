@@ -4,12 +4,13 @@ import { customerActions } from "../../../actions";
 import { withRouter } from "react-router-dom";
 import { getPostcodeFromDistrictNo } from "../../../helpers";
 import { Form, Modal, Button, Row, Col } from "react-bootstrap";
-import { FaCheck } from "react-icons/fa";
 
 import { ModalConfirm } from "../../Modals";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
 import CustomerVerifyForm from "../../Customer/CustomerVerifyForm";
 import FormButton from "../../Customer/FormButton";
+
+import { FaCheck, FaQuestionCircle } from "react-icons/fa";
 
 class AddCustomer extends Component {
   state = {
@@ -35,15 +36,29 @@ class AddCustomer extends Component {
       description: ""
     },
     successModal: false,
-    verifySection: true
+    verifySection: true,
+    customerExists: false
   };
 
   sigPad = null;
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
-      customers: { status }
+      customers: { status, exists, checking }
     } = nextProps;
+
+    if (typeof exists !== "undefined") {
+      if (exists) {
+        return this.setState({
+          customerExists: true,
+          peaIdInvalid: true,
+          canSubmit: false
+        });
+      }
+      // return this.setState({
+      //   customerExists: exists
+      // });
+    }
 
     if (status === "create_success") {
       if (!this.state.verifySection) {
@@ -108,14 +123,20 @@ class AddCustomer extends Component {
         }
       });
     } else if (name === "peaId") {
-      this.setState({
-        peaIdInvalid: value.length < 12,
-        canSubmit: value.length === 12,
-        customer: {
-          ...this.state.customer,
-          peaId: value
+      this.setState(
+        {
+          peaIdInvalid: value.length < 12,
+          customerExists: false,
+          canSubmit: value.length === 12,
+          customer: {
+            ...this.state.customer,
+            peaId: value
+          }
+        },
+        () => {
+          this.state.canSubmit && this.checkExists(value);
         }
-      });
+      );
     } else {
       this.setState({
         customer: {
@@ -162,6 +183,38 @@ class AddCustomer extends Component {
     });
   };
 
+  checkExists = peaId => {
+    this.props.checkExists(peaId);
+  };
+
+  handleViewCustomer = () => {
+    const {
+      history,
+      location: { state }
+    } = this.props;
+    history.replace(`/customers/view/${this.state.customer.peaId}`, {
+      from: state.from,
+      filter: state && state.filter
+    });
+  };
+
+  handleVerifyCustomer = () => {
+    const {
+      history,
+      location: { state }
+    } = this.props;
+    history.replace(`/customers/verify/${this.state.customer.peaId}`, {
+      from: state.from,
+      filter: state && state.filter
+    });
+  };
+
+  handleModalExistsClose = () => {
+    this.setState({
+      customerExists: false
+    });
+  };
+
   render() {
     const {
       successModal,
@@ -169,7 +222,8 @@ class AddCustomer extends Component {
       confirmModal,
       customer,
       peaIdInvalid,
-      verifySection
+      verifySection,
+      customerExists
     } = this.state;
     return (
       <Fragment>
@@ -239,6 +293,44 @@ class AddCustomer extends Component {
           confirm={this.handleGoBack}
           close={this.handleConfirmModalClose}
         />
+
+        <Modal
+          show={customerExists}
+          onHide={this.handleModalExistsClose}
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          backdrop="static"
+        >
+          <Modal.Header>
+            <FaQuestionCircle className="pea-color" size={32} />
+          </Modal.Header>
+
+          <Modal.Body className="text-center">
+            รหัสผู้ใช้ไฟ <b>{customer.peaId}</b> มีอยู่แล้วในระบบ
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="outline-secondary"
+              className="pea-color"
+              onClick={this.handleVerifyCustomer}
+            >
+              แสดงตน
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={this.handleViewCustomer}
+            >
+              แสดงข้อมูล
+            </Button>
+            <Button
+              variant="outline-secondary"
+              onClick={this.handleModalExistsClose}
+            >
+              ปิด
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Fragment>
     );
   }
@@ -255,7 +347,8 @@ const mapDispatchToProps = dispatch => {
   return {
     createCustomer: customer => dispatch(customerActions.create(customer)),
     verifyCustomer: (peaId, verify) =>
-      dispatch(customerActions.verify(peaId, verify))
+      dispatch(customerActions.verify(peaId, verify)),
+    checkExists: peaId => dispatch(customerActions.checkExists(peaId))
   };
 };
 

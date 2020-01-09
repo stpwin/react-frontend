@@ -318,6 +318,26 @@ const getSignature = (peaId, sigId) => {
     .catch(handleFetchError);
 };
 
+// const checkExists = peaId => {
+//   if (!peaId) {
+//     return Promise.reject("peaId required");
+//   }
+//   const requestOptions = {
+//     method: "GET",
+//     headers: authHeader()
+//   };
+
+//   return (
+//     fetch(`${config.apiUrl}/api/customers/peaid/${peaId}`, requestOptions)
+//       .then(handleResponse)
+//       // .then(result => {
+//       //   console.log("checkExists:", result);
+//       //   return true;
+//       // })
+//       .catch(handleFetchError)
+//   );
+// };
+
 export const customerService = {
   create,
   get,
@@ -332,4 +352,5 @@ export const customerService = {
   revokeApprove,
   setVerify,
   removeVerify
+  // checkExists
 };

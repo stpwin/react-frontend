@@ -145,6 +145,17 @@ export const customers = (state = {}, action) => {
         error: action.error
       };
 
+    case customerConstants.CUSTOMER_EXISTS_REQUEST:
+      return {
+        checking: true
+      };
+    case customerConstants.CUSTOMER_EXISTS_SUCCESS:
+      return { exists: action.data };
+    case customerConstants.CUSTOMER_EXISTS_FAILURE:
+      return {
+        error: action.error
+      };
+
     default:
       return state;
   }

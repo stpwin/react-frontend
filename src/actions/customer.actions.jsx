@@ -291,6 +291,27 @@ const removeVerify = (peaId, verifyId) => {
   }
 };
 
+const checkExists = peaId => {
+  return dispatch => {
+    dispatch(request());
+
+    customerService.get(peaId).then(
+      data => dispatch(success(data ? true : false)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: customerConstants.CUSTOMER_EXISTS_REQUEST };
+  }
+  function success(data) {
+    return { type: customerConstants.CUSTOMER_EXISTS_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: customerConstants.CUSTOMER_EXISTS_FAILURE, error };
+  }
+};
+
 export const customerActions = {
   create,
   get,
@@ -304,5 +325,6 @@ export const customerActions = {
   approve,
   revokeApprove,
   setVerify,
-  removeVerify
+  removeVerify,
+  checkExists
 };
