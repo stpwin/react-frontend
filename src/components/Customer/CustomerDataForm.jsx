@@ -313,6 +313,7 @@ export const CustomerDataForm = ({
             row="3"
             value={description}
             onChange={onChange}
+            disabled={readOnly}
           ></Form.Control>
         </Col>
       </Form.Group>
