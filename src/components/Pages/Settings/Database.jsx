@@ -14,7 +14,7 @@ import {
   Tab,
   ButtonToolbar,
   Button,
-  Form,
+  Form
   // Dropdown,
   // DropdownButton
 } from "react-bootstrap";
@@ -22,7 +22,7 @@ import {
 import { ModalConfirm } from "../../Modals";
 
 const tempDate = new Date();
-tempDate.setHours(0, 0, 0, 0)
+tempDate.setHours(0, 0, 0, 0);
 const lastYearDate = new Date(tempDate.getUTCFullYear() - 1, 1, 1);
 // const totalCountSince = [
 //   { name: "วันนี้", value: tempDate },
@@ -67,7 +67,8 @@ class Database extends Component {
   componentDidMount() {
     registerLocale("th", th);
     this.props.getDatabaseCounters();
-    this.props.getDatabaseInfo();
+    // this.props.getDatabaseInfo();
+    this.props.getVerifyInfoByDate(this.state.sinceDate.toJSON());
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
@@ -211,11 +212,16 @@ class Database extends Component {
   };
 
   handleSinceDateChange = date => {
-    console.log(date)
-    this.setState({
-      sinceDate: date
-    })
-  }
+    // console.log();
+    this.setState(
+      {
+        sinceDate: date
+      },
+      () => {
+        this.props.getVerifyInfoByDate(date.toJSON());
+      }
+    );
+  };
 
   render() {
     const {
@@ -421,8 +427,19 @@ const Tools = ({ onSet, onReset }) => {
 };
 
 const DatePickerButton = forwardRef((props, ref) => {
-  return <Button ref={ref} variant="outline-secondary" size="sm" className="ml-2" onClick={props.onClick} style={{ width: "9rem" }}>{props.value}</Button>
-})
+  return (
+    <Button
+      ref={ref}
+      variant="outline-secondary"
+      size="sm"
+      className="ml-2"
+      onClick={props.onClick}
+      style={{ width: "9rem" }}
+    >
+      {props.value}
+    </Button>
+  );
+});
 
 const mapStateToProps = state => {
   const { database } = state;
@@ -436,7 +453,9 @@ const mapDispatchToProps = dispatch => {
     getDatabaseCounters: () => dispatch(databaseActions.getAllCounter()),
     setDatabaseCounter: (name, sequence) =>
       dispatch(databaseActions.setCounter(name, sequence)),
-    getDatabaseInfo: () => dispatch(databaseActions.getInfo())
+    getDatabaseInfo: () => dispatch(databaseActions.getInfo()),
+    getVerifyInfoByDate: date =>
+      dispatch(databaseActions.getVerifyInfoByDate(date))
   };
 };
 

@@ -64,8 +64,30 @@ const getInfo = () => {
   }
 };
 
+const getVerifyInfoByDate = date => {
+  return dispatch => {
+    dispatch(request());
+
+    databaseService.getVerifyInfoByDate(date).then(
+      data => dispatch(success(data)),
+      error => dispatch(failure(error))
+    );
+  };
+
+  function request() {
+    return { type: databaseConstants.GET_VERIFY_INFO_REQUEST };
+  }
+  function success(data) {
+    return { type: databaseConstants.GET_VERIFY_INFO_SUCCESS, data };
+  }
+  function failure(error) {
+    return { type: databaseConstants.GET_VERIFY_INFO_FAILURE, error };
+  }
+};
+
 export const databaseActions = {
   getAllCounter,
   setCounter,
-  getInfo
+  getInfo,
+  getVerifyInfoByDate
 };

@@ -38,8 +38,22 @@ const getInfo = () => {
     .catch(handleFetchError);
 };
 
+const getVerifyInfoByDate = date => {
+  const requestOption = {
+    method: "GET",
+    headers: authHeader()
+  };
+  return fetch(
+    `${config.apiUrl}/api/settings/database/verifyinfo?date=${date}`,
+    requestOption
+  )
+    .then(handleResponse)
+    .catch(handleFetchError);
+};
+
 export const databaseService = {
   getAllCounter,
   setCounter,
-  getInfo
+  getInfo,
+  getVerifyInfoByDate
 };

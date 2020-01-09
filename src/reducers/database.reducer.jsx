@@ -35,6 +35,17 @@ export const database = (state = {}, action) => {
         error: action.error
       };
 
+    case databaseConstants.GET_VERIFY_INFO_REQUEST:
+      return {
+        loading: true
+      };
+    case databaseConstants.GET_VERIFY_INFO_SUCCESS:
+      return { info: action.data };
+    case databaseConstants.GET_VERIFY_INFO_FAILURE:
+      return {
+        error: action.error
+      };
+
     default:
       return state;
   }
