@@ -153,7 +153,7 @@ export const customers = (state = {}, action) => {
       return { exists: action.data };
     case customerConstants.CUSTOMER_EXISTS_FAILURE:
       return {
-        error: action.error
+        checkError: action.error
       };
 
     default:

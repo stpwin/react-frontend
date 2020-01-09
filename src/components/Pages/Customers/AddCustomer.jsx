@@ -44,7 +44,7 @@ class AddCustomer extends Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
-      customers: { status, exists, checking }
+      customers: { status, exists } //checking
     } = nextProps;
 
     if (typeof exists !== "undefined") {
@@ -193,7 +193,7 @@ class AddCustomer extends Component {
       location: { state }
     } = this.props;
     history.replace(`/customers/view/${this.state.customer.peaId}`, {
-      from: state.from,
+      from: state && state.from,
       filter: state && state.filter
     });
   };
@@ -204,7 +204,7 @@ class AddCustomer extends Component {
       location: { state }
     } = this.props;
     history.replace(`/customers/verify/${this.state.customer.peaId}`, {
-      from: state.from,
+      from: state && state.from,
       filter: state && state.filter
     });
   };
