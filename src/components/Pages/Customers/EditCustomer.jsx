@@ -58,7 +58,8 @@ class EditCustomer extends Component {
         filter: state.filter
       });
     }
-    history.goBack();
+    history.replace("/customers");
+    // history.goBack();
   };
 
   handleDataChange = e => {

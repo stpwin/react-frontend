@@ -30,7 +30,7 @@ class VerifyCustomer extends Component {
 
     if (status === "verify_success") {
       this.props.history.goBack();
-      return
+      return;
     }
     // && Object.entries(customer).length !== 0 && customer.constructor === Object
     if (customer) {
@@ -43,12 +43,14 @@ class VerifyCustomer extends Component {
           houseNo: customer.address && customer.address.houseNo,
           mooNo: customer.address && customer.address.mooNo,
           districtNo: customer.address && customer.address.districtNo,
-          postcode: customer.address && getPostcodeFromDistrictNo(customer.address.districtNo),
+          postcode:
+            customer.address &&
+            getPostcodeFromDistrictNo(customer.address.districtNo),
           authorize: customer.authorize,
           soldierNo: customer.soldierNo,
           war: customer.war
         }
-      })
+      });
     }
   }
 
@@ -57,13 +59,19 @@ class VerifyCustomer extends Component {
   };
 
   handleGoBack = () => {
-    const { history } = this.props
-    const { location: { state, pathname } } = history
+    const { history } = this.props;
+    const {
+      location: { state, pathname }
+    } = history;
     if (state && state.from) {
-      return history.replace(state.from, { from: pathname, filter: state.filter })
+      return history.replace(state.from, {
+        from: pathname,
+        filter: state.filter
+      });
     }
-    history.goBack()
-  }
+    history.replace("/customers");
+    // history.goBack()
+  };
   handleAppearDateChange = date => {
     this.setState({
       appearDate: date
@@ -82,8 +90,10 @@ class VerifyCustomer extends Component {
   };
 
   render() {
-    const { customer } = this.state
-    const { customers: { loading } } = this.props;
+    const { customer } = this.state;
+    const {
+      customers: { loading }
+    } = this.props;
 
     return (
       <Form onSubmit={this.handleVerifyCustomer}>
@@ -118,4 +128,4 @@ VerifyCustomer.propTypes = {
   peaId: PropTypes.string.isRequired
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(VerifyCustomer)
+export default connect(mapStateToProps, mapDispatchToProps)(VerifyCustomer);

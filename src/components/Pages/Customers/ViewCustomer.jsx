@@ -110,7 +110,8 @@ class ViewCustomer extends Component {
         filter: state && state.filter
       });
     }
-    history.goBack();
+    history.push("/customers");
+    // history.goBack();
   };
 
   handleVerifyRemove = (id, title) => {

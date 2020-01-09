@@ -2,7 +2,11 @@ import React, { Component, Fragment } from "react";
 
 import { connect } from "react-redux";
 import { customerActions } from "../../../actions";
-import { translateCustomer, toLocalDate, toLocalDateTime } from "../../../helpers";
+import {
+  translateCustomer,
+  toLocalDate,
+  toLocalDateTime
+} from "../../../helpers";
 
 import ReactToPrint from "react-to-print";
 
@@ -68,7 +72,7 @@ class PrintCustomer extends Component {
   handlePrint = () => {
     this.setState({
       printDate: toLocalDateTime(new Date())
-    })
+    });
     this.printRef.handlePrint();
   };
 
@@ -87,13 +91,19 @@ class PrintCustomer extends Component {
   };
 
   handleGoBack = () => {
-    const { history } = this.props
-    const { location: { state, pathname } } = history
+    const { history } = this.props;
+    const {
+      location: { state, pathname }
+    } = history;
     if (state && state.from) {
-      return history.replace(state.from, { from: pathname, filter: state.filter })
+      return history.replace(state.from, {
+        from: pathname,
+        filter: state.filter
+      });
     }
-    history.goBack()
-  }
+    history.replace("/customers");
+    // history.goBack()
+  };
 
   render() {
     const {
@@ -108,7 +118,6 @@ class PrintCustomer extends Component {
     return (
       <Fragment>
         <Row className="justify-content-md-center">
-
           <Col md="auto">
             <Form.Group>
               <Form.Label>เลือกวันที่แสดงตน</Form.Label>
@@ -126,9 +135,7 @@ class PrintCustomer extends Component {
                 })}
               </Form.Control>
             </Form.Group>
-
           </Col>
-
         </Row>
         <Row className="justify-content-md-center">
           <Col md="auto">
@@ -167,13 +174,12 @@ class PrintCustomer extends Component {
                 printDate={printDate}
               />
             </div>
-
           </Fragment>
         ) : (
-            <div className="text-center mt-5">
-              <Spinner animation="border"></Spinner>
-            </div>
-          )}
+          <div className="text-center mt-5">
+            <Spinner animation="border"></Spinner>
+          </div>
+        )}
       </Fragment>
     );
   }

@@ -173,7 +173,7 @@ class AddCustomer extends Component {
         filter: state.filter
       });
     }
-    history.goBack();
+    history.replace("/customers");
   };
 
   handleVerifySectionChange = e => {
