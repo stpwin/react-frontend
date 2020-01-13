@@ -9,9 +9,20 @@ import { Form } from "react-bootstrap";
 import CustomerDataForm from "../../Customer/CustomerDataForm";
 import FormButton from "../../Customer/FormButton";
 
+const filters = {
+  ภายในประเทศ: "G1",
+  เวียดนาม: "G1",
+  เกาหลี: "G1",
+  เหรียญชัยสมรภูมิ: "G2",
+  เอเชียบูรพา: "G2",
+  อินโดจีน: "G2",
+  ฝรั่งเศส: "G2"
+};
+
 class EditCustomer extends Component {
   state = {
-    customer: {}
+    customer: {},
+    disableWar: ""
   };
 
   componentDidMount() {
@@ -42,7 +53,8 @@ class EditCustomer extends Component {
           war: customer.war,
           tel: customer.tel,
           description: customer.description
-        }
+        },
+        disableWar: filters[customer.war]
       });
     }
   }
@@ -88,7 +100,7 @@ class EditCustomer extends Component {
   };
 
   render() {
-    const { customer } = this.state;
+    const { customer, disableWar } = this.state;
     const { loading } = this.props;
 
     return (
@@ -98,6 +110,7 @@ class EditCustomer extends Component {
           customer={customer}
           showPlaceholder={true}
           onChange={this.handleDataChange}
+          disableWar={disableWar}
         />
         <FormButton loading={loading} cancel={this.handleGoBack} />
       </Form>

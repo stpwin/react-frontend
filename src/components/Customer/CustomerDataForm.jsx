@@ -21,7 +21,8 @@ export const CustomerDataForm = ({
     war,
     tel,
     description
-  }
+  },
+  disableWar
 }) => {
   return (
     <React.Fragment>
@@ -291,13 +292,55 @@ export const CustomerDataForm = ({
             value={war || "ภายในประเทศ"}
             onChange={onChange}
           >
-            <option value="ภายในประเทศ">ภายในประเทศ</option>
-            <option value="เวียดนาม">เวียดนาม</option>
-            <option value="เกาหลี">เกาหลี</option>
-            <option value="เหรียญชัยสมรภูมิ">เหรียญชัยสมรภูมิ</option>
-            <option value="เอเชียบูรพา">เอเชียบูรพา</option>
-            <option value="อินโดจีน">อินโดจีน</option>
-            <option value="ฝรั่งเศส">ฝรั่งเศส</option>
+            <option
+              value="ภายในประเทศ"
+              hidden={disableWar === "G2"}
+              disabled={disableWar === "G2"}
+            >
+              ภายในประเทศ
+            </option>
+            <option
+              value="เวียดนาม"
+              hidden={disableWar === "G2"}
+              disabled={disableWar === "G2"}
+            >
+              เวียดนาม
+            </option>
+            <option
+              value="เกาหลี"
+              hidden={disableWar === "G2"}
+              disabled={disableWar === "G2"}
+            >
+              เกาหลี
+            </option>
+            <option
+              value="เหรียญชัยสมรภูมิ"
+              hidden={disableWar === "G1"}
+              disabled={disableWar === "G1"}
+            >
+              เหรียญชัยสมรภูมิ
+            </option>
+            <option
+              value="เอเชียบูรพา"
+              hidden={disableWar === "G1"}
+              disabled={disableWar === "G1"}
+            >
+              เอเชียบูรพา
+            </option>
+            <option
+              value="อินโดจีน"
+              hidden={disableWar === "G1"}
+              disabled={disableWar === "G1"}
+            >
+              อินโดจีน
+            </option>
+            <option
+              value="ฝรั่งเศส"
+              hidden={disableWar === "G1"}
+              disabled={disableWar === "G1"}
+            >
+              ฝรั่งเศส
+            </option>
           </Form.Control>
         </Col>
       </Form.Group>
