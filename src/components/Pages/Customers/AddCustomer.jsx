@@ -99,7 +99,7 @@ class AddCustomer extends Component {
     canSubmit && this.props.createCustomer(customer);
   };
 
-  gotoVerifyCustomer = () => {
+  handleVerifyCustomer = () => {
     const {
       customer: { peaId },
       appearDate
@@ -318,7 +318,7 @@ class AddCustomer extends Component {
             <Button
               variant="outline-secondary"
               className="pea-color"
-              onClick={this.handleVerifyCustomer}
+              onClick={this.gotoVerifyCustomer}
             >
               แสดงตน
             </Button>
