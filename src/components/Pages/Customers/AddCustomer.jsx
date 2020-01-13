@@ -42,6 +42,10 @@ class AddCustomer extends Component {
 
   sigPad = null;
 
+  componentDidMount() {
+    this.validatePeaId();
+  }
+
   UNSAFE_componentWillReceiveProps(nextProps) {
     const {
       customers: { status, exists } //checking
@@ -130,17 +134,12 @@ class AddCustomer extends Component {
     } else if (name === "peaId") {
       this.setState(
         {
-          peaIdInvalid: value.length < 12,
-          customerExists: false,
-          canSubmit: value.length === 12,
           customer: {
             ...this.state.customer,
             peaId: value
           }
         },
-        () => {
-          this.state.canSubmit && this.checkExists(value);
-        }
+        this.validatePeaId
       );
     } else {
       this.setState({
@@ -150,6 +149,17 @@ class AddCustomer extends Component {
         }
       });
     }
+  };
+
+  validatePeaId = () => {
+    this.setState(
+      {
+        peaIdInvalid: this.state.customer.peaId.length < 12,
+        customerExists: false,
+        canSubmit: this.state.customer.peaId.length === 12
+      },
+      () => this.state.canSubmit && this.checkExists(this.state.customer.peaId)
+    );
   };
 
   handleHideSuccessModal = () => {
@@ -162,7 +172,7 @@ class AddCustomer extends Component {
       location: { state }
     } = this.props;
     history.replace(`/customers/print/${this.state.customer.peaId}`, {
-      from: state.from,
+      from: state && state.from,
       filter: state && state.filter
     });
   };

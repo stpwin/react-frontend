@@ -188,9 +188,10 @@ export const DataTable = ({
               bordered
               hover
               size="sm"
-              style={{ width: "1078px" }}
+              // style={{ width: "1078px" }}
             >
               <thead className="text-center thread-pea">
+                {/* <tr>&nbsp;</tr> */}
                 <tr>
                   {columns &&
                     columns.map((col, index) => {
@@ -292,6 +293,9 @@ export const DataTable = ({
                   </tr>
                 )}
               </tbody>
+              {/* <tfoot>
+                <tr>&nbsp;</tr>
+              </tfoot> */}
             </Table>
           </div>
         </Col>
@@ -328,7 +332,7 @@ const ActionButtons = ({ tools, item, idKey }) => {
                 id="bg-nested-dropdown"
                 className="pea-color"
                 variant="outline-secondary"
-                drop="right"
+                drop="down"
                 style={{ display: "inherit" }}
               >
                 {tools.map((data1, index1) => {
