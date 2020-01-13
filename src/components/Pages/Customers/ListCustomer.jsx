@@ -2,7 +2,7 @@ import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 // import { withRouter } from "react-router-dom";
 import { customerActions } from "../../../actions";
-import { translateCustomer } from "../../../helpers";
+import { translateCustomer, toLocalDate } from "../../../helpers";
 
 import {
   FaTrash,
@@ -38,7 +38,7 @@ const columns = [
     valign: "true",
     style: { width: "6%" },
     canSearch: true,
-    variable: "currentYearApproved",
+    // variable: "lastApproved",
     tdStyle: {
       fontSize: "smaller"
     }
@@ -53,7 +53,7 @@ const columns = [
     }
   },
   {
-    text: "หมายเลขผู้ใช้ไฟฟ้า",
+    text: "CA",
     dataField: "peaId",
     valign: "true",
     canSearch: true,
@@ -82,18 +82,34 @@ const columns = [
   },
   // { text: "ได้รับสิทธิ์วันที่", dataField: "privilegeDate", valign: "true" },
   {
-    text: "กรณีเป็น",
+    text: "เป็น",
     dataField: "authorize",
     valign: "true",
     badge: { variant: "secondary" }
   },
   {
-    text: "วันที่มาแสดงตน",
+    text: "แสดงตน",
     dataField: "appearDate",
     valign: "true",
-    variable: "currentYearAppear",
-    badge: { variant: "dark" }
+    // variable: "currentYearAppear",
+    badge: {
+      variant: "dark",
+      variable: "lastApproved",
+      variantVariable: "success"
+    }
   }
+  // {
+  //   text: "อนุมัติ",
+  //   dataField: "lastApprovedDate",
+  //   valign: "true",
+  //   // variable: "currentYearAppear",
+  //   badge: {
+  //     variant: "dark",
+  //     variable: "lastApproved",
+  //     variantVariable: "success"
+  //   }
+  //   // tdStyle: { fontWeight: "100" }
+  // }
 ];
 
 class ListCustomer extends Component {
@@ -133,7 +149,7 @@ class ListCustomer extends Component {
     },
     {
       variable: "lastVerifyId",
-      toggleVar: "currentYearApproved",
+      toggleVar: "lastApproved",
       overlaytext: "อนุมัติ",
       overlaytextSecond: "ยกเลิกอนุมัติ",
       icon: <FaCheck />,
@@ -212,8 +228,11 @@ class ListCustomer extends Component {
         item => item.peaId === approve.approve.peaId
       );
       if (cusIndex > -1) {
-        translated[cusIndex].currentYearApproved =
-          approve.status === "approved";
+        translated[cusIndex].lastApproved = approve.status === "approved";
+        translated[cusIndex].lastApprovedDate =
+          approve.approve && approve.approve.approvedDate
+            ? toLocalDate(approve.approve.approvedDate, false)
+            : "";
         this.setState({
           translated
         });
@@ -235,7 +254,7 @@ class ListCustomer extends Component {
         customers.customers.map((customer, index) => {
           return {
             index: index + start + 1,
-            ...translateCustomer(customer, false, true, true, true)
+            ...translateCustomer(customer, false, true, true, true, false)
           };
         });
 

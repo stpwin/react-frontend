@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { Router, Switch, Route } from "react-router-dom";
 
 import Navigation from "../Navigation";
+import Footer from "../Footer";
 import NotFound from "../Pages/NotFound";
 import { PrivateRoute } from "../PrivateRoute";
 
@@ -33,6 +34,7 @@ const App = props => {
           <NotFound />
         </Route>
       </Switch>
+      <Footer />
     </Router>
   );
 };

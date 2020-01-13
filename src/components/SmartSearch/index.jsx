@@ -60,20 +60,18 @@ export class SmartSearch extends Component {
     const { customer, loading, error } = this.props;
 
     return (
-      <Jumbotron className="text-center" >
+      <Jumbotron className="text-center">
         <h2 className="text-white">
           ระบบจัดการการขอส่วนลดค่าไฟฟ้าของทหารผ่านศึก
         </h2>
-        <h4 className="text-white">
-          PEA War Veterans Privilege Management System
-        </h4>
+        <h4 className="text-white">PEA Veterans Privilege Management System</h4>
 
         <Row className="justify-content-md-center">
-          <Col >
+          <Col>
             <Form.Group className="smart-search-input">
               <Form.Label className="text-white">
                 ระบุหมายเลขผู้ใช้ไฟฟ้า(CA)
-                </Form.Label>
+              </Form.Label>
               <Form.Control
                 className="ca-text text-center"
                 size="lg"
@@ -99,13 +97,11 @@ export class SmartSearch extends Component {
                     <span className="text-white">พบข้อมูล</span>
                   </div>
 
-                  <CustomerView
-                    customer={customer}
-                  />
+                  <CustomerView customer={customer} />
                 </Fragment>
               ) : (
-                      <NotFound />
-                    )
+                <NotFound />
+              )
             ) : null}
           </Col>
         </Row>
@@ -123,7 +119,7 @@ export class SmartSearch extends Component {
                 className="btn-block"
               >
                 เพิ่มข้อมูล
-                </Button>
+              </Button>
             </Col>
           </Row>
         </Collapse>
@@ -140,7 +136,7 @@ export class SmartSearch extends Component {
                 onClick={this.handleEdit}
               >
                 แก้ไขข้อมูล
-                </Button>
+              </Button>
             </Col>
             <Col xs lg="3">
               <Button
@@ -149,8 +145,8 @@ export class SmartSearch extends Component {
                 onClick={this.handleVerify}
                 className="btn-block"
               >
-                ยืนยันสิทธิ์
-                </Button>
+                แสดงตน
+              </Button>
             </Col>
           </Row>
         </Collapse>
@@ -160,22 +156,18 @@ export class SmartSearch extends Component {
 }
 
 const CustomerView = ({ customer: customerData }) => {
-  const customer = translateCustomer(customerData)
+  const customer = translateCustomer(customerData);
   return (
     <Card>
       <Card.Body>
-        <Card.Title>
-          {customer.name}
-        </Card.Title>
+        <Card.Title>{customer.name}</Card.Title>
         <Card.Subtitle className="mb-2 text-muted">
           สงคราม {customer.war}
         </Card.Subtitle>
         <Card.Text>{customer.address}</Card.Text>
       </Card.Body>
       <ListGroup className="list-group-flush">
-        <ListGroupItem>
-          หมายเลขทหาร {customer.soldierNo}
-        </ListGroupItem>
+        <ListGroupItem>หมายเลขทหาร {customer.soldierNo}</ListGroupItem>
       </ListGroup>
       <Card.Body>
         <Link to={`/customers/print/${customer.peaId}`}>พิมพ์</Link>
@@ -184,10 +176,10 @@ const CustomerView = ({ customer: customerData }) => {
       <Card.Footer>
         <small className="text-muted">
           {customer.appearDate ? (
-            <span>ยืนยันสิทธิ์ครั้งล่าสุดเมื่อ {customer.appearDate}</span>
+            <span>แสดงตนครั้งล่าสุดเมื่อ {customer.appearDate}</span>
           ) : (
-              <span>ไม่เคยยืนยันสิทธิ์</span>
-            )}
+            <span>ไม่เคยแสดงตน</span>
+          )}
         </small>
       </Card.Footer>
     </Card>

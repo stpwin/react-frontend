@@ -380,10 +380,10 @@ class Database extends Component {
                             </th>
                           </tr>
                           <tr className="text-center">
-                            <th>ยืนยันสิทธิ์แล้ว</th>
-                            <th>อนุมัติแล้ว</th>
-                            <th>ยืนยันสิทธิ์แล้ว</th>
-                            <th>อนุมัติแล้ว</th>
+                            <th>แสดงตน</th>
+                            <th>อนุมัติ</th>
+                            <th>แสดงตน</th>
+                            <th>อนุมัติ</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -523,7 +523,7 @@ const DatePickerButton = forwardRef((props, ref) => {
       ref={ref}
       variant="outline-secondary"
       size="sm"
-      className="ml-1 mr-1"
+      className="mx-1"
       onClick={props.onClick}
       style={{ width: "8.5rem" }}
     >

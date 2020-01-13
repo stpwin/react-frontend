@@ -7,7 +7,7 @@ const Navigation = ({ user, loggedIn }) => {
   return (
     <Navbar expand="md" fixed="top">
       <LinkContainer to="/">
-        <Navbar.Brand style={{ cursor: "pointer" }}>PEA WVPMS</Navbar.Brand>
+        <Navbar.Brand style={{ cursor: "pointer" }}>PEA VPMS</Navbar.Brand>
       </LinkContainer>
 
       {loggedIn ? (

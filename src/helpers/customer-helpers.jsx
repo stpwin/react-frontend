@@ -19,7 +19,8 @@ export const translateCustomer = (
   fullDate = true,
   shortAddress = false,
   onlyDistrict = false,
-  telInAddress = false
+  telInAddress = false,
+  showNoTitle = false
 ) => {
   if (!customer) return;
 
@@ -33,8 +34,9 @@ export const translateCustomer = (
     address: `${addressToString(
       customer.address,
       shortAddress,
-      onlyDistrict
-    )} ${telInAddress && customer.tel ? customer.tel : ""}`,
+      onlyDistrict,
+      showNoTitle
+    )}\n${telInAddress && customer.tel ? customer.tel : ""}`,
     tel: customer.tel,
     description: customer.description,
     authorize: customer.authorize,
@@ -58,14 +60,8 @@ const getLastVerify = ({ verifies }, fullDate) => {
       lastApprovedDate:
         lastVerify.approvedDate &&
         toLocalDate(lastVerify.approvedDate, fullDate),
-      currentYearAppear: lastVerify.appearDate
-        ? new Date(lastVerify.appearDate).getFullYear() ===
-          new Date().getFullYear()
-        : false,
-      currentYearApproved: lastVerify.approvedDate
-        ? new Date(lastVerify.approvedDate).getFullYear() ===
-          new Date().getFullYear()
-        : false
+      lastAppear: lastVerify.appearDate ? true : false,
+      lastApproved: lastVerify.approvedDate ? true : false
     };
   }
 };

@@ -169,7 +169,7 @@ class ViewCustomer extends Component {
                 className="pea-color"
                 onClick={this.handleGotoVerify}
               >
-                ยืนยันสิทธิ์
+                แสดงตน
               </Button>
               <Button
                 key="button-edit"
@@ -218,7 +218,7 @@ class ViewCustomer extends Component {
             </Row>
           </Col>
           <Col>
-            <h4 className="text-center">ข้อมูลการยืนยัน</h4>
+            <h4 className="text-center">ข้อมูลการแสดงตน</h4>
             <Row>
               <Col>
                 {customer &&

@@ -240,7 +240,7 @@ class AddCustomer extends Component {
               <Form.Check
                 custom
                 inline
-                label="ยืนยันสิทธิ์"
+                label="แสดงตน"
                 checked={verifySection}
                 onChange={this.handleVerifySectionChange}
                 id="showVerifySection"
