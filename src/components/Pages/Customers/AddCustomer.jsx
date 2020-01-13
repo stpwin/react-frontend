@@ -61,14 +61,18 @@ class AddCustomer extends Component {
     }
 
     if (status === "create_success") {
+      console.log("Created...");
       if (!this.state.verifySection) {
+        console.log("Skip verify.");
         return this.setState({
           successModal: true
         });
       }
-      this.handleVerifyCustomer();
+
+      console.log("Verifying...");
+      return this.handleVerifyCustomer();
     } else if (status === "verify_success") {
-      this.setState({
+      return this.setState({
         successModal: true
       });
     }
@@ -89,12 +93,13 @@ class AddCustomer extends Component {
   };
 
   handleCreateCustomer = event => {
+    console.log("Creating...");
     event.preventDefault();
     const { customer, canSubmit } = this.state;
     canSubmit && this.props.createCustomer(customer);
   };
 
-  handleVerifyCustomer = () => {
+  gotoVerifyCustomer = () => {
     const {
       customer: { peaId },
       appearDate
@@ -187,7 +192,7 @@ class AddCustomer extends Component {
     this.props.checkExists(peaId);
   };
 
-  handleViewCustomer = () => {
+  gotoViewCustomer = () => {
     const {
       history,
       location: { state }
@@ -198,7 +203,7 @@ class AddCustomer extends Component {
     });
   };
 
-  handleVerifyCustomer = () => {
+  gotoVerifyCustomer = () => {
     const {
       history,
       location: { state }
@@ -317,10 +322,7 @@ class AddCustomer extends Component {
             >
               แสดงตน
             </Button>
-            <Button
-              variant="outline-secondary"
-              onClick={this.handleViewCustomer}
-            >
+            <Button variant="outline-secondary" onClick={this.gotoViewCustomer}>
               แสดงข้อมูล
             </Button>
             <Button
