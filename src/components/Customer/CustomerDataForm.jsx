@@ -22,7 +22,8 @@ export const CustomerDataForm = ({
     tel,
     description
   },
-  disableWar
+  disableWar,
+  warInvalid
 }) => {
   return (
     <React.Fragment>
@@ -36,11 +37,13 @@ export const CustomerDataForm = ({
               isInvalid={peaIdInvalid}
               aria-describedby="basic-addon3"
               maxLength={12}
+              minLength={12}
               name="peaId"
               placeholder={showPlaceholder ? "หมายเลขผู้ใช้ไฟฟ้า(CA)" : ""}
               value={peaId || ""}
               disabled={readOnly || peaIdReadOnly}
               onChange={onChange}
+              required={true}
             />
           </InputGroup>
           <Form.Text className="text-muted">
@@ -79,6 +82,7 @@ export const CustomerDataForm = ({
                 disabled={readOnly}
                 value={firstName || ""}
                 onChange={onChange}
+                required={true}
               />
             </Form.Group>
 
@@ -90,6 +94,7 @@ export const CustomerDataForm = ({
                 name="lastName"
                 value={lastName || ""}
                 onChange={onChange}
+                required={true}
               />
             </Form.Group>
           </Form.Row>
@@ -160,17 +165,17 @@ export const CustomerDataForm = ({
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Label>อำเภอ</Form.Label>
-              <Form.Control value="เมือง" disabled={true} />
+              <Form.Control size="sm" value="เมือง" disabled={true} />
             </Form.Group>
 
             <Form.Group as={Col}>
               <Form.Label>จังหวัด</Form.Label>
-              <Form.Control value="ลำปาง" disabled={true} />
+              <Form.Control size="sm" value="ลำปาง" disabled={true} />
             </Form.Group>
 
             <Form.Group as={Col}>
               <Form.Label>รหัสไปรษณีย์</Form.Label>
-              <Form.Control disabled={true} value={postcode || "52000"} />
+              <Form.Control size="sm" disabled={true} value={postcode || "52000"} />
             </Form.Group>
           </Form.Row>
         </Col>
@@ -248,23 +253,6 @@ export const CustomerDataForm = ({
 
       <Form.Group as={Row}>
         <Form.Label column sm={2}>
-          โทรศัพท์
-        </Form.Label>
-        <Col sm={4}>
-          <Form.Control
-            type="text"
-            placeholder={showPlaceholder ? "โทรศัพท์" : ""}
-            name="tel"
-            disabled={readOnly}
-            value={tel || ""}
-            maxLength="15"
-            onChange={onChange}
-          />
-        </Col>
-      </Form.Group>
-
-      <Form.Group as={Row}>
-        <Form.Label column sm={2}>
           เลขประจำตัวทหาร
         </Form.Label>
         <Col sm={4}>
@@ -276,6 +264,7 @@ export const CustomerDataForm = ({
             value={soldierNo || ""}
             maxLength="15"
             onChange={onChange}
+            required={true}
           />
         </Col>
       </Form.Group>
@@ -289,9 +278,16 @@ export const CustomerDataForm = ({
             as="select"
             name="war"
             disabled={readOnly}
-            value={war || "ภายในประเทศ"}
+            value={war || ""}
             onChange={onChange}
+            isInvalid={warInvalid}
           >
+            <option
+              value=""
+              hidden={disableWar}
+            >
+              --เลือกสงคราม--
+            </option>
             <option
               value="ภายในประเทศ"
               hidden={disableWar === "G2"}
@@ -342,6 +338,23 @@ export const CustomerDataForm = ({
               ฝรั่งเศส
             </option>
           </Form.Control>
+        </Col>
+      </Form.Group>
+
+      <Form.Group as={Row}>
+        <Form.Label column sm={2}>
+          โทรศัพท์
+        </Form.Label>
+        <Col sm={4}>
+          <Form.Control
+            type="text"
+            placeholder={showPlaceholder ? "โทรศัพท์" : ""}
+            name="tel"
+            disabled={readOnly}
+            value={tel || ""}
+            maxLength="15"
+            onChange={onChange}
+          />
         </Col>
       </Form.Group>
 

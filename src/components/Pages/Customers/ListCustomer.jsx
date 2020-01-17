@@ -50,7 +50,8 @@ const columns = [
     style: { width: "16%" },
     tdStyle: {
       fontSize: "smaller"
-    }
+    },
+    additional: "description"
   },
   {
     text: "CA",
@@ -277,11 +278,11 @@ class ListCustomer extends Component {
     return filterChecked.every(v => v === true)
       ? "*"
       : filterChecked
-          .map((data, index) => {
-            return data === true ? filters[index].wars.join() : null;
-          })
-          .filter(Boolean)
-          .join() || "-";
+        .map((data, index) => {
+          return data === true ? filters[index].wars.join() : null;
+        })
+        .filter(Boolean)
+        .join() || "-";
   };
 
   fetchNew = () => {

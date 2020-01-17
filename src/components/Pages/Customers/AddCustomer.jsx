@@ -27,7 +27,7 @@ class AddCustomer extends Component {
       lastName: "",
       authorize: "ทหาร",
       soldierNo: "",
-      war: "ภายในประเทศ",
+      war: "",
       houseNo: "",
       mooNo: "",
       districtNo: "520101",
@@ -37,7 +37,8 @@ class AddCustomer extends Component {
     },
     successModal: false,
     verifySection: true,
-    customerExists: false
+    customerExists: false,
+    warInvalid: false
   };
 
   sigPad = null;
@@ -100,6 +101,11 @@ class AddCustomer extends Component {
     console.log("Creating...");
     event.preventDefault();
     const { customer, canSubmit } = this.state;
+
+    this.setState({
+      warInvalid: this.state.customer.war === ""
+    })
+
     canSubmit && this.props.createCustomer(customer);
   };
 
@@ -123,6 +129,7 @@ class AddCustomer extends Component {
 
   handleDataChange = e => {
     const { name, value } = e.target;
+    console.log({ name, value })
     if (name === "districtNo") {
       this.setState({
         customer: {
@@ -141,6 +148,15 @@ class AddCustomer extends Component {
         },
         this.validatePeaId
       );
+    } else if (name === "war") {
+      this.setState({
+        customer: {
+          ...this.state.customer,
+          [name]: value
+        },
+        warInvalid: value === "",
+        canSubmit: this.state.customer.peaId.length === 12 && value !== ""
+      });
     } else {
       this.setState({
         customer: {
@@ -156,7 +172,7 @@ class AddCustomer extends Component {
       {
         peaIdInvalid: this.state.customer.peaId.length < 12,
         customerExists: false,
-        canSubmit: this.state.customer.peaId.length === 12
+        canSubmit: this.state.customer.peaId.length === 12 && this.state.customer.war !== ""
       },
       () => this.state.canSubmit && this.checkExists(this.state.customer.peaId)
     );
@@ -238,7 +254,8 @@ class AddCustomer extends Component {
       customer,
       peaIdInvalid,
       verifySection,
-      customerExists
+      customerExists,
+      warInvalid
     } = this.state;
     return (
       <Fragment>
@@ -248,6 +265,7 @@ class AddCustomer extends Component {
             customer={customer}
             showPlaceholder={true}
             onChange={this.handleDataChange}
+            warInvalid={warInvalid}
           />
           <hr />
           <Row>
