@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 
 import {
   Table,
@@ -19,7 +19,13 @@ import {
 
 import "./table.css";
 
-import { FaSearch, FaTimes, FaSlidersH, FaListUl, FaInfo } from "react-icons/fa";
+import {
+  FaSearch,
+  FaTimes,
+  FaSlidersH,
+  FaListUl,
+  FaInfo
+} from "react-icons/fa";
 import Highlight from "react-highlighter";
 import Paginator from "./Paginator";
 
@@ -53,17 +59,17 @@ export const DataTable = ({
           <div className="top-button">
             {topButtons && topButtons.length > 0
               ? topButtons.map((item, index) => {
-                return (
-                  <Button
-                    key={`button-${item.key}`}
-                    variant="outline"
-                    className="pea-color"
-                    onClick={() => item.onClick()}
-                  >
-                    {item.text}
-                  </Button>
-                );
-              })
+                  return (
+                    <Button
+                      key={`button-${item.key}`}
+                      variant="outline"
+                      className="pea-color"
+                      onClick={() => item.onClick()}
+                    >
+                      {item.text}
+                    </Button>
+                  );
+                })
               : null}
           </div>
         </Col>
@@ -128,13 +134,13 @@ export const DataTable = ({
                       {/* <span className="sr-only">Loading...</span> */}
                     </Button>
                   ) : (
-                      <Button
-                        variant="outline-secondary"
-                        onClick={onClearFilterText}
-                      >
-                        <FaTimes />
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline-secondary"
+                      onClick={onClearFilterText}
+                    >
+                      <FaTimes />
+                    </Button>
+                  )}
                 </InputGroup.Append>
               ) : null}
             </InputGroup>
@@ -188,7 +194,7 @@ export const DataTable = ({
               bordered
               hover
               size="sm"
-            // style={{ width: "1078px" }}
+              // style={{ width: "1078px" }}
             >
               <thead className="text-center thread-pea">
                 {/* <tr>&nbsp;</tr> */}
@@ -223,13 +229,13 @@ export const DataTable = ({
                                 style={col.tdStyle}
                                 className={`align-middle ${
                                   col.valign === "true" ? "text-center" : ""
-                                  } ${
+                                } ${
                                   col.variable
                                     ? item[col.variable]
                                       ? "approved"
                                       : ""
                                     : ""
-                                  }`}
+                                }`}
                               >
                                 {col.canSearch ? (
                                   <Highlight
@@ -244,15 +250,15 @@ export const DataTable = ({
                                         {item[col.dataField] || ""}
                                       </Badge>
                                     ) : (
-                                        item[col.dataField] || ""
-                                      )}
+                                      item[col.dataField] || ""
+                                    )}
                                   </Highlight>
-                                ) : (col.badge ? (
+                                ) : col.badge ? (
                                   <Badge
                                     style={{ fontWeight: "100" }}
                                     variant={
                                       col.badge.variable &&
-                                        item[col.badge.variable]
+                                      item[col.badge.variable]
                                         ? col.badge.variantVariable
                                         : col.badge.variant
                                     }
@@ -260,17 +266,19 @@ export const DataTable = ({
                                     {item[col.dataField] || ""}
                                   </Badge>
                                 ) : (
-                                    <span style={{ whiteSpace: "pre-wrap" }}>
-                                      {item[col.dataField] || ""}
-                                    </span>
-                                  ))}
+                                  <span style={{ whiteSpace: "pre-wrap" }}>
+                                    {item[col.dataField] || ""}
+                                  </span>
+                                )}
 
-                                {col.additional && item[col.additional] ?
+                                {col.additional && item[col.additional] ? (
                                   <OverlayTrigger
                                     key={`overlay-additional-${colIndex}-${dataIndex}`}
                                     placement={"top"}
                                     overlay={
-                                      <Tooltip id={`tooltip-${colIndex}-${dataIndex}`}>
+                                      <Tooltip
+                                        id={`tooltip-${colIndex}-${dataIndex}`}
+                                      >
                                         {item[col.additional]}
                                       </Tooltip>
                                     }
@@ -283,8 +291,7 @@ export const DataTable = ({
                                       <FaInfo size={8} />
                                     </Badge>
                                   </OverlayTrigger>
-                                  : null}
-
+                                ) : null}
                               </td>
                             ); //////////////////List data
                           })}
@@ -293,7 +300,6 @@ export const DataTable = ({
                             key={`td-toolsbar`}
                             className="align-middle text-center td-tools-button"
                           >
-
                             <ActionButtons
                               tools={tools}
                               item={item}
@@ -305,15 +311,15 @@ export const DataTable = ({
                     );
                   })
                 ) : (
-                    <tr>
-                      <td
-                        className="text-center align-middle"
-                        colSpan={columns && columns.length + (tools ? 1 : 0)}
-                      >
-                        ไม่มีข้อมูล
+                  <tr>
+                    <td
+                      className="text-center align-middle"
+                      colSpan={columns && columns.length + (tools ? 1 : 0)}
+                    >
+                      ไม่มีข้อมูล
                     </td>
-                    </tr>
-                  )}
+                  </tr>
+                )}
               </tbody>
               {/* <tfoot>
                 <tr>&nbsp;</tr>
@@ -367,9 +373,9 @@ const ActionButtons = ({ tools, item, idKey }) => {
                           onClick={() =>
                             data1.variable
                               ? data1.onclickSecond(
-                                item[idKey],
-                                item[data1.variable]
-                              )
+                                  item[idKey],
+                                  item[data1.variable]
+                                )
                               : data1.onclickSecond(item[idKey])
                           }
                         >
